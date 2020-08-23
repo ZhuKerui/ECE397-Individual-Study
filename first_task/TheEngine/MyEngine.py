@@ -2,18 +2,20 @@ from whoosh.index import create_in, open_dir
 from whoosh.fields import TEXT, ID, KEYWORD, STORED, Schema
 from whoosh.qparser import QueryParser, MultifieldParser, OrGroup
 from whoosh.query import And, Or
-from nltk import download
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import os
 import io
 import json
+import logging
 
-# download('stopwords')
-# download('punkt')
+# nltk.download('stopwords')
+# nltk.download('punkt')
 
 class MyEngine:
     def __init__(self, index_path, dataset_path):
+        logging.debug('Start building index')
         # Initialize index storage path
         self.index_path = index_path or 'default_index'
         # Initialize schema
@@ -55,22 +57,22 @@ class MyEngine:
                                             update_date=str(jsonObj['update_date']), 
                                             authors_parsed=json.dumps(jsonObj['authors_parsed']))
                     writer.commit()
-                print('Dataset loaded to index.')
+                logging.debug('Dataset loaded to index.')
             else:
-                print('Dataset file not found')
+                logging.debug('Dataset file not found')
 
-            print('New index storage created.')
+            logging.debug('New index storage created.')
         # Load index from storage if exist
         else:
             self.ix = open_dir(self.index_path)
-            print('Index loaded from existing storage.')
+            logging.debug('Index loaded from existing storage.')
         
     @classmethod
     def load_from_index(cls, index_path):
         return cls(index_path, '')
 
-    def search(self, keywords:str, fields:str, data_fields:list, is_strict:bool)->list:
-
+    def search(self, keywords:str, fields:str, data_fields:list, is_strict:bool, limit:int=5)->list:
+        
         # Pre-process the keywords
         raw_keywords = keywords.split(';')
         keywords_list = []
@@ -127,7 +129,7 @@ class MyEngine:
         # Search for results and prepare the return value
         ret = []
         with self.ix.searcher() as searcher:
-            results = searcher.search(search_parse)
+            results = searcher.search(search_parse, limit = limit)
             for data in results:
                 for field in ret_fields:
                     ret.append({field:data[field]})
