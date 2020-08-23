@@ -10,9 +10,6 @@ import io
 import json
 import logging
 
-# nltk.download('stopwords')
-# nltk.download('punkt')
-
 class MyEngine:
     def __init__(self, index_path, dataset_path):
         logging.debug('Start building index')
@@ -72,7 +69,7 @@ class MyEngine:
         return cls(index_path, '')
 
     def search(self, keywords:str, fields:str, data_fields:list, is_strict:bool, limit:int=5)->list:
-        
+        logging.debug('Enter search')
         # Pre-process the keywords
         raw_keywords = keywords.split(';')
         keywords_list = []
@@ -128,10 +125,13 @@ class MyEngine:
 
         # Search for results and prepare the return value
         ret = []
+        logging.debug('Start searching')
         with self.ix.searcher() as searcher:
             results = searcher.search(search_parse, limit = limit)
             for data in results:
+                temp_dict = {}
                 for field in ret_fields:
-                    ret.append({field:data[field]})
-        
+                    temp_dict[field] = data[field]
+                ret.append(temp_dict)
+                
         return ret

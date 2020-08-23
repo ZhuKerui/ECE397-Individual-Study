@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import logging
 from . import MyEngine
 
-engine = MyEngine.MyEngine('../../../test_index', '../../../dataset/snapshot.json')
+engine = MyEngine.MyEngine('/root/dataset/test_index', '/root/dataset/snapshot.json')
 
 def index(request):
     logging.debug('debug works')
