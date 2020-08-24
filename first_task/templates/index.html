@@ -171,8 +171,8 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="sr-only" for="name">limit</label>
-								<input type="text" class="form-control" id="limit">
+								<label class="sr-only" for="limit">limit</label>
+								<input type="text" class="form-control" id="limit" size="2" placeholder="limit">
 							</div>
 							<br><br>
 							<button type="button" class="btn btn-default" id="submit">search</button>
@@ -421,7 +421,8 @@
 				'success' :function(ret){
 					$('#results_display').empty();
 					ret.forEach(element => {
-						$('#results_display').append('<div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1 service-wrap"><div class="service"><h3><i class="ti-bookmark"></i>'+element['title']+'</h3><p>'+element['content']+'</p></div></div>');
+						id = element['id'];
+						$('#results_display').append('<a href="get_paper/?id='+id+'"><div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1 service-wrap"><div class="service"><h3><i class="ti-bookmark"></i>'+element['title']+'</h3><p>'+element['content']+'</p></div></div></a>');
 					});
 				}
 			});

@@ -68,7 +68,7 @@ class MyEngine:
     def load_from_index(cls, index_path):
         return cls(index_path, '')
 
-    def search(self, keywords:str, fields:str, data_fields:list, is_strict:bool, limit:int=5)->list:
+    def search(self, keywords:str, fields:str, data_fields:list, is_strict:bool=False, highlight:bool=False, limit:int=5)->list:
         logging.debug('Enter search')
         # Pre-process the keywords
         raw_keywords = keywords.split(';')
@@ -131,7 +131,10 @@ class MyEngine:
             for data in results:
                 temp_dict = {}
                 for field in ret_fields:
-                    temp_dict[field] = data[field]
+                    if highlight:
+                        temp_dict[field] = data.highlights(field) or data[field]
+                    else:
+                        temp_dict[field] = data[field]
                 ret.append(temp_dict)
                 
         return ret
