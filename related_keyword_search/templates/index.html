@@ -1,0 +1,411 @@
+<!DOCTYPE HTML>
+{% load static %}
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>TheEngine &mdash; First Task using Whoosh</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="First Task using Whoosh" />
+	<meta name="author" content="Kerui Zhu" />
+
+	<link href="https://fonts.googleapis.com/css?family=Raleway:100,300,400,700" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
+	<!-- Themify Icons-->
+	<link rel="stylesheet" href="{% static 'css/themify-icons.css' %}">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+	<!-- Magnific Popup -->
+	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+	<!-- Owl Carousel  -->
+	<link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+	<!-- Modernizr JS -->
+	<script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="{% static 'js/respond.min.js' %}"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="#"/>
+	</head>
+	<body>
+		
+	<div class="gtco-loader"></div>
+	
+	<div id="page">
+
+		<!-- <nav class="gtco-nav" role="navigation">
+			<div class="gtco-container">
+				
+				<div class="row">
+					<div class="col-sm-2 col-xs-12">
+						<div id="gtco-logo"><a href="index.html"><img src="{% static 'images/logo.png' %}" alt="TheEngine"></a></div>
+					</div>
+					<div class="col-xs-10 text-right menu-1">
+						<ul>
+							<li class="active"><a href="index.html">Home</a></li>
+							<li><a href="about.html">About</a></li>
+							<li class="has-dropdown">
+								<a href="services.html">Services</a>
+								<ul class="dropdown">
+									<li><a href="#">Web Design</a></li>
+									<li><a href="#">eCommerce</a></li>
+									<li><a href="#">Branding</a></li>
+									<li><a href="#">API</a></li>
+								</ul>
+							</li>
+							<li class="has-dropdown">
+								<a href="#">Dropdown</a>
+								<ul class="dropdown">
+									<li><a href="#">HTML5</a></li>
+									<li><a href="#">CSS3</a></li>
+									<li><a href="#">Sass</a></li>
+									<li><a href="#">jQuery</a></li>
+								</ul>
+							</li>
+							<li><a href="portfolio.html">Portfolio</a></li>
+							<li><a href="contact.html">Contact</a></li>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+		</nav> -->
+
+		<header id="gtco-header" class="gtco-cover" role="banner">
+			<div class="gtco-container">
+				<div class="row">
+					<div class="col-md-12 col-md-offset-0 text-left">
+						<div class="display-t">
+							<div class="display-tc">
+								<div class="row">
+									<div class="col-md-5 text-center header-img animate-box">
+										<img src="{% static 'images/cube.png' %}" alt="TheEngine">
+									</div>
+									<div class="col-md-7 copy animate-box">
+										<h1>Search paper with keywords!</h1>
+										<p>A simple search engine for the first task using Whoosh.</p>
+										<p><a href="#start_search"  class="btn btn-white">Go Searching</a></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- END #gtco-header -->
+
+		<!-- <div class="gtco-client">
+			<div class="gtco-container">
+				<div class="row">
+					<div class="col-md-2 col-md-offset-1 text-center client col-sm-6 col-xs-6 col-xs-offset-0 col-sm-offset-0">
+						<img src="{% static 'images/client_1.png' %}" alt="Free Website Template by FreeHTML5.co" class="img-responsive">
+					</div>
+					<div class="col-md-2 text-center client col-sm-6 col-xs-6 col-xs-offset-0 col-sm-offset-0">
+						<img src="{% static 'images/client_2.png' %}" alt="Free Website Template by FreeHTML5.co" class="img-responsive">
+					</div>
+					<div class="col-md-2 text-center client col-sm-6 col-xs-6 col-xs-offset-0 col-sm-offset-0">
+						<img src="{% static 'images/client_3.png' %}" alt="Free Website Template by FreeHTML5.co" class="img-responsive">
+					</div>
+					<div class="col-md-2 text-center client col-sm-6 col-xs-6 col-xs-offset-0 col-sm-offset-0">
+						<img src="{% static 'images/client_4.png' %}" alt="Free Website Template by FreeHTML5.co" class="img-responsive">
+					</div>
+					<div class="col-md-2 text-center client col-sm-6 col-xs-6 col-xs-offset-0 col-sm-offset-0">
+						<img src="{% static 'images/client_5.png' %}" alt="Free Website Template by FreeHTML5.co" class="img-responsive">
+					</div>
+				</div>
+			</div>
+		</div> -->
+		<!-- END .gtco-client -->
+
+		<div class="gtco-section gtco-services">
+			<div class="gtco-container">
+
+				<a name="start_search"></a>
+				<div class="row row-pb-sm">
+					<div class="col-md-8 col-md-offset-2 gtco-heading text-center">
+						<h2>Search related keywords here!</h2>
+						<p>Split keywords with comma. Click "Search" to start searching.</p>
+						<form class="form-inline">
+							<div class="form-group">
+								<label class="sr-only" for="name">Keywords</label>
+								<input type="text" class="form-control" id="keywords" placeholder='Keywords split with ";"'>
+							</div>
+							<div class="form-group">
+								<label class="sr-only" for="limit">limit</label>
+								<input type="text" class="form-control" id="limit" size="2" placeholder="limit">
+							</div>
+							<div class="form-group">
+								<div class="checkbox">
+									<label>
+										Local Search<input type="checkbox" id="local_search">
+									</label>
+								</div>
+							</div>
+							<br><br>
+							<button type="button" class="btn btn-default" id="submit">search</button>
+						</form>
+					</div>
+
+					<div class="row row-pb-md" id="results_display">
+						
+						<div class="clearfix visible-md-block visible-sm-block"></div>
+	
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="gtco-services">
+			<div class="gtco-container">
+				
+			</div>
+		</div> -->
+		<!-- END .gtco-services -->
+
+		<!-- <div class="gtco-section gtco-products">
+			<div class="gtco-container">
+				<div class="row row-pb-sm">
+					<div class="col-md-8 col-md-offset-2 gtco-heading text-center">
+						<h2>Popular Products</h2>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus placerat enim et urna sagittis, rhoncus euismod erat tincidunt. Donec tincidunt volutpat erat.</p>
+					</div>
+				</div>
+				<div class="row row-pb-md">
+					<div class="col-md-4 col-sm-4">
+						<a href="#" class="gtco-item two-row bg-img animate-box" style="background-image: url({% static 'images/img_1.jpg' %})">
+							<div class="overlay">
+								<i class="ti-arrow-top-right"></i>
+								<div class="copy">
+									<h3>Paper Hot Cup</h3>
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+								</div>
+							</div>
+							<img src="{% static 'images/img_1.jpg' %}" class="hidden" alt="Free HTML5 Website Template by FreeHTML5.co">
+						</a>
+						<a href="#" class="gtco-item two-row bg-img animate-box" style="background-image: url({% static 'images/img_2.jpg)' %}">
+							<div class="overlay">
+								<i class="ti-arrow-top-right"></i>
+								<div class="copy">
+									<h3>Notepad Mockup</h3>
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+								</div>
+							</div>
+							<img src="{% static 'images/img_2.jpg' %}" class="hidden" alt="Free HTML5 Website Template by FreeHTML5.co">
+						</a>
+					</div>
+					<div class="col-md-4 col-sm-4">
+						<a href="#" class="gtco-item one-row bg-img animate-box" style="background-image: url({% static 'images/img_md_1.jpg' %})">
+							<div class="overlay">
+								<i class="ti-arrow-top-right"></i>
+								<div class="copy">
+									<h3>Paper Pouch</h3>
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+								</div>
+							</div>
+							<img src="{% static 'images/img_md_1.jpg' %}" class="hidden" alt="Free HTML5 Website Template by FreeHTML5.co">
+						</a>
+					</div>
+					<div class="col-md-4 col-sm-4">
+						<a href="#" class="gtco-item two-row bg-img animate-box" style="background-image: url({% static 'images/img_3.jpg' %})">
+							<div class="overlay">
+								<i class="ti-arrow-top-right"></i>
+								<div class="copy">
+									<h3>Fancy 3D</h3>
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+								</div>
+							</div>
+							<img src="{% static 'images/img_3.jpg' %}" class="hidden" alt="Free HTML5 Website Template by FreeHTML5.co">
+						</a>
+						<a href="#" class="gtco-item two-row bg-img animate-box" style="background-image: url({% static 'images/img_4.jpg' %})">
+							<div class="overlay">
+								<i class="ti-arrow-top-right"></i>
+								<div class="copy">
+									<h3>Hard Cover Book</h3>
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+								</div>
+							</div>
+							<img src="{% static 'images/img_4.jpg' %}" class="hidden" alt="Free HTML5 Website Template by FreeHTML5.co">
+						</a>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 text-center">
+					<p><a href="http://freehtml5.co" target="_blank" class="btn btn-special">Visit Gettemplates.co</a></p>
+					</div>
+				</div>
+			</div>
+		</div> -->
+		<!-- END .gtco-products -->
+
+		<!-- <div class="gtco-section gtco-testimonial gtco-gray">
+			<div class="gtco-container">
+
+				<div class="row row-pb-sm">
+					<div class="col-md-8 col-md-offset-2 gtco-heading text-center">
+						<h2>People Love Us</h2>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus placerat enim et urna sagittis, rhoncus euismod erat tincidunt. Donec tincidunt volutpat erat.</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6 col-sm-6 animate-box">
+						<div class="gtco-testimony gtco-left">
+							<div><img src="{% static 'images/person_1.jpg' %}" alt="Free Website template by FreeHTML5.co"></div>
+							<blockquote>
+								<p>&ldquo;Design must be functional and functionality must be translated into visual aesthetics, without any reliance on gimmicks that have to be explained.&rdquo; <cite class="author">&mdash; Ferdinand A. Porsche</cite></p>
+							</blockquote>	
+						</div>
+					</div>
+
+					<div class="col-md-6 col-sm-6 animate-box">
+						<div class="gtco-testimony gtco-left">
+							<div><img src="{% static 'images/person_2.jpg' %}" alt="Free Website template by FreeHTML5.co"></div>
+							<blockquote>
+								<p>&ldquo;Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something. It seemed obvious to them after a while.&rdquo; <cite class="author">&mdash; Steve Jobs</cite></p>
+							</blockquote>	
+						</div>
+					</div>
+
+					
+				</div>
+				<div class="row">
+					<div class="col-md-6 col-sm-6 animate-box">
+						<div class="gtco-testimony gtco-left">
+							<div><img src="{% static 'images/person_3.jpg' %}" alt="Free Website template by FreeHTML5.co"></div>
+							<blockquote>
+								<p>&ldquo;I think design would be better if designers were much more skeptical about its applications. If you believe in the potency of your craft, where you choose to dole it out is not something to take lightly.&rdquo; <cite class="author">&mdash; Frank Chimero</cite></p>
+							</blockquote>	
+						</div>
+					</div>
+
+					<div class="col-md-6 col-sm-6 animate-box">
+						<div class="gtco-testimony gtco-left">
+							<div><img src="{% static 'images/person_1.jpg' %}" alt="Free Website template by FreeHTML5.co"></div>
+							<blockquote>
+								<p>&ldquo;Design must be functional and functionality must be translated into visual aesthetics, without any reliance on gimmicks that have to be explained.&rdquo; <cite class="author">&mdash; Ferdinand A. Porsche</cite></p>
+							</blockquote>	
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<footer id="gtco-footer" class="gtco-section" role="contentinfo">
+			<div class="gtco-container">
+				<div class="row row-pb-md">
+					<div class="col-md-8 col-md-offset-2 gtco-cta text-center">
+						<h3>We Love To Talk About Your Business</h3>
+						<p><a href="#" class="btn btn-white btn-outline">Contact Us</a></p>
+					</div>
+				</div>
+				<div class="row row-pb-md">
+					<div class="col-md-4 gtco-widget gtco-footer-paragraph">
+						<h3>Cube</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus placerat enim et urna sagittis, rhoncus euismod.</p>
+					</div>
+					<div class="col-md-4 gtco-footer-link">
+						<div class="row">
+							<div class="col-md-6">
+								<ul class="gtco-list-link">
+									<li><a href="#">Home</a></li>
+									<li><a href="#">Features</a></li>
+									<li><a href="#">Products</a></li>
+									<li><a href="#">Testimonial</a></li>
+									<li><a href="#">Contact</a></li>
+								</ul>
+							</div>
+							<div class="col-md-6">
+								<p>
+									<a href="tel://1234567890">+1 234 4565 2342</a> <br>
+									<a href="#">info@domain.com</a>
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4 gtco-footer-subscribe">
+						<form class="form-inline">
+						  <div class="form-group">
+						    <label class="sr-only" for="exampleInputEmail3">Email address</label>
+						    <input type="email" class="form-control" id="" placeholder="Email">
+						  </div>
+						  <button type="submit" class="btn btn-primary">Send</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="gtco-copyright">
+				<div class="gtco-container">
+					<div class="row">
+						<div class="col-md-6 text-left">
+							<p><small>&copy; 2016 Free HTML5. All Rights Reserved. </small></p>
+						</div>
+						<div class="col-md-6 text-right">
+							<p><small>Designed by <a href="http://freehtml5.co/" target="_blank">FreeHTML5.co</a> Demo Images: <a href="http://pixeden.com/" target="_blank">Pixeden</a> &amp; <a href="http://unsplash.com" target="_blank">Unsplash</a></small> </p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer> -->
+
+	</div>
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+	</div>
+	
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<!-- jQuery Easing -->
+	<script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+	<!-- Bootstrap -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<!-- Waypoints -->
+	<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+	<!-- Carousel -->
+	<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+	<!-- Magnific Popup -->
+	<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+	<script src="{% static 'js/magnific-popup-options.js' %}"></script>
+	<!-- Main -->
+	<script src="{% static 'js/main.js' %}"></script>
+	<!-- MultipSelect -->
+	<script src="{% static 'js/multipSelect.js' %}"></script>
+	<script>
+		selectMultip.register();
+
+		$('#submit').click(function(){
+			$.ajax({
+				'url':'/search/',
+				'data':{
+					"keywords":$("#keywords").val(),
+					"local_search":$("#local_search").get(0).checked,
+					"limit":$("#limit").val()
+				},
+				'success' :function(ret){
+					$('#results_display').empty();
+					ret.forEach(element => {
+						$('#results_display').append('<div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1 service-wrap"><div class="service"><h3><i class="ti-bookmark"></i>'+element['title']+'</h3><p>'+element['content']+'</p></div></div></a>');
+					});
+				}
+			});
+		});
+		
+	</script>
+	</body>
+</html>
+

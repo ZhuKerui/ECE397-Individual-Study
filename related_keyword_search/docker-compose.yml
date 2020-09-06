@@ -1,0 +1,23 @@
+version: '3'
+    
+services:
+    # db:
+    #     image: postgres
+    #     environment:
+    #         - POSTGRES_DB=postgres
+    #         - POSTGRES_USER=postgres
+    #         - POSTGRES_PASSWORD=postgres
+    web:
+        build:
+            context: ./
+            dockerfile: Django.Dockerfile
+        container_name: related_kw_web
+        command: python3 manage.py runserver 0.0.0.0:8000
+        volumes:
+            - ./:/code
+            - ./nltk_data:/root/nltk_data
+            - ../../dataset:/root/dataset
+        ports:
+            - "8000:8000"
+        # depends_on:
+        #     - db
