@@ -5,6 +5,7 @@ import re
 from spacy_conll import init_parser
 
 nlp = spacy.load('en_core_web_sm')
+last_end_line = 1076000
 
 def json_generator(json_file):
     with io.open(json_file, 'r', encoding='utf-8') as load_file:
@@ -16,6 +17,9 @@ def extract_sent(json_file, store_file):
     with io.open(store_file, 'a', encoding='utf-8') as output:
         cnt = 0
         for jsonObj in json_generator(json_file):
+            cnt += 1
+            if cnt <= last_end_line:
+                continue
             para = jsonObj['abstract'].strip().replace('\n', ' ')
             latex_str = re.search(r'\$.*?\$', para)
             while latex_str:
@@ -24,9 +28,9 @@ def extract_sent(json_file, store_file):
             doc = nlp(para)
             for sentence in doc.sents:
                 output.write(str(sentence) + '\n')
-            cnt += 1
             if cnt % 1000 == 0:
                 print(cnt)
+        print(cnt)
 
 
 def conll_gen(text, store_file):
