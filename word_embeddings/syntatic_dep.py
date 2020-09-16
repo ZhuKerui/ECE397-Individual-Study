@@ -139,7 +139,9 @@ class Dep_Based_Word_Embed:
     def extract_context(self, reformed_file:str, context_file:str):
         with io.open(context_file, 'w', encoding='utf-8') as output_file:
             with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
+                cnt = 0
                 for line in load_file:
+                    cnt += 1
                     if not line:
                         continue
                     doc = nlp(line)
@@ -166,6 +168,9 @@ class Dep_Based_Word_Embed:
 
                         if word.head.text and word.dep_ not in self.bad_deps:
                             output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
+                    if cnt % 10000 == 0:
+                        print(cnt)
+                print('Extract context accomplished with {:d} lines processed'.format(cnt))
 
 def conll_gen(text, store_file):
     nlp = init_parser("spacy", "en")
