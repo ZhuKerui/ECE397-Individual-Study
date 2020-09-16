@@ -33,7 +33,11 @@ def extract_sent(json_file, store_file):
                 print(cnt)
         print(cnt)
 
+
 class Dep_Based_Word_Embed:
+
+    def __init__(self):
+        self.bad_deps = set(('aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det', 'dep'))
 
     def build_word_tree(self, input_txt):
         with io.open(input_txt, 'r', encoding='utf-8') as load_file:
@@ -41,9 +45,15 @@ class Dep_Based_Word_Embed:
         word_list = (word.strip(" '") for word in raw_list)
         
         self.MyTree = {}
+        self.keywords = set()
         cnt = 0
         for word in word_list:
             cnt += 1
+
+            # Directly add the '_' connected keyword
+            self.keywords.add(word.replace(' ', '_'))
+
+            # Insert the keyword to the tree structure
             if ' ' not in word:
                 # If the word is an atomic word instead of a phrase
                 if word not in self.MyTree.keys():
@@ -126,6 +136,36 @@ class Dep_Based_Word_Embed:
                         print(cnt)
                 print('Process sentences accomplished with {:d} lines processed'.format(cnt))
 
+    def extract_context(self, reformed_file:str, context_file:str):
+        with io.open(context_file, 'w', encoding='utf-8') as output_file:
+            with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
+                for line in load_file:
+                    if not line:
+                        continue
+                    doc = nlp(line)
+                    for word in doc:
+                        if word.text not in self.keywords:
+                            continue
+                        word_txt = word.text.lower()
+                        for child in word.children:
+                            if child.dep_ == 'prep':
+                                relation = ''
+                                child_txt = ''
+                                for grand_child in child.children:
+                                    if grand_child.dep_ == 'pobj':
+                                        relation = 'prep_' + child.text.lower()
+                                        child_txt = grand_child.text.lower()
+                                if not relation:
+                                    continue
+                            elif child.dep_ in self.bad_deps:
+                                continue
+                            else:
+                                relation = child.dep_
+                                child_txt = child.text.lower()
+                            output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
+
+                        if word.head.text and word.dep_ not in self.bad_deps:
+                            output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
 
 def conll_gen(text, store_file):
     nlp = init_parser("spacy", "en")

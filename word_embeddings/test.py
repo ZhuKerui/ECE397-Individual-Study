@@ -3,7 +3,7 @@ import io
 import spacy
 import re
 
-bad_deps = ['aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det']
+bad_deps = ['aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det', 'dep']
 examples = []
 
 nlp = spacy.load('en_core_web_sm')
