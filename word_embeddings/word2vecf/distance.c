@@ -70,6 +70,9 @@ int main(int argc, char **argv) {
         st1[a] = 0;
         break;
       }
+      if (st1[a] == ' '){
+        st1[a] = '_';
+      }
       a++;
     }
     if (!strcmp(st1, "EXIT")) break;
