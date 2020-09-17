@@ -11,6 +11,7 @@ word2vecf : word2vecf.c vocab.c io.c
 	$(CC) word2vecf.c vocab.c io.c -o word2vecf $(CFLAGS)
 distance : distance.c
 	$(CC) distance.c -o distance $(CFLAGS)
+	chmod +x *.sh
 
 clean:
 	rm -rf count_and_filter word2vecf distance
