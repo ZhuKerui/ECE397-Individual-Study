@@ -18,7 +18,7 @@ struct vocabulary {
 
 
 int ReadWordIndex(struct vocabulary *v, FILE *fin);
-int GetWordHash(struct vocabulary *v, char *word);
+inline int GetWordHash(struct vocabulary *v, char *word);
 int SearchVocab(struct vocabulary *v, char *word);
 int AddWordToVocab(struct vocabulary *v, char *word);
 void SortAndReduceVocab(struct vocabulary *v, int min_count);
