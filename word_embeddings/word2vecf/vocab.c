@@ -69,7 +69,7 @@ int rem;
 
 
 // Returns hash value of a word
-inline int GetWordHash(struct vocabulary *v, char *word) {
+int GetWordHash(struct vocabulary *v, char *word) {
   unsigned long long hash = 0;
   char *b = word;
   //for (a = 0; a < strlen(word); a++) hash = hash * 257 + word[a];
