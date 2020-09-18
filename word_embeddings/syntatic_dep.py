@@ -40,55 +40,52 @@ class Dep_Based_Word_Embed:
         # self.bad_deps = set(('aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det', 'dep'))
 
     def build_word_tree(self, input_txt):
-        with io.open(input_txt, 'r', encoding='utf-8') as load_file:
-            raw_list = load_file.readline().strip('[]').split(',')
-        word_list = (word.strip(" '") for word in raw_list)
-        
         self.MyTree = {}
         self.keywords = set()
         cnt = 0
-        for word in word_list:
-            cnt += 1
+        with io.open(input_txt, 'r', encoding='utf-8') as load_file:
+            for word in load_file:
+                cnt += 1
 
-            # Directly add the '_' connected keyword
-            self.keywords.add(word.replace(' ', '_'))
+                # Directly add the '_' connected keyword
+                self.keywords.add(word.replace(' ', '_'))
 
-            # Insert the keyword to the tree structure
-            if ' ' not in word:
-                # If the word is an atomic word instead of a phrase
-                if word not in self.MyTree.keys():
-                    # If this is the first time that this word is inserted to the tree
-                    self.MyTree[word] = {"":""}
-                elif "" not in self.MyTree[word].keys():
-                    # If the word has been inserted but is viewed as an atomic word the first time
-                    self.MyTree[word][""] = ""
-                # If the word has already been inserted as an atomic word, then we do nothing
-            else:
-                # If the word is an phrase
-                phrase = word.split(' ')
-                length = len(phrase)
-                fw = phrase[0]
-                if fw not in self.MyTree.keys():
-                    self.MyTree[fw] = {}
-                temp_dict = self.MyTree.copy()
-                parent_node = fw
-                for i in range(1, length):
-                    sw = phrase[i]
-                    if sw not in temp_dict[parent_node].keys():
-                        # The second word is inserted to as the child of parent node the first time
-                        temp_dict[parent_node][sw] = {}
-                    if i == length - 1:
-                        # If the second word is the last word in the phrase
-                        if "" not in temp_dict[parent_node][sw].keys():
-                            temp_dict[parent_node][sw][""] = ""
-                    else:
-                        # If the second word is not the last word in the phrase
-                        temp_dict = temp_dict[parent_node].copy()
-                        parent_node = sw
-            if cnt % 1000 == 0:
-                print(cnt)
-        print('Building word tree is accomplished with {:d} words added'.format(cnt))
-        # print(self.MyTree)
+                # Insert the keyword to the tree structure
+                if ' ' not in word:
+                    # If the word is an atomic word instead of a phrase
+                    if word not in self.MyTree.keys():
+                        # If this is the first time that this word is inserted to the tree
+                        self.MyTree[word] = {"":""}
+                    elif "" not in self.MyTree[word].keys():
+                        # If the word has been inserted but is viewed as an atomic word the first time
+                        self.MyTree[word][""] = ""
+                    # If the word has already been inserted as an atomic word, then we do nothing
+                else:
+                    # If the word is an phrase
+                    phrase = word.split(' ')
+                    length = len(phrase)
+                    fw = phrase[0]
+                    if fw not in self.MyTree.keys():
+                        self.MyTree[fw] = {}
+                    temp_dict = self.MyTree.copy()
+                    parent_node = fw
+                    for i in range(1, length):
+                        sw = phrase[i]
+                        if sw not in temp_dict[parent_node].keys():
+                            # The second word is inserted to as the child of parent node the first time
+                            temp_dict[parent_node][sw] = {}
+                        if i == length - 1:
+                            # If the second word is the last word in the phrase
+                            if "" not in temp_dict[parent_node][sw].keys():
+                                temp_dict[parent_node][sw][""] = ""
+                        else:
+                            # If the second word is not the last word in the phrase
+                            temp_dict = temp_dict[parent_node].copy()
+                            parent_node = sw
+                if cnt % 1000 == 0:
+                    print(cnt)
+            print('Building word tree is accomplished with {:d} words added'.format(cnt))
+            # print(self.MyTree)
 
     def process_sent(self, sent):
         if not sent:
