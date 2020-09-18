@@ -36,8 +36,8 @@ def extract_sent(json_file, store_file):
 
 class Dep_Based_Word_Embed:
 
-    def __init__(self):
-        self.bad_deps = set(('aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det', 'dep'))
+    # def __init__(self):
+        # self.bad_deps = set(('aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det', 'dep'))
 
     def build_word_tree(self, input_txt):
         with io.open(input_txt, 'r', encoding='utf-8') as load_file:
@@ -159,14 +159,14 @@ class Dep_Based_Word_Embed:
                                         child_txt = grand_child.text.lower()
                                 if not relation:
                                     continue
-                            elif child.dep_ in self.bad_deps:
-                                continue
+                            # elif child.dep_ in self.bad_deps:
+                                # continue
                             else:
                                 relation = child.dep_
                                 child_txt = child.text.lower()
                             output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
 
-                        if word.head.text and word.dep_ not in self.bad_deps:
+                        # if word.head.text and word.dep_ not in self.bad_deps:
                             output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
                     if cnt % 1000 == 0:
                         print(cnt)
