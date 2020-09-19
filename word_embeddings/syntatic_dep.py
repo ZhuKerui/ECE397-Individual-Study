@@ -39,7 +39,7 @@ class Dep_Based_Word_Embed:
     # def __init__(self):
         # self.bad_deps = set(('aux', 'auxpass', 'cc', 'neg', 'num', 'ROOT', 'pobj', 'punct', 'det', 'dep'))
 
-    def build_word_tree(self, input_txt):
+    def build_word_tree(self, input_txt, dump_file):
         self.MyTree = {}
         self.keywords = set()
         cnt = 0
@@ -47,6 +47,7 @@ class Dep_Based_Word_Embed:
             for word in load_file:
                 cnt += 1
 
+                word = word.strip()
                 # Directly add the '_' connected keyword
                 self.keywords.add(word.replace(' ', '_'))
 
@@ -85,12 +86,31 @@ class Dep_Based_Word_Embed:
                 if cnt % 1000 == 0:
                     print(cnt)
             print('Building word tree is accomplished with {:d} words added'.format(cnt))
-            # print(self.MyTree)
+        with io.open(dump_file, 'w', encoding='utf-8') as output_file:
+            json.dump(self.MyTree, output_file)
+
+    def load_word_tree(self, json_file):
+        with io.open(json_file, 'r', encoding='utf-8') as load_file:
+            self.MyTree = eval(load_file.readline())
+            self.keywords = set(self.__read_word_tree('', self.MyTree))
+
+    def __read_word_tree(self, head:str, node:dict):
+        # print(head)
+        for key in node.keys():
+            if key:
+                for child in self.__read_word_tree(key, node[key]):
+                    if head:
+                        yield head + '_' + child
+                    else:
+                        yield child
+            else:
+                yield head
+
 
     def process_sent(self, sent):
         if not sent:
             return ''
-        word_tokens = word_tokenize(sent)
+        word_tokens = word_tokenize(sent.lower())
         reformed_sent = []
         i = 0
         while i < len(word_tokens):
@@ -103,18 +123,23 @@ class Dep_Based_Word_Embed:
                 # If the word is part of a key word
                 phrase_buf = []
                 phrase_wait_buf = []
+                tail_buf = []
                 it = self.MyTree
                 while i < len(word_tokens) and word_tokens[i] in it.keys():
                     # Add the word to the wait list
                     phrase_wait_buf.append(word_tokens[i])
+                    tail_buf.append(word_tokens[i])
                     if "" in it[word_tokens[i]].keys():
                         # If the word could be the last word of a keyword, update the phrase buffer to be the same with wait buffer
                         phrase_buf = phrase_wait_buf.copy()
+                        tail_buf = []
                     # Go down the tree to the next child
                     it = it[word_tokens[i]]
                     i += 1
                 # Change the keyword into one uniformed word and add it to the reformed_sent
-                reformed_sent.append('_'.join(phrase_buf))
+                if phrase_buf:
+                    reformed_sent.append('_'.join(phrase_buf))
+                reformed_sent += tail_buf
         return ' '.join(reformed_sent)
 
     def process_sents(self, sent_file, reformed_sent_file):
@@ -123,8 +148,8 @@ class Dep_Based_Word_Embed:
                 cnt = 0
                 for line in load_file:
                     cnt += 1
-                    if line:
-                        sent = line.strip()
+                    sent = line.strip()
+                    if sent:
                         reformed = self.process_sent(sent)
                         if reformed:
                             output_file.write(reformed)
