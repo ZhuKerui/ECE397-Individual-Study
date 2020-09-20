@@ -189,7 +189,7 @@ class Dep_Based_Word_Embed:
                             output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
 
                         # if word.head.text and word.dep_ not in self.bad_deps:
-                            output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
+                        output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
                     if cnt % 1000 == 0:
                         print(cnt)
                 print('Extract context accomplished with {:d} lines processed'.format(cnt))
