@@ -72,7 +72,6 @@ void *TrainModelThread(void *id) {
         if (alpha < starting_alpha * 0.0001) alpha = starting_alpha * 0.0001;
       }
       if (feof(fi) || ftell(fi) > end_offset) break; // If the end of the file or the end line in the file for this thread is reached, break the while loop
-      for (c = 0; c < layer1_size; c++) neu1[c] = 0;
       for (c = 0; c < layer1_size; c++) neu1e[c] = 0;
       wrdi = ReadWordIndex(wv, fi);
       ctxi = ReadWordIndex(cv, fi);

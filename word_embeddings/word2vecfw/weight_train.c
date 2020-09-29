@@ -10,7 +10,7 @@ long long layer1_size = 100;
 int batch_size = 100;
 long long train_words = 0, word_count_actual = 0, file_size = 0, classes = 0;
 real alpha = 0.025, starting_alpha, sample = 0;
-real *word_vecs, *context_vecs, *expTable;
+real *word_vecs, *context_vecs, *expTable, *classification_vecs;
 clock_t start;
 int numiters = 1;
 
@@ -31,6 +31,7 @@ int *unitable;
 // at this point.
 void *TrainModelThread(void *id) {
   int ctxi = -1, wrdi = -1, rlti = -1; // ctxi: context index, wrdi: word index, rlti: relation index
+  char class_str[2];
   long long word_count = 0, last_word_count = 0;
   long long l1, l2, l3, l4, a, b, c, d, target, label;
   long long block_size = rv->vocab_size * layer1_size;
@@ -39,7 +40,6 @@ void *TrainModelThread(void *id) {
   char relation[MAX_STRING];
   real f, g, weight;
   clock_t now;
-  real *neu1 = (real *)calloc(layer1_size, sizeof(real));
   real *neu1e = (real *)calloc(layer1_size, sizeof(real));
   FILE *fi = fopen(train_file, "rb"); // fi: The input training file. 
                                       // For word embedding, there are 2 elements each line: word_class, relation_context
@@ -58,13 +58,6 @@ void *TrainModelThread(void *id) {
     printf("thread %d %lld\n", id, ftell(fi));
 
     long long train_words = wv->word_count;
-
-    for (a = 0; a < total_weight_num; a++){
-      for (b = 0; b < layer1_size; b++){
-        acc_weight_table[a] = 0;
-      }
-      weight_table_count[a] = 0;
-    }
     
     while (1) { //HERE @@@
       // TODO set alpha scheduling based on number of examples read.
@@ -84,8 +77,6 @@ void *TrainModelThread(void *id) {
         if (alpha < starting_alpha * 0.0001) alpha = starting_alpha * 0.0001;
       }
       if (feof(fi) || ftell(fi) > end_offset) break; // If the end of the file or the end line in the file for this thread is reached, break the while loop
-      for (c = 0; c < layer1_size; c++) neu1[c] = 0;
-      for (c = 0; c < layer1_size; c++) neu1e[c] = 0;
       wrdi = ReadWordIndex(wv, fi);
       ctxi = ReadWordIndex(cv, fi);
       word_count++;
@@ -121,27 +112,63 @@ void *TrainModelThread(void *id) {
         l3 = wrdi * block_size + rlti * layer1_size;
         f = 0;
         for (c = 0; c < layer1_size; c++) f += word_vecs[c + l1] * context_vecs[c + l2];
-        if (f > MAX_EXP) g = (label - 1) * alpha;
-        else if (f < -MAX_EXP) g = (label - 0) * alpha;
-        else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
+        if (f > MAX_EXP) g = (label - 1);
+        else if (f < -MAX_EXP) g = (label - 0);
+        else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]);
         // Add the weight to the acc_weight_table according to the word and the relation
-        for (c = 0; c < layer1_size; c++) acc_weight_table[c + l3] += g * context_vecs[c + l2];
-        for (c = 0; c < layer1_size; c++) context_vecs[c + l2] += g * word_vecs[c + l1];
+        for (c = 0; c < layer1_size; c++) acc_weight_table[c + l3] += g * context_vecs[c + l2] * alpha;
+        for (c = 0; c < layer1_size; c++) context_vecs[c + l2] += g * word_vecs[c + l1] * alpha;
         weight_table_count[wrdi * rv->vocab_size + rlti] += 1;
       }
+
+
       // Learn weights input -> hidden
-      if (word_count - last_word_count > batch_size){
+      if ((word_count - last_word_count) % batch_size == 0){
+        // If we have processed a batch size of words, we update the word vector and the weights
         for (a = 0; a < wv->vocab_size; a++){
+          // For each word in the word vocabulary
+          l1 = a * layer1_size; // Locate the starting point of the word vector
           for (b = 0; b < rv->vocab_size; b++){
-            l3 = a * block_size + b * layer1_size;
-            l4 = a * rv->vocab_size + b;
-            if (weight_table_count[l4] <= 1) continue;
+            // For each relation contribution of the word
+            l3 = a * block_size + b * layer1_size; // Locate the starting point of the learned weights from the previous word embedding
+            l4 = a * rv->vocab_size + b; // Locate the counter of the present relation in the present word
+            if (weight_table_count[l4] == 0) continue; // If this relation didn't appear to this word, just skip it
             for (c = 0; c < layer1_size; c++) {
-              acc_weight_table[c + l3] /= weight_table_count[l4];
-              word_vecs[c + l1] += weight_table_count[c + l3] * relation_weight[b];
+              // For each entry of the vector
+              acc_weight_table[c + l3] /= weight_table_count[l4]; // Update the accumulated weight to the average value
+              word_vecs[c + l1] += acc_weight_table[c + l3] * relation_weight[b]; // Add the product of the learned weight and 
+                                                                                    // the weight of the relation to update the word vector
+            }
+          }
+          // For now, all the contribution from every relation have been added to the present word vector
+          grab_relation(class_str, wv->vocab[a].word); // Take the class of the present word
+          label = atoi(class_str); // Transform the class to an integer
+          f = 0; // Clear the loss
+          for (c = 0; c < layer1_size; c++) f += word_vecs[c + l1] * classification_vecs[c]; // Calculate the loss
+          // Calculate the back-propagation loss
+          if (f > MAX_EXP) g = (label - 1);
+          else if (f < -MAX_EXP) g = (label - 0);
+          else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]);
+          
+          for (c = 0; c < layer1_size; c++){
+            // Calculate the loss of each entry of the word vector
+            neu1e[c] = g * classification_vecs[c];
+            // Update the classification vector weight
+            classification_vecs[c] += g * word_vecs[c + l1] * alpha;
+            // Update the word vector according to the classification result
+            word_vecs[c + l1] += neu1e[c] * alpha;
+          }
+
+          // Now, update the relation weights
+          for (b = 0; b < rv->vocab_size; b++){
+            // For each relation
+            l3 = a * block_size + b * layer1_size; // Locate the starting point of the learned weights from the previous word embedding
+            for (c = 0; c < layer1_size; c++){
+              relation_weight[b] += acc_weight_table[c + l3] * neu1e[c] * alpha;
             }
           }
         }
+
         for (a = 0; a < total_weight_num; a++){
           for (b = 0; b < layer1_size; b++){
             acc_weight_table[a] = 0;
@@ -152,7 +179,6 @@ void *TrainModelThread(void *id) {
     }
   }
   fclose(fi);
-  free(neu1);
   free(neu1e);
   free(acc_weight_table);
   free(weight_table_count);
@@ -168,6 +194,7 @@ void TrainModel() {
   char *relation_vocab_temp;
   file_size = GetFileSize(train_file); // Get the file size, which will be later used for dividing the task into threads
   pthread_t *pt = (pthread_t *)malloc(num_threads * sizeof(pthread_t));
+  classification_vecs = (real *)malloc(layer1_size * sizeof(real));
   printf("Starting training using file %s\n", train_file);
   starting_alpha = alpha;
   wv = ReadVocab(wvocab_file); // Read the words into the word vocabulary
@@ -177,6 +204,10 @@ void TrainModel() {
   InitNet(wv, cv, &word_vecs, &context_vecs, layer1_size); // Initialize the word vectors and the context vectors to random vectors
   InitRelationWeight(rv, &relation_weight); // Initialize the relation weight table
   InitUnigramTable(cv, &unitable, table_size); // Initialize the unigram table, which will be later used in negative sampling
+  // Initialize the classification weight vector
+  for (a = 0; a < layer1_size; a++){
+    classification_vecs[a] = rand() / (real)RAND_MAX;
+  }
   
   start = clock(); // Record the starting time
   for (a = 0; a < num_threads; a++) pthread_create(&pt[a], NULL, TrainModelThread, (void *)a); // Create the threads and start training
@@ -187,9 +218,11 @@ void TrainModel() {
       dumpVec(dumpcv_file, cv, context_vecs, layer1_size, binary);
     }
     dumpVec(output_file, wv, word_vecs, layer1_size, binary);
+    dumpVec(rweight_file, rv, relation_weight, 1, binary);
   } else {
     dumpKMean(classes, output_file, wv, word_vecs, layer1_size);
   }
+  free(classification_vecs);
 }
 
 
@@ -270,5 +303,6 @@ int main(int argc, char **argv) {
     expTable[i] = expTable[i] / (expTable[i] + 1);                   // Precompute f(x) = x / (x + 1)
   }
   TrainModel();
+  free(expTable);
   return 0;
 }
