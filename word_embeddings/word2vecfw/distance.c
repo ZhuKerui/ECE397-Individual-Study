@@ -19,12 +19,12 @@
 
 #include "word2vecf_lib.h"
 
-int main(int argc, char **argv) {
+int32_t main(int32_t argc, char **argv) {
   char st1[MAX_STRING];
   char *bestw[N];
   char file_name[MAX_STRING], st[100][MAX_STRING];
   float dist, len, bestd[N], vec[MAX_STRING];
-  long long words, size, a, b, c, d, cn, bi[100];
+  int64_t words, size, a, b, c, d, cn, bi[100];
   float *M;
   char *vocab;
   if (argc < 2) {
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
       for (b = 0; b < words; b++) if (!strcmp(&vocab[b * MAX_STRING], st[a])) break;
       if (b == words) b = -1;
       bi[a] = b;
-      printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
+      printf("\nWord: %s  Position in vocabulary: %ld\n", st[a], bi[a]);
       if (b == -1) {
         printf("Out of dictionary word!\n");
         break;

@@ -26,23 +26,23 @@ typedef float real;                    // Precision of float numbers
 
 
 char train_file[MAX_STRING], output_file[MAX_STRING], cvocab_file[MAX_STRING], wvocab_file[MAX_STRING], rvocab_file[MAX_STRING];
-int binary = 0, cbow = 0, debug_mode = 2, window = 5, min_count = 5, num_threads = 1, use_position = 0;
-long long layer1_size = 100;
-long long train_words = 0, word_count_actual = 0, classes = 0, dumpcv = 0;
+int32_t binary = 0, cbow = 0, debug_mode = 2, window = 5, min_count = 5, num_threads = 1, use_position = 0;
+int64_t layer1_size = 100;
+int64_t train_words = 0, word_count_actual = 0, classes = 0, dumpcv = 0;
 real alpha = 0.025, starting_alpha, sample = 0;
 real *syn0, *syn1, *syn1neg, *expTable;
 clock_t start;
 
-int hs = 1, negative = 0;
-const int table_size = 1e8;
-int *table;
+int32_t hs = 1, negative = 0;
+const int32_t table_size = 1e8;
+int32_t *table;
 
 void LearnVocabFromTrainFile() {
   char word[MAX_STRING];
   char context[MAX_STRING];
   char relation[MAX_STRING];
   FILE *fin;// = stdin;
-  long long a, i;
+  int64_t a, i;
   struct vocabulary *wv = CreateVocabulary();
   struct vocabulary *cv = CreateVocabulary();
   struct vocabulary *rv = CreateVocabulary();
@@ -57,7 +57,7 @@ void LearnVocabFromTrainFile() {
     if (feof(fin)) break;
     train_words++;
     if ((debug_mode > 1) && (train_words % 1000000 == 0)) {
-      printf("%lldK%c", train_words / 1000, 13);
+      printf("%ldK%c", train_words / 1000, 13);
       fflush(stdout);
     }
     i = SearchVocab(wv,word);
@@ -86,18 +86,18 @@ void LearnVocabFromTrainFile() {
   SortAndReduceVocab(wv,min_count);
   SortAndReduceVocab(cv,min_count);
   SortAndReduceVocab(rv,min_count);
-  printf("WVocab size: %lld\n", wv->vocab_size);
-  printf("CVocab size: %lld\n", cv->vocab_size);
-  printf("RVocab size: %lld\n", rv->vocab_size);
-  printf("Words in train file: %lld\n", train_words);
+  printf("WVocab size: %d\n", wv->vocab_size);
+  printf("CVocab size: %d\n", cv->vocab_size);
+  printf("RVocab size: %d\n", rv->vocab_size);
+  printf("Words in train file: %ld\n", train_words);
   fclose(fin);
   SaveVocab(wv, wvocab_file);
   SaveVocab(cv, cvocab_file);
   SaveVocab(rv, rvocab_file);
 }
 
-int main(int argc, char **argv) {
-  int i;
+int32_t main(int32_t argc, char **argv) {
+  int32_t i;
   if (argc == 1) {
     printf("WORD VECTOR estimation toolkit v 0.1b\n\n");
     printf("Options:\n");

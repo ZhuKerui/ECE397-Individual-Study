@@ -2,8 +2,8 @@
 #include "io.h"
 
 // Reads a single word from a file, assuming space + tab + EOL to be word boundaries
-void ReadWord(char *word, FILE *fin, int max_string) {
-  int a = 0, ch;
+void ReadWord(char *word, FILE *fin, int32_t max_string) {
+  int32_t a = 0, ch;
   while (!feof(fin)) {
     ch = fgetc(fin);
     if (ch == 13) continue;

@@ -17,12 +17,12 @@
                        +(uint32_t)(((const uint8_t *)(d))[0]) )
 #endif
 
-const int vocab_hash_size = 50000000;  // Maximum 30 * 0.7 = 21M words in the vocabulary
+const int32_t vocab_hash_size = 50000000;  // Maximum 30 * 0.7 = 21M words in the vocabulary
 
 // hash from: http://www.azillionmonkeys.com/qed/hash.html
-uint32_t FastHash(const char * data, int len) {
+uint32_t FastHash(const char * data, int32_t len) {
 uint32_t hash = len, tmp;
-int rem;
+int32_t rem;
 
     if (len <= 0 || data == NULL) return 0;
 
@@ -67,8 +67,8 @@ int rem;
 
 
 // Returns hash value of a word
-inline int GetWordHash(struct vocabulary *v, char *word) {
-  unsigned long long hash = 0;
+inline int32_t GetWordHash(struct vocabulary *v, char *word) {
+  uint64_t hash = 0;
   char *b = word;
   //for (a = 0; a < strlen(word); a++) hash = hash * 257 + word[a];
   //hash = FastHash(word, strlen(word)) % vocab_hash_size;
@@ -78,8 +78,8 @@ inline int GetWordHash(struct vocabulary *v, char *word) {
 }
 
 // Returns position of a word in the vocabulary; if the word is not found, returns -1
-int SearchVocab(struct vocabulary *v, char *word) {
-  unsigned int hash = GetWordHash(v, word);
+int32_t SearchVocab(struct vocabulary *v, char *word) {
+ uint32_t hash = GetWordHash(v, word);
   while (1) {
     if ((v->vocab_hash)[hash] == -1) return -1;
     if (!strcmp(word, v->vocab[v->vocab_hash[hash]].word)) return v->vocab_hash[hash];
@@ -89,10 +89,10 @@ int SearchVocab(struct vocabulary *v, char *word) {
 }
 
 // Adds a word to the vocabulary
-int AddWordToVocab(struct vocabulary *v, char *word) {
-  //static long collide = 0;
-  //static long nocollide = 0;
-  unsigned int hash, length = strlen(word) + 1;
+int32_t AddWordToVocab(struct vocabulary *v, char *word) {
+  //static int32_t collide = 0;
+  //static int32_t nocollide = 0;
+ uint32_t hash, length = strlen(word) + 1;
   if (length > MAX_STRING) length = MAX_STRING;
   v->vocab[v->vocab_size].word = (char *)calloc(length, sizeof(char));
   strcpy(v->vocab[v->vocab_size].word, word);
@@ -112,14 +112,14 @@ int AddWordToVocab(struct vocabulary *v, char *word) {
 }
 
 // Used later for sorting by word counts
-int VocabCompare(const void *a, const void *b) {
+int32_t VocabCompare(const void *a, const void *b) {
     return ((struct vocab_word *)b)->cn - ((struct vocab_word *)a)->cn;
 }
 
 // Sorts the vocabulary by frequency using word counts
-void SortAndReduceVocab(struct vocabulary *v, int min_count) {
-  int a, size;
-  unsigned int hash;
+void SortAndReduceVocab(struct vocabulary *v, int32_t min_count) {
+  int32_t a, size;
+ uint32_t hash;
   // Sort the vocabulary and keep </s> at the first position
   qsort(&(v->vocab[1]), v->vocab_size - 1, sizeof(struct vocab_word), VocabCompare);
   for (a = 0; a < vocab_hash_size; a++) v->vocab_hash[a] = -1;
@@ -143,29 +143,29 @@ void SortAndReduceVocab(struct vocabulary *v, int min_count) {
 
 struct vocabulary *CreateVocabulary() {
    struct vocabulary *v = malloc(sizeof(struct vocabulary));
-   long long a;
+   int64_t a;
    v->vocab_max_size = 1000;
    v->vocab_size = 0;
 
    v->vocab = (struct vocab_word *)calloc(v->vocab_max_size, sizeof(struct vocab_word));
 
-   v->vocab_hash = (int *)calloc(vocab_hash_size, sizeof(int));
+   v->vocab_hash = (int32_t *)calloc(vocab_hash_size, sizeof(int));
    for (a = 0; a < vocab_hash_size; a++) v->vocab_hash[a] = -1;
    return v;
 }
 
 void SaveVocab(struct vocabulary *v, char *save_vocab_file) {
-  long long i;
+  int64_t i;
   FILE *fo = fopen(save_vocab_file, "wb");
-  for (i = 0; i < v->vocab_size; i++) fprintf(fo, "%s %lld\n", v->vocab[i].word, v->vocab[i].cn);
+  for (i = 0; i < v->vocab_size; i++) fprintf(fo, "%s %ld\n", v->vocab[i].word, v->vocab[i].cn);
   fclose(fo);
 }
 // Reduces the vocabulary by removing infrequent tokens
 void ReduceVocab(struct vocabulary *v) {
-  static int min_reduce = 1;
+  static int32_t min_reduce = 1;
   printf("reducevocab\n");
-  int a, b = 0;
-  unsigned int hash;
+  int32_t a, b = 0;
+ uint32_t hash;
   for (a = 0; a < v->vocab_size; a++) if (v->vocab[a].cn > min_reduce) {
     v->vocab[b].cn = v->vocab[a].cn;
     v->vocab[b].word = v->vocab[a].word;
@@ -184,7 +184,7 @@ void ReduceVocab(struct vocabulary *v) {
 }
 
 // Reads a word and returns its index in the vocabulary
-int ReadWordIndex(struct vocabulary *v, FILE *fin) {
+int32_t ReadWordIndex(struct vocabulary *v, FILE *fin) {
   char word[MAX_STRING];
   ReadWord(word, fin, MAX_STRING);
   if (feof(fin)) return -1;
@@ -192,7 +192,7 @@ int ReadWordIndex(struct vocabulary *v, FILE *fin) {
 }
 
 struct vocabulary *ReadVocab(char *vocabfile) {
-  long long a, i = 0;
+  int64_t a, i = 0;
   char c;
   char word[MAX_STRING];
   FILE *fin = fopen(vocabfile, "rb");
@@ -205,12 +205,12 @@ struct vocabulary *ReadVocab(char *vocabfile) {
     ReadWord(word, fin, MAX_STRING);
     if (feof(fin)) break;
     a = AddWordToVocab(v, word);
-    fscanf(fin, "%lld%c", &v->vocab[a].cn, &c);
+    fscanf(fin, "%ld%c", &v->vocab[a].cn, &c);
     i++;
   }
   SortAndReduceVocab(v, 0);
   printf("Vocab size: %d\n", v->vocab_size);
-  printf("Word count: %lld\n", v->word_count);
+  printf("Word count: %ld\n", v->word_count);
   return v;
 }
 

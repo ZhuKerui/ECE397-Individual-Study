@@ -5,13 +5,13 @@ char wvocab_file[MAX_STRING], cvocab_file[MAX_STRING], rvocab_file[MAX_STRING];
 char output_file[MAX_STRING], dumpcv_file[MAX_STRING];
 char rweight_file[MAX_STRING];
 
-int binary = 0, debug_mode = 2, num_threads = 1;
-long long layer1_size = 100;
-long long train_words = 0, word_count_actual = 0, file_size = 0, classes = 0;
+int32_t binary = 0, debug_mode = 2, num_threads = 1;
+int64_t layer1_size = 100;
+int64_t train_words = 0, word_count_actual = 0, file_size = 0, classes = 0;
 real alpha = 0.025, starting_alpha, sample = 0;
 real *word_vecs, *context_vecs, *expTable;
 clock_t start;
-int numiters = 1;
+int32_t numiters = 1;
 
 struct vocabulary *wv;
 struct vocabulary *cv;
@@ -19,9 +19,9 @@ struct vocabulary *rv;
 
 real *relation_weight;
 
-int negative = 15;
-const int table_size = 1e8;
-int *unitable;
+int32_t negative = 15;
+const int32_t table_size = 1e8;
+int32_t *unitable;
 
 // Read word,context pairs from training file, where both word and context are integers.
 // We are learning to predict context based on word.
@@ -29,11 +29,11 @@ int *unitable;
 // Word and context come from different vocabularies, but we do not really care about that
 // at this point.
 void *TrainModelThread(void *id) {
-  int ctxi = -1, wrdi = -1, rlti = -1; // ctxi: context index, wrdi: word index, rlti: relation index
-  long long d;
-  long long word_count = 0, last_word_count = 0;
-  long long l1, l2, c, target, label;
-  unsigned long long next_random = (unsigned long long)id;
+  int32_t ctxi = -1, wrdi = -1, rlti = -1; // ctxi: context index, wrdi: word index, rlti: relation index
+  int64_t d;
+  int64_t word_count = 0, last_word_count = 0;
+  int64_t l1, l2, c, target, label;
+  uint64_t next_random = (uint64_t)id;
   char relation[MAX_STRING];
   real f, g, weight;
   clock_t now;
@@ -41,9 +41,9 @@ void *TrainModelThread(void *id) {
   real *neu1e = (real *)calloc(layer1_size, sizeof(real));
   FILE *fi = fopen(train_file, "rb"); // fi: The input training file. 
                                       // For word embedding, there are 2 elements each line: target_word, relation_context
-  long long start_offset = file_size / (long long)num_threads * (long long)id; // The starting point in the file for this thread
-  long long end_offset = file_size / (long long)num_threads * (long long)(id+1); // The ending point in the file for this thread
-  int iter;
+  int64_t start_offset = file_size / (int64_t)num_threads * (int64_t)id; // The starting point32_t in the file for this thread
+  int64_t end_offset = file_size / (int64_t)num_threads * (int64_t)(id+1); // The ending point32_t in the file for this thread
+  int32_t iter;
   //printf("thread %d %lld %lld \n",id, start_offset, end_offset);
 
   /* The training process begins here */
@@ -51,9 +51,9 @@ void *TrainModelThread(void *id) {
     fseek(fi, start_offset, SEEK_SET);
     
     while (fgetc(fi) != '\n') { }; //TODO make sure its ok
-    printf("thread %d %lld\n", id, ftell(fi));
+    printf("thread %ld %ld\n", (int64_t)id, ftell(fi));
 
-    long long train_words = wv->word_count;
+    int64_t train_words = wv->word_count;
     while (1) { //HERE @@@
       // TODO set alpha scheduling based on number of examples read.
       // The conceptual change is the move from word_count to pair_count
@@ -80,10 +80,10 @@ void *TrainModelThread(void *id) {
 
       if (sample > 0) {
         real ran = (sqrt(wv->vocab[wrdi].cn / (sample * wv->word_count)) + 1) * (sample * wv->word_count) / wv->vocab[wrdi].cn;
-        next_random = next_random * (unsigned long long)25214903917 + 11;
+        next_random = next_random * (uint64_t)25214903917 + 11;
         if (ran < (next_random & 0xFFFF) / (real)65536) continue;
         ran = (sqrt(cv->vocab[ctxi].cn / (sample * cv->word_count)) + 1) * (sample * cv->word_count) / cv->vocab[ctxi].cn;
-        next_random = next_random * (unsigned long long)25214903917 + 11;
+        next_random = next_random * (uint64_t)25214903917 + 11;
         if (ran < (next_random & 0xFFFF) / (real)65536) continue;
       }
 
@@ -94,7 +94,7 @@ void *TrainModelThread(void *id) {
           target = ctxi;
           label = 1;
         } else {
-          next_random = next_random * (unsigned long long)25214903917 + 11;
+          next_random = next_random * (uint64_t)25214903917 + 11;
           target = unitable[(next_random >> 16) % table_size];
           if (target == 0) target = next_random % (cv->vocab_size - 1) + 1;
           if (target == ctxi) continue;
@@ -126,9 +126,9 @@ void *TrainModelThread(void *id) {
 
 
 void TrainModel() {
-  int idx;
-  long a;
-  long long words, size;
+  int32_t idx;
+  int64_t a;
+  int64_t words, size;
   real *relation_weight_temp;
   char *relation_vocab_temp;
   file_size = GetFileSize(train_file); // Get the file size, which will be later used for dividing the task into threads
@@ -176,8 +176,8 @@ void TrainModel() {
 }
 
 
-int main(int argc, char **argv) {
-  int i;
+int32_t main(int32_t argc, char **argv) {
+  int32_t i;
   if (argc == 1) {
     printf("WORD VECTOR estimation toolkit v 0.1b\n\n");
     printf("Options:\n");

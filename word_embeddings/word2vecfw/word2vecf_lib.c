@@ -26,8 +26,8 @@
 
 #include "word2vecf_lib.h"
 
-long long GetFileSize(char *fname) {
-  long long fsize;
+int64_t GetFileSize(char *fname) {
+  int64_t fsize;
   FILE *fin = fopen(fname, "rb");
   if (fin == NULL) {
     printf("ERROR: file not found! %s\n", fname);
@@ -39,11 +39,11 @@ long long GetFileSize(char *fname) {
   return fsize;
 }
 
-void InitUnigramTable(struct vocabulary *v, int **unitable, int table_size) {
-  int a, i;
-  long long normalizer = 0;
+void InitUnigramTable(struct vocabulary *v, int32_t **unitable, int32_t table_size) {
+  int32_t a, i;
+  int64_t normalizer = 0;
   real d1, power = 0.75;
-  (*unitable) = (int *)malloc(table_size * sizeof(int));
+  (*unitable) = (int32_t *)malloc(table_size * sizeof(int));
   for (a = 0; a < v->vocab_size; a++) normalizer += pow(v->vocab[a].cn, power);
   i = 0;
   d1 = pow(v->vocab[i].cn, power) / (real)normalizer;
@@ -57,15 +57,15 @@ void InitUnigramTable(struct vocabulary *v, int **unitable, int table_size) {
   }
 }
 
-void InitNet(struct vocabulary *wv, struct vocabulary *cv, real **word_vecs, real **context_vecs, long long layer1_size) {
-  long long a, b;
-  a = posix_memalign((void **)word_vecs, 128, (long long)wv->vocab_size * layer1_size * sizeof(real));
+void InitNet(struct vocabulary *wv, struct vocabulary *cv, real **word_vecs, real **context_vecs, int64_t layer1_size) {
+  int64_t a, b;
+  a = posix_memalign((void **)word_vecs, 128, (int64_t)wv->vocab_size * layer1_size * sizeof(real));
   if (*word_vecs == NULL) {printf("Memory allocation failed\n"); exit(1);}
   for (b = 0; b < layer1_size; b++) 
     for (a = 0; a < wv->vocab_size; a++)
         (*word_vecs)[a * layer1_size + b] = (rand() / (real)RAND_MAX - 0.5) / layer1_size;
 
-  a = posix_memalign((void **)context_vecs, 128, (long long)cv->vocab_size * layer1_size * sizeof(real));
+  a = posix_memalign((void **)context_vecs, 128, (int64_t)cv->vocab_size * layer1_size * sizeof(real));
   if (*context_vecs == NULL) {printf("Memory allocation failed\n"); exit(1);}
   for (b = 0; b < layer1_size; b++)
     for (a = 0; a < cv->vocab_size; a++)
@@ -73,31 +73,31 @@ void InitNet(struct vocabulary *wv, struct vocabulary *cv, real **word_vecs, rea
 }
 
 void InitRelationWeight(struct vocabulary *rv, real **relation_weight){
-  long long a;
-  a = posix_memalign((void **)relation_weight, 128, (long long)rv->vocab_size * sizeof(real));
+  int64_t a;
+  a = posix_memalign((void **)relation_weight, 128, (int64_t)rv->vocab_size * sizeof(real));
   if (*relation_weight == NULL) {printf("Memory allocation failed\n"); exit(1);}
   for (a = 0; a < rv->vocab_size; a++)
     (*relation_weight)[a] = rand() / (real)RAND_MAX;
 }
 
-void dumpVec(char *dump_file, struct vocabulary *v, real *vecs, long long vec_dim, int binary){
+void dumpVec(char *dump_file, struct vocabulary *v, real *vecs, int64_t vec_dim, int32_t binary){
   FILE *f = fopen(dump_file, "wb");
-  fprintf(f, "%d %d\n", v->vocab_size, vec_dim);
-  for (long a = 0; a < v->vocab_size; a++) {
+  fprintf(f, "%d %ld\n", v->vocab_size, vec_dim);
+  for (int32_t a = 0; a < v->vocab_size; a++) {
       fprintf(f, "%s ", v->vocab[a].word);
-      if (binary) for (long b = 0; b < vec_dim; b++) fwrite(&vecs[a * vec_dim + b], sizeof(real), 1, f);
-      else for (long b = 0; b < vec_dim; b++) fprintf(f, "%lf ", vecs[a * vec_dim + b]);
+      if (binary) for (int32_t b = 0; b < vec_dim; b++) fwrite(&vecs[a * vec_dim + b], sizeof(real), 1, f);
+      else for (int32_t b = 0; b < vec_dim; b++) fprintf(f, "%lf ", vecs[a * vec_dim + b]);
       fprintf(f, "\n");
   }
   fclose(f);
 }
 
-void dumpKMean(long long classes, char *dump_file, struct vocabulary *wv, real *word_vecs, long long layer1_size){
+void dumpKMean(int64_t classes, char *dump_file, struct vocabulary *wv, real *word_vecs, int64_t layer1_size){
   // Run K-means on the word vectors
-  long a, b, c, d;
-  int clcn = classes, iter = 10, closeid;
-  int *centcn = (int *)malloc(classes * sizeof(int));
-  int *cl = (int *)calloc(wv->vocab_size, sizeof(int));
+  int32_t a, b, c, d;
+  int32_t clcn = classes, iter = 10, closeid;
+  int32_t *centcn = (int32_t *)malloc(classes * sizeof(int));
+  int32_t *cl = (int32_t *)calloc(wv->vocab_size, sizeof(int));
   real closev, x;
   real *cent = (real *)calloc(classes * layer1_size, sizeof(real));
   for (a = 0; a < wv->vocab_size; a++) cl[a] = a % clcn;
@@ -141,8 +141,8 @@ void dumpKMean(long long classes, char *dump_file, struct vocabulary *wv, real *
   free(cl);
 }
 
-int loadVec(char *fname, long long *words, long long *size, char **vocab, float **vecs, int normalize){
-  long long a, b, word_num, vec_dim;
+int32_t loadVec(char *fname, int64_t *words, int64_t *size, char **vocab, float **vecs, int32_t normalize){
+  int64_t a, b, word_num, vec_dim;
   char ch;
   float len;
   float *word_embed;
@@ -154,14 +154,14 @@ int loadVec(char *fname, long long *words, long long *size, char **vocab, float 
     return -1;
   }
 
-  fscanf(f, "%lld", &word_num);
-  fscanf(f, "%lld", &vec_dim);
+  fscanf(f, "%ld", &word_num);
+  fscanf(f, "%ld", &vec_dim);
   (*words) = word_num;
   (*size) = vec_dim;
 
   word_embed = (float *)malloc(word_num * vec_dim * sizeof(float));
   if (word_embed == NULL) {
-    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", word_num * vec_dim * sizeof(float) / 1048576, word_num, vec_dim);
+    printf("Cannot allocate memory: %ld MB    %ld  %ld\n", word_num * vec_dim * sizeof(float) / 1048576, word_num, vec_dim);
     fclose(f);
     return -1;
   }
@@ -169,7 +169,7 @@ int loadVec(char *fname, long long *words, long long *size, char **vocab, float 
 
   word_vocab = (char *)malloc(word_num * MAX_STRING * sizeof(char));
   if (word_vocab == NULL) {
-    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", word_num * MAX_STRING * sizeof(char) / 1048576, word_num, MAX_STRING);
+    printf("Cannot allocate memory: %ld MB    %ld  %d\n", word_num * MAX_STRING * sizeof(char) / 1048576, word_num, MAX_STRING);
     fclose(f);
     return -1;
   }
@@ -190,7 +190,7 @@ int loadVec(char *fname, long long *words, long long *size, char **vocab, float 
 }
 
 void grab_relation(char *relation, char *word){
-  int a;
+  int32_t a;
   strcpy(relation, word);
   for (a = 0; a < MAX_STRING; a++){
     if (relation[a] == 0) return;
@@ -207,8 +207,8 @@ void grab_relation(char *relation, char *word){
   relation[a-1] = 0;
 }
 
-int ArgPos(char *str, int argc, char **argv) {
-  int a;
+int32_t ArgPos(char *str, int32_t argc, char **argv) {
+  int32_t a;
   for (a = 1; a < argc; a++) if (!strcmp(str, argv[a])) {
     if (a == argc - 1) {
       printf("Argument missing for %s\n", str);
