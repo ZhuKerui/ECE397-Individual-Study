@@ -4,4 +4,4 @@
 
 For test:
 ./count_and_filter -train ../../../dataset/sub_dep_context.txt -cvocab cv_t -wvocab wv_t -rvocab rv_t -min-count 10
-./weight_train -train ../../../dataset/sub_dep_context.txt -wvocab wv -cvocab cv -rvocab rv_t -rweight rw_t -output word_embedding.bin -iters 200 -binary 0 -size 200 -negative 15 -threads 1
+./weight_train -train ../../../dataset/weight_train_file.txt -wvocab wv_t -cvocab cv_t -rvocab rv_t -rweight rw_t -output word_embedding.bin -iters 100 -binary 0 -size 200 -negative 15 -threads 1

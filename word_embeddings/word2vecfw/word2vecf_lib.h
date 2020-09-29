@@ -14,7 +14,7 @@
 
 typedef float real;                    // Precision of float numbers
 
-#define N 40                  // number of closest words that will be shown
+#define N 5                  // number of closest words that will be shown
 
 int64_t GetFileSize(char *fname);
 
