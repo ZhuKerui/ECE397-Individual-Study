@@ -217,3 +217,30 @@ def analysis_data(input_txt, output_txt):
             for word in item:
                 output_file.write('    ' + str(word) + '\n')
             output_file.write('\n')
+
+def gen_weight_training_data(word_context_file:str, training_data:str, class_1_words:set, class_0_words:set):
+    with io.open(training_data, 'w', encoding='utf-8') as output_file:
+        with io.open(word_context_file, 'r', encoding='utf-8') as load_file:
+            cnt = 0
+            for line in load_file:
+                cnt += 1
+                word = line.split(' ')[0].replace('_', ' ')
+                if word in class_1_words:
+                    output_file.write('1_' + line)
+                elif word in class_0_words:
+                    output_file.write('0_' + line)
+                if cnt % 1000000 == 0:
+                    print(cnt)
+                
+def extract_pairs(word_context_file:str, output_file:str, wanted_words:set):
+    with io.open(output_file, 'w', encoding='utf-8') as output_file:
+        with io.open(word_context_file, 'r', encoding='utf-8') as load_file:
+            cnt = 0
+            for line in load_file:
+                cnt += 1
+                word = line.split(' ')[0].replace('_', ' ')
+                if word in wanted_words:
+                    output_file.write(line)
+                if cnt % 1000000 == 0:
+                    print(cnt)
+                
