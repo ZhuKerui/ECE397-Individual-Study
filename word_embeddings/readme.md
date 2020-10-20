@@ -1,0 +1,1 @@
+./word2vec -train ../../../dataset/word_emb_sents_reform.txt -output word_embeddings.txt -cbow 0 -size 200 -window 5 -negative 15 -threads 12 -binary 0 -dumpcv context_embeddings.txt
