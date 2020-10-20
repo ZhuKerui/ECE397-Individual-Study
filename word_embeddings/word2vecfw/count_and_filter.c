@@ -43,6 +43,7 @@ void LearnVocabFromTrainFile() {
   char relation[MAX_STRING];
   FILE *fin;// = stdin;
   int64_t a, i;
+  int32_t b;
   struct vocabulary *wv = CreateVocabulary();
   struct vocabulary *cv = CreateVocabulary();
   struct vocabulary *rv = CreateVocabulary();
@@ -72,20 +73,24 @@ void LearnVocabFromTrainFile() {
       cv->vocab[a].cn = 1;
     } else cv->vocab[i].cn++;
 
-    grab_relation(relation, context);
+    EnsureVocabSize(wv);
+    EnsureVocabSize(cv);
+  }
+
+  SortAndReduceVocab(wv,min_count);
+  SortAndReduceVocab(cv,min_count);
+
+  for (b = 0; b < cv->vocab_size; b++){
+    grab_relation(relation, cv->vocab[b].word);
     i = SearchVocab(rv,relation);
-    if (i == -1) {
+    if (i == -1 && relation[0] != 0) {
       a = AddWordToVocab(rv,relation);
       rv->vocab[a].cn = 1;
     } else rv->vocab[i].cn++;
 
-    EnsureVocabSize(wv);
-    EnsureVocabSize(cv);
     EnsureVocabSize(rv);
   }
-  SortAndReduceVocab(wv,min_count);
-  SortAndReduceVocab(cv,min_count);
-  SortAndReduceVocab(rv,min_count);
+
   printf("WVocab size: %d\n", wv->vocab_size);
   printf("CVocab size: %d\n", cv->vocab_size);
   printf("RVocab size: %d\n", rv->vocab_size);

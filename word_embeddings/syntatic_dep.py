@@ -4,6 +4,8 @@ import spacy
 from nltk.tokenize import word_tokenize
 import re
 from spacy_conll import init_parser
+import numpy as np
+import sys
 
 nlp = spacy.load('en_core_web_sm')
 last_end_line = 1076000
@@ -193,6 +195,25 @@ class Dep_Based_Word_Embed:
                     if cnt % 1000 == 0:
                         print(cnt)
                 print('Extract context accomplished with {:d} lines processed'.format(cnt))
+
+    def extract_word_vector(self, origin_file, output_file):
+        fh=open(origin_file)
+        first=fh.readline()
+        size=list(map(int,first.strip().split()))
+
+        # wvecs=np.zeros((size[0],size[1]),float)
+        wvecs=[]
+
+        vocab=[]
+        for line in fh:
+            line = line.strip().split()
+            if line[0] in self.keywords:
+                vocab.append(line[0])
+                wvecs.append(np.array(list(map(float,line[1:]))))
+
+        np.save(output_file+".npy",np.array(wvecs, float))
+        with open(output_file+".vocab","w") as outf:
+            outf.write(" ".join(vocab))
 
 def conll_gen(text, store_file):
     nlp = init_parser("spacy", "en")

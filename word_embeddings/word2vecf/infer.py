@@ -1,5 +1,4 @@
 import heapq
-from itertools import izip
 import numpy as np
 
 def ugly_normalize(vecs):
@@ -11,7 +10,7 @@ class Embeddings:
    def __init__(self, vecsfile, vocabfile=None, normalize=True):
       if vocabfile is None: vocabfile = vecsfile.replace("npy","vocab")
       self._vecs = np.load(vecsfile)
-      self._vocab = file(vocabfile).read().split()
+      self._vocab = open(vocabfile).read().split()
       if normalize:
          self._vecs = ugly_normalize(self._vecs)
       self._w2v = {w:i for i,w in enumerate(self._vocab)}
@@ -42,18 +41,18 @@ class Embeddings:
       if mult:
          p1,p2,n1 = [(1+wvecs.dot(wvecs[i]))/2 for i in (p1,p2,n1)]
          if N == 1:
-            return max(((v,w) for v,w in izip((p1 * p2 / n1),vocab) if w not in [pos1,pos2,neg1]))
-         return heapq.nlargest(N,((v,w) for v,w in izip((p1 * p2 / n1),vocab) if w not in [pos1,pos2,neg1]))
+            return max(((v,w) for v,w in zip((p1 * p2 / n1),vocab) if w not in [pos1,pos2,neg1]))
+         return heapq.nlargest(N,((v,w) for v,w in zip((p1 * p2 / n1),vocab) if w not in [pos1,pos2,neg1]))
       else:
          p1,p2,n1 = [(wvecs.dot(wvecs[i])) for i in (p1,p2,n1)]
          if N == 1:
-            return max(((v,w) for v,w in izip((p1 + p2 - n1),vocab) if w not in [pos1,pos2,neg1]))
-         return heapq.nlargest(N,((v,w) for v,w in izip((p1 + p2 - n1),vocab) if w not in [pos1,pos2,neg1]))
+            return max(((v,w) for v,w in zip((p1 + p2 - n1),vocab) if w not in [pos1,pos2,neg1]))
+         return heapq.nlargest(N,((v,w) for v,w in zip((p1 + p2 - n1),vocab) if w not in [pos1,pos2,neg1]))
 
-if __name__ == '__main__':
-   import sys
+# if __name__ == '__main__':
+#    import sys
 
-   e = Embeddings.load(sys.argv[1])
+#    e = Embeddings.load(sys.argv[1])
 
-   print e.most_similar('azkaban')
-   print e.analogy('king','man','woman')
+#    print e.most_similar('azkaban')
+#    print e.analogy('king','man','woman')

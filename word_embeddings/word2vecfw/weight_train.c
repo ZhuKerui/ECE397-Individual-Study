@@ -55,7 +55,7 @@ void *TrainModelThread(void *id) {
     fseek(fi, start_offset, SEEK_SET);
     
     while (fgetc(fi) != '\n') { }; //TODO make sure its ok
-    printf("thread %ld %ld\n", (int64_t)id, ftell(fi));
+    // printf("thread %ld %ld\n", (int64_t)id, ftell(fi));
 
     int64_t train_words = wv->word_count;
     
@@ -170,8 +170,9 @@ void *TrainModelThread(void *id) {
         }
 
         for (a = 0; a < total_weight_num; a++){
+          l3 = a * layer1_size;
           for (b = 0; b < layer1_size; b++){
-            acc_weight_table[a] = 0;
+            acc_weight_table[l3 + b] = 0;
           }
           weight_table_count[a] = 0;
         }
@@ -261,6 +262,8 @@ int32_t main(int32_t argc, char **argv) {
     printf("\t\trelations vocabulary file\n");
     printf("\t-rweight filename\n");
     printf("\t\trelation weights output file\n");
+    printf("\t-batch <int>\n");
+    printf("\t\tbatch size during the training\n");
     printf("\nExamples:\n");
     printf("./word2vecf -train data.txt -wvocab wv -cvocab cv -output vec.txt -size 200 -negative 5 -threads 10 \n\n");
     return 0;
@@ -277,6 +280,7 @@ int32_t main(int32_t argc, char **argv) {
   if ((i = ArgPos((char *)"-cvocab", argc, argv)) > 0) strcpy(cvocab_file, argv[i + 1]);
   if ((i = ArgPos((char *)"-rvocab", argc, argv)) > 0) strcpy(rvocab_file, argv[i + 1]);
   if ((i = ArgPos((char *)"-rweight", argc, argv)) > 0) strcpy(rweight_file, argv[i + 1]);
+  if ((i = ArgPos((char *)"-batch", argc, argv)) > 0) batch_size = atoi(argv[i + 1]);
   if ((i = ArgPos((char *)"-debug", argc, argv)) > 0) debug_mode = atoi(argv[i + 1]);
   if ((i = ArgPos((char *)"-binary", argc, argv)) > 0) binary = atoi(argv[i + 1]);
   if ((i = ArgPos((char *)"-alpha", argc, argv)) > 0) alpha = atof(argv[i + 1]);
