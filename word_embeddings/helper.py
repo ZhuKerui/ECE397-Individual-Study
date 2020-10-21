@@ -37,19 +37,23 @@ nlp = spacy.load('en_core_web_sm')
 #                 if cnt % 1000 == 0:
 #                     print(cnt)
 
-with io.open('../../dataset/sent.txt', 'r', encoding='utf-8') as load_file:
-    with io.open('../../dataset/sent2.txt', 'w', encoding='utf-8') as dump_file:
+with io.open('../../dataset/word2vec/sent.txt', 'r', encoding='utf-8') as load_file:
+    with io.open('../../dataset/word2vec/sent2.txt', 'w', encoding='utf-8') as dump_file:
         cnt = 0
-        full_sent = ''
+        not_finish = False
         for line in load_file:
             line = line.strip()
-            if line and line[0].isupper():
+            if line[-1] == '.':
                 if cnt == 0:
                     dump_file.write(line)
+                elif not_finish:
+                    dump_file.write(' '+line)
+                    not_finish = False
                 else:
                     dump_file.write('\n'+line)
                 cnt += 1
             else:
                 dump_file.write(' '+line)
+                not_finish = True
             if cnt % 10000 == 0:
                 print(cnt)
