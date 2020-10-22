@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+{% load static %}
+<html>
+
+<head>
+	<title>Destroydrop &raquo; Javascripts &raquo; Tree</title>
+
+	<link rel="StyleSheet" href="{% static 'css/dtree.css' %}" type="text/css" />
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/dtree.js' %}"></script>
+
+</head>
+
+<body>
+
+<h2>Input Your Central Keyword</h2>
+
+<div>
+	<input type="text" placeholder="Central Keyword" id="central_keyword" />
+	<button type="button" id="search_central_keyword" >Search</button>
+</div>
+
+<div class="dtree" id="tree_display"></div>
+
+
+<script>
+
+	objName = 'd';
+
+	d = new dTree(objName);
+
+	node_cnt = 0;
+
+	function add_node(pid, name, link){
+		d.add(node_cnt, pid, name, link);
+		node_cnt += 1;
+		return node_cnt;
+	}
+
+	$('#search_central_keyword').click(function(){
+		$.ajax({
+			'url':'/init_ck/',
+			'data':{
+				"central_keyword":$("#central_keyword").val()
+			},
+			'success' :function(ret){
+				$('#tree_display').empty();
+				if (ret["status"]){
+					d = new dTree(objName);
+					add_node(-1, 'Tree Display for "' + ret["central_keyword"] + '"');
+					add_node(0, ret["central_keyword"], 'javascript:void(0);');
+					add_node(1, 'fake_node');
+					$('#tree_display').append(d.toString());
+				} else {
+					$('#tree_display').append('<p>The keyword does not exist.</p>');
+				}
+			}
+		});
+	});
+
+	function search_topic_similar (id) {
+
+		ai = parseInt(id.split(objName)[1]);
+
+		$.ajax({
+			'url':'/get_tr/',
+			'data':{
+				"central_keyword":$("#central_keyword").val(),
+				"topic_related_threshold":$("#t"+objName+ai+"_th1").val(),
+				"function_cluster_threshold":$("#t"+objName+ai+"_th2").val(),
+			},
+			'success' :function(ret){
+				console.log('2');
+				$('#tree_display').empty();
+				pid = d.removeNode(ai);
+				if (ret["status"]){
+					children = ret["children"];
+					for (var child in children){
+						add_node(pid, child);
+					}
+					$('#tree_display').append(d.toString());
+					d.o(ai);
+				} else {
+					$('#tree_display').append('<p>The keyword does not exist.</p>');
+				}
+			}
+		});
+
+	}
+
+	// $("[id^='j" + objName + "']").on('click', function(){
+	// 	console.log('1');
+	// 	id = $(this).attr('id').split(objName)[1]
+	// 	console.log('2');
+	// 	$.ajax({
+	// 		'url':'/get_tr/',
+	// 		'data':{
+	// 			"central_keyword":$("#central_keyword").val(),
+	// 			"topic_related_threshold":$("#t"+objName+id+"_th1").val(),
+	// 			"function_cluster_threshold":$("#t"+objName+id+"_th2").val(),
+	// 		},
+	// 		'success' :function(ret){
+	// 			console.log('3');
+	// 			$('#tree_display').empty();
+	// 			pid = d.removeNode(id);
+	// 			if (ret["status"]){
+	// 				children = ret["children"];
+	// 				for (var child in children){
+	// 					add_node(pid, child);
+	// 				}
+	// 				$('#tree_display').append(d.toString());
+	// 			} else {
+	// 				$('#tree_display').append('<p>The keyword does not exist.</p>');
+	// 			}
+	// 		}
+	// 	});
+	// });
+
+</script>
+
+</body>
+
+</html>

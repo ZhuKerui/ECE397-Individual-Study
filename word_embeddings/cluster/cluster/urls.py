@@ -19,8 +19,8 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', views.index),
-    path('set_cw/', views.set_cw),
-    path('get_topic_related/', views.get_topic_related),
-    path('get_cluster/', views.get_cluster),
+    path('', views.index),
+    path('init_ck/', views.init_ck),
+    path('get_tr/', views.get_topic_related),
+    # path('get_cluster/', views.get_cluster),
 ]

@@ -84,33 +84,33 @@ function dTree(objName) {
 
 	this.icon = {
 
-		root				: 'img/base.gif',
+		root				: '/static/images/base.gif',
 
-		folder			: 'img/folder.gif',
+		folder			: '/static/images/folder.gif',
 
-		folderOpen	: 'img/folderopen.gif',
+		folderOpen	: '/static/images/folderopen.gif',
 
-		node				: 'img/page.gif',
+		node				: '/static/images/page.gif',
 
-		empty				: 'img/empty.gif',
+		empty				: '/static/images/empty.gif',
 
-		line				: 'img/line.gif',
+		line				: '/static/images/line.gif',
 
-		join				: 'img/join.gif',
+		join				: '/static/images/join.gif',
 
-		joinBottom	: 'img/joinbottom.gif',
+		joinBottom	: '/static/images/joinbottom.gif',
 
-		plus				: 'img/plus.gif',
+		plus				: '/static/images/plus.gif',
 
-		plusBottom	: 'img/plusbottom.gif',
+		plusBottom	: '/static/images/plusbottom.gif',
 
-		minus				: 'img/minus.gif',
+		minus				: '/static/images/minus.gif',
 
-		minusBottom	: 'img/minusbottom.gif',
+		minusBottom	: '/static/images/minusbottom.gif',
 
-		nlPlus			: 'img/nolines_plus.gif',
+		nlPlus			: '/static/images/nolines_plus.gif',
 
-		nlMinus			: 'img/nolines_minus.gif'
+		nlMinus			: '/static/images/nolines_minus.gif'
 
 	};
 
@@ -236,6 +236,60 @@ dTree.prototype.addNode = function(pNode) {
 
 
 
+// Remove parts of the tree structure
+
+dTree.prototype.removeNode = function(ai) {
+
+	var child_idx;
+
+	pid = this.aNodes[ai].id;
+
+	do {
+
+		child_idx = -1;
+		
+		for (n=0; n<this.aNodes.length; n++) {
+
+			if (this.aNodes[n].pid == pid) {
+
+				child_idx = n;
+	
+				var cn = this.aNodes[n];
+				
+				var i = n;
+	
+				this.setCS(cn);
+	
+				if (cn._hc){
+	
+					id = cn.id
+	
+					this.removeNode(id);
+	
+					for (i=0; i<this.aNodes.length; i++){
+	
+						if (this.aNodes[i].id == id) break;
+	
+					}
+	
+				}
+	
+				this.aNodes.splice(i, 1);
+
+				break;
+	
+			}
+
+		}
+
+	} while (child_idx >= 0);
+
+	return pid;
+
+};
+
+
+
 // Creates the node icon, url and text
 
 dTree.prototype.node = function(node, nodeId) {
@@ -326,13 +380,15 @@ dTree.prototype.indent = function(node, nodeId) {
 
 		if (node._hc) {
 
-			str += '<a href="javascript: ' + this.obj + '.o(' + nodeId + ');"><img id="j' + this.obj + nodeId + '" src="';
+			str += '<img id="j' + this.obj + nodeId + '" src="';
 
 			if (!this.config.useLines) str += (node._io) ? this.icon.nlMinus : this.icon.nlPlus;
 
 			else str += ( (node._io) ? ((node._ls && this.config.useLines) ? this.icon.minusBottom : this.icon.minus) : ((node._ls && this.config.useLines) ? this.icon.plusBottom : this.icon.plus ) );
 
-			str += '" alt="" /></a>';
+			// str += '" alt="" onclick="' + this.obj + '.o(' + nodeId + ');" />';
+
+			str += '" alt="" onclick="search_topic_similar(this.id);" />';
 
 		} else str += '<img src="' + ( (this.config.useLines) ? ((node._ls) ? this.icon.joinBottom : this.icon.join ) : this.icon.empty) + '" alt="" />';
 
