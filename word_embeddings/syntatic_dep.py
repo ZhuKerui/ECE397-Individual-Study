@@ -199,11 +199,7 @@ class Dep_Based_Word_Embed:
     def extract_word_vector(self, origin_file, output_file):
         fh=open(origin_file)
         first=fh.readline()
-        size=list(map(int,first.strip().split()))
-
-        # wvecs=np.zeros((size[0],size[1]),float)
         wvecs=[]
-
         vocab=[]
         for line in fh:
             line = line.strip().split()

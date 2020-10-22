@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+
+<head>
+	<title>Destroydrop &raquo; Javascripts &raquo; Tree</title>
+
+	<link rel="StyleSheet" href="dtree.css" type="text/css" />
+	<script type="text/javascript" src="dtree.js"></script>
+
+</head>
+
+<body>
+
+<h2>Input Your Central Keyword</h2>
+
+<div>
+	<input type="text" placeholder="Central Keyword" id="central_keyword" />
+	<button type="button" id="search_central_keyword" >Search</button>
+</div>
+
+<div class="dtree" id="tree_display">
+
+	<!-- <p><a href="javascript: d.openAll();">open all</a> | <a href="javascript: d.closeAll();">close all</a></p> -->
+
+	<!-- <script type="text/javascript">
+
+		d = new dTree('d');
+
+		d.add(0,-1,'My example tree');
+		d.add(1,0,'Node 1','javascript:void(0);');
+		d.add(2,0,'Node 2','javascript:void(0);');
+		d.add(3,1,'Node 1.1','javascript:void(0);');
+		d.add(4,0,'Node 3','javascript:void(0);');
+		d.add(5,3,'Node 1.1.1','javascript:void(0);');
+		d.add(6,5,'Node 1.1.1.1','javascript:void(0);');
+		d.add(7,0,'Node 4','javascript:void(0);');
+		d.add(8,1,'Node 1.2','javascript:void(0);');
+		d.add(9,0,'My Pictures','javascript:void(0);','Pictures I\'ve taken over the years','','','img/imgfolder.gif');
+		d.add(10,9,'The trip to Iceland','javascript:void(0);','Pictures of Gullfoss and Geysir');
+		d.add(11,9,'Mom\'s birthday','javascript:void(0);');
+		d.add(12,0,'Recycle Bin','javascript:void(0);','','','img/trash.gif');
+
+		document.write(d);
+
+	</script> -->
+
+</div>
+
+<!-- <p><a href="mailto&#58;drop&#64;destroydrop&#46;com">&copy;2002-2003 Geir Landr&ouml;</a></p> -->
+
+<script>
+
+	$('#search_central_keyword').click(function(){
+		$.ajax({
+			'url':'/search/',
+			'data':{
+				"central_keyword":$("#central_keyword").val()
+			},
+			'success' :function(ret){
+				$('#results_display').empty();
+				ret.forEach(element => {
+					id = element['id'];
+					$('#results_display').append('<a href="get_paper/?id='+id+'"><div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1 service-wrap"><div class="service"><h3><i class="ti-bookmark"></i>'+element['title']+'</h3><p>'+element['content']+'</p></div></div></a>');
+				});
+			}
+		});
+	});
+
+</script>
+
+</body>
+
+</html>
