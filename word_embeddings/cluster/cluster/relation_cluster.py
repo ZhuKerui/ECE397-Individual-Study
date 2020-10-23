@@ -50,7 +50,7 @@ class cluster:
 
     def get_topic_related(self, central_word, threshold):
         if central_word in self._t_w2i.keys():
-            return self._get_similar(self._t_vecs[self._t_w2i[central_word]], self._t_vecs, self._t_vocab, threshold)
+            return self._get_similar(simple_normalize(self._t_vecs[self._t_w2i[central_word]]), ugly_normalize(self._t_vecs), self._t_vocab, threshold)
         else:
             return None
 
@@ -121,3 +121,4 @@ class cluster:
             mat_result = np.matmul(temp_array, vec)
             closest_idx = np.argmax(mat_result)
             ret.append(temp_list[closest_idx])
+        return ret

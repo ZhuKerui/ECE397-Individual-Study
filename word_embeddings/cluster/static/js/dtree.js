@@ -52,6 +52,10 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 
 	this._p;
 
+	this._tr_threshold = 1.0;
+
+	this._fc_threshold = 1.0;
+
 };
 
 
@@ -196,13 +200,13 @@ dTree.prototype.addNode = function(pNode) {
 
 	for (n; n<this.aNodes.length; n++) {
 
+		this.aNodes[n]._ai = n;
+
 		if (this.aNodes[n].pid == pNode.id) {
 
 			var cn = this.aNodes[n];
 
 			cn._p = pNode;
-
-			cn._ai = n;
 
 			this.setCS(cn);
 
@@ -242,13 +246,15 @@ dTree.prototype.removeNode = function(ai) {
 
 	var child_idx;
 
-	pid = this.aNodes[ai].id;
+	var pid = this.aNodes[ai].id;
 
 	do {
 
 		child_idx = -1;
 		
 		for (n=0; n<this.aNodes.length; n++) {
+
+			console.log(pid + ' : ' + this.aNodes[n].pid);
 
 			if (this.aNodes[n].pid == pid) {
 
@@ -264,7 +270,7 @@ dTree.prototype.removeNode = function(ai) {
 	
 					id = cn.id
 	
-					this.removeNode(id);
+					this.removeNode(i);
 	
 					for (i=0; i<this.aNodes.length; i++){
 	
@@ -287,6 +293,15 @@ dTree.prototype.removeNode = function(ai) {
 	return pid;
 
 };
+
+
+
+// Store the threshold value to the node
+
+dTree.prototype.storeThreshold = function(ai, tr_threshold, fc_threshold) {
+	this.aNodes[ai]._tr_threshold = parseFloat(tr_threshold);
+	this.aNodes[ai]._fc_threshold = parseFloat(fc_threshold);
+}
 
 
 
@@ -340,9 +355,9 @@ dTree.prototype.node = function(node, nodeId) {
 
 	if (node.url || ((!this.config.folderLinks || !node.url) && node._hc)) str += '</a>';
 
-	str += '<input type="text" id="t' + this.obj + nodeId + '_th1" size="1" />'
+	str += '<input type="text" id="t' + this.obj + nodeId + '_th1" size="1" value="' + this.aNodes[nodeId]._tr_threshold + '" />';
 
-	str += '<input type="text" id="t' + this.obj + nodeId + '_th2" size="1" />'
+	str += '<input type="text" id="t' + this.obj + nodeId + '_th2" size="1" value="' + this.aNodes[nodeId]._fc_threshold + '" />';
 
 	str += '</div>';
 
