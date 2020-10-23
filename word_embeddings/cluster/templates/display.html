@@ -72,29 +72,32 @@
 
 			tr_threshold = $("#t"+objName+ai+"_th1").val();
 			fc_threshold = $("#t"+objName+ai+"_th2").val();
-			d.storeThreshold(ai, tr_threshold, fc_threshold);
-
-			$.ajax({
-				'url':'/get_tr/',
-				'data':{
-					"central_keyword":$("#central_keyword").val(),
-					"topic_related_threshold":tr_threshold,
-					"function_cluster_threshold":fc_threshold,
-				},
-				'success' :function(ret){
-					pid = d.removeNode(ai);
-					$('#tree_display').empty();
-					if (ret["status"]){
-						children = ret["children"];
-						for (var child in children){
-							add_folder(pid, child, 'javascript:void(0);');
+			
+			if (d.isThresholdChanged(ai, tr_threshold, fc_threshold)){
+				d.storeThreshold(ai, tr_threshold, fc_threshold);
+				$.ajax({
+					'url':'/get_tr/',
+					'data':{
+						"central_keyword":$("#central_keyword").val(),
+						"topic_related_threshold":tr_threshold,
+						"function_cluster_threshold":fc_threshold,
+					},
+					'success' :function(ret){
+						pid = d.removeNode(ai);
+						$('#tree_display').empty();
+						if (ret["status"]){
+							children = ret["children"];
+							for (var child in children){
+								add_folder(pid, child, 'javascript:void(0);');
+							}
+							$('#tree_display').append(d.toString());
+							console.log(d.aNodes.length);
+						} else {
+							$('#tree_display').append('<p>The keyword does not exist.</p>');
 						}
-						$('#tree_display').append(d.toString());
-					} else {
-						$('#tree_display').append('<p>The keyword does not exist.</p>');
 					}
-				}
-			});
+				});
+			}
 		}
 
 		// ids = [];

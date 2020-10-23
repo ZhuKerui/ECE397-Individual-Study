@@ -254,7 +254,7 @@ dTree.prototype.removeNode = function(ai) {
 		
 		for (n=0; n<this.aNodes.length; n++) {
 
-			console.log(pid + ' : ' + this.aNodes[n].pid);
+			// console.log(pid + ' : ' + this.aNodes[n].pid);
 
 			if (this.aNodes[n].pid == pid) {
 
@@ -301,6 +301,16 @@ dTree.prototype.removeNode = function(ai) {
 dTree.prototype.storeThreshold = function(ai, tr_threshold, fc_threshold) {
 	this.aNodes[ai]._tr_threshold = parseFloat(tr_threshold);
 	this.aNodes[ai]._fc_threshold = parseFloat(fc_threshold);
+}
+
+
+
+// Check whether the threshold value is changed
+
+dTree.prototype.isThresholdChanged = function(ai, tr_threshold, fc_threshold) {
+
+	return this.aNodes[ai]._tr_threshold != parseFloat(tr_threshold) || this.aNodes[ai]._fc_threshold != parseFloat(fc_threshold);
+	
 }
 
 
