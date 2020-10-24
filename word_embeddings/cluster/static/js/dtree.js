@@ -176,7 +176,7 @@ dTree.prototype.get_all_group_mem = function(ai, arr) {
 
 	this.aNodes[ai]._hidden_group_members.forEach(element => {
 
-		if (!(element in arr)) {
+		if (arr.indexOf(element) == -1) {
 
 			arr.push(element);
 			
@@ -218,6 +218,8 @@ dTree.prototype.get_cluster = function(ai) {
 
 			this.get_all_group_mem(i, arr);
 
+			console.log(arr);
+
 			main_clusters[i] = arr;
 
 		}
@@ -238,9 +240,9 @@ dTree.prototype.get_cluster = function(ai) {
 
 		main_clusters[i].forEach(word => {
 
-			str += (i == highlight_cluster_ai && highlight_words.indexOf(word) >= 0) ? "<b>" + word + "</b>" : word;
+			str += (i == highlight_cluster_ai && highlight_words.indexOf(word) >= 0) ? "<font color='red'><b>" + word + "</b></font>" : word;
 
-			str += " ";
+			str += "&emsp;";
 
 		});
 
@@ -580,7 +582,11 @@ dTree.prototype.s = function(id) {
 
 			eOld = document.getElementById("s" + this.obj + this.selectedNode);
 
-			eOld.className = "node";
+			if (eOld){
+				
+				eOld.className = "node";
+
+			}
 
 		}
 
