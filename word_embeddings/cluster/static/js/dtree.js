@@ -22,7 +22,7 @@
 
 // Node object
 
-function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
+function Node(id, pid, name, url, group_mem, title, target, icon, iconOpen, open) {
 
 	this.id = id;
 
@@ -55,6 +55,18 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open) {
 	this._tr_threshold = 1.0;
 
 	this._fc_threshold = 1.0;
+
+	this._hidden_group_members = [];
+
+	if (group_mem) {
+
+		group_mem.forEach(element => {
+
+			this._hidden_group_members.push(element);
+	
+		});
+
+	}
 
 };
 
@@ -143,6 +155,102 @@ dTree.prototype.add = function(id, pid, name, url, title, target, icon, iconOpen
 	this.aNodes[this.aNodes.length] = new Node(id, pid, name, url, title, target, icon, iconOpen, open);
 
 };
+
+
+
+// Get hidden group members of the children
+
+dTree.prototype.get_all_group_mem = function(ai, arr) {
+
+	var pid = this.aNodes[ai].id;
+
+	for (var i = ai; i < this.aNodes.length; i++){
+
+		if (this.aNodes[i].pid == pid){
+
+			this.get_all_group_mem(i, arr);
+
+		}
+
+	}
+
+	this.aNodes[ai]._hidden_group_members.forEach(element => {
+
+		if (!(element in arr)) {
+
+			arr.push(element);
+			
+		}
+
+	});
+
+}
+
+
+
+// Get the cluster display text
+
+dTree.prototype.get_cluster = function(ai) {
+
+	var str = '';
+
+	var root_ai = 0;
+
+	for (root_ai = 0; root_ai < this.aNodes.length; root_ai++){
+
+		if (this.aNodes[root_ai]._p.pid == -1) break;
+
+	}
+
+	var root_id = this.aNodes[root_ai].id;
+
+	var main_clusters = {};
+
+	var highlight_words = [];
+
+	this.get_all_group_mem(ai, highlight_words);
+
+	for (var i = 0; i < this.aNodes.length; i++){
+
+		if (this.aNodes[i].pid == root_id) {
+
+			var arr = [];
+
+			this.get_all_group_mem(i, arr);
+
+			main_clusters[i] = arr;
+
+		}
+
+	}
+
+	var highlight_cluster_ai = ai;
+
+	while (!(highlight_cluster_ai in main_clusters || highlight_cluster_ai == root_ai)) {
+
+		highlight_cluster_ai = this.aNodes[highlight_cluster_ai]._p._ai;
+
+	}
+
+	for (var i in main_clusters) {
+
+		str += "<p>";
+
+		main_clusters[i].forEach(word => {
+
+			str += (i == highlight_cluster_ai && highlight_words.indexOf(word) >= 0) ? "<b>" + word + "</b>" : word;
+
+			str += " ";
+
+		});
+
+		str += "</p>";
+
+	}
+
+	return str;
+
+}
 
 
 
@@ -254,8 +362,6 @@ dTree.prototype.removeNode = function(ai) {
 		
 		for (n=0; n<this.aNodes.length; n++) {
 
-			// console.log(pid + ' : ' + this.aNodes[n].pid);
-
 			if (this.aNodes[n].pid == pid) {
 
 				child_idx = n;
@@ -310,7 +416,7 @@ dTree.prototype.storeThreshold = function(ai, tr_threshold, fc_threshold) {
 dTree.prototype.isThresholdChanged = function(ai, tr_threshold, fc_threshold) {
 
 	return this.aNodes[ai]._tr_threshold != parseFloat(tr_threshold) || this.aNodes[ai]._fc_threshold != parseFloat(fc_threshold);
-	
+
 }
 
 
@@ -351,7 +457,8 @@ dTree.prototype.node = function(node, nodeId) {
 
 		if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc))
 
-			str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
+			// str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
+			str += ' onclick="draw_cluster('+nodeId+')"';
 
 		str += '>';
 

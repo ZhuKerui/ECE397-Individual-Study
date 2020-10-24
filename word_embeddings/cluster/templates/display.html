@@ -23,6 +23,8 @@
 
 <div class="dtree" id="tree_display"></div>
 
+<div id="cluster_display"></div>
+
 
 <script>
 
@@ -32,14 +34,14 @@
 
 	node_cnt = 0;
 
-	function add_node(pid, name, link){
-		d.add(node_cnt, pid, name, link);
+	function add_node(pid, name, link, group_mem){
+		d.add(node_cnt, pid, name, link, group_mem);
 		node_cnt += 1;
 		return node_cnt-1;
 	}
 
-	function add_folder(pid, name, link){
-		id = add_node(pid, name, link);
+	function add_folder(pid, name, group_mem){
+		id = add_node(pid, name, 'javascript:void(0);', group_mem);
 		add_node(id, 'fake_node');
 		return id;
 	}
@@ -51,14 +53,14 @@
 				"central_keyword":$("#central_keyword").val()
 			},
 			'success' :function(ret){
-				$('#tree_display').empty();
 				if (ret["status"]){
 					d = new dTree(objName);
+					node_cnt = 0;
 					add_node(-1, 'Tree Display for "' + ret["central_keyword"] + '"');
-					add_folder(0, ret["central_keyword"], 'javascript:void(0);');
-					$('#tree_display').append(d.toString());
+					add_folder(0, ret["central_keyword"]);
+					$('#tree_display')[0].innerHTML = d.toString();
 				} else {
-					$('#tree_display').append('<p>The keyword does not exist.</p>');
+					$('#tree_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
 				}
 			}
 		});
@@ -72,46 +74,52 @@
 
 			tr_threshold = $("#t"+objName+ai+"_th1").val();
 			fc_threshold = $("#t"+objName+ai+"_th2").val();
+			central_keyword = $("#s"+objName+ai)[0].innerHTML;
 			
 			if (d.isThresholdChanged(ai, tr_threshold, fc_threshold)){
 				d.storeThreshold(ai, tr_threshold, fc_threshold);
 				$.ajax({
 					'url':'/get_tr/',
 					'data':{
-						"central_keyword":$("#central_keyword").val(),
+						"central_keyword":central_keyword,
 						"topic_related_threshold":tr_threshold,
 						"function_cluster_threshold":fc_threshold,
 					},
 					'success' :function(ret){
 						pid = d.removeNode(ai);
-						$('#tree_display').empty();
 						if (ret["status"]){
 							children = ret["children"];
 							for (var child in children){
-								add_folder(pid, child, 'javascript:void(0);');
+								// if (child == central_keyword) {
+								// 	continue;
+								// }
+								add_folder(pid, child, children[child]);
 							}
-							$('#tree_display').append(d.toString());
+							$('#tree_display')[0].innerHTML = d.toString();
 							console.log(d.aNodes.length);
 						} else {
-							$('#tree_display').append('<p>The keyword does not exist.</p>');
+							$('#tree_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
 						}
 					}
 				});
 			}
 		}
 
-		// ids = [];
-
-		// for (var i = 0; i < d.aNodes.length; i++){
-		// 	ids.push(d.aNodes[i].id);
-		// }
-
-		// console.log(ids);
-
 		d.o(ai);
 
 	}
 
+	function draw_cluster(ai) {
+
+		str = d.get_cluster(ai);
+
+		$('#cluster_display')[0].innerHTML = str;
+
+		d.s(ai);
+
+		return false;
+
+	}
 
 </script>
 
