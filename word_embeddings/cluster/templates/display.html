@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title>Destroydrop &raquo; Javascripts &raquo; Tree</title>
+	<title>Recursive &raquo; Clustering &raquo; Tree</title>
 
 	<link rel="StyleSheet" href="{% static 'css/dtree.css' %}" type="text/css" />
 	<!-- jQuery -->
@@ -53,6 +53,7 @@
 				"central_keyword":$("#central_keyword").val()
 			},
 			'success' :function(ret){
+				$('#cluster_display').empty();
 				if (ret["status"]){
 					d = new dTree(objName);
 					node_cnt = 0;

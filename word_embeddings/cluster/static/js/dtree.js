@@ -218,8 +218,6 @@ dTree.prototype.get_cluster = function(ai) {
 
 			this.get_all_group_mem(i, arr);
 
-			console.log(arr);
-
 			main_clusters[i] = arr;
 
 		}

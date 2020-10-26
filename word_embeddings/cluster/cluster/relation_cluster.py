@@ -48,6 +48,17 @@ class cluster:
     def is_exist(self, word):
         return word in self._t_w2i.keys() and word in self._f_w2i.keys()
 
+    def get_topical_similarity(self, word1, word2):
+        if word1 not in self._t_w2i.keys():
+            print('"' + word1 + '" is not in the vocabulary')
+            return 0
+        elif word2 not in self._t_w2i.keys():
+            print('"' + word2 + '" is not in the vocabulary')
+            return 0
+        vec1 = simple_normalize(self._t_vecs[self._t_w2i[word1]])
+        vec2 = simple_normalize(self._t_vecs[self._t_w2i[word2]])
+        return vec1.dot(vec2)
+        
     def get_topic_related(self, central_word, threshold):
         if central_word in self._t_w2i.keys():
             return self._get_similar(simple_normalize(self._t_vecs[self._t_w2i[central_word]]), ugly_normalize(self._t_vecs), self._t_vocab, threshold)
@@ -68,7 +79,7 @@ class cluster:
 
     def _get_cluster(self, vecs, vocab, threshold):
         cluster_num = 0
-        cluster_center_vecs = None
+        cluster_center_vecs = np.array([])
         cluster_set = []
         w2c = {}
 
