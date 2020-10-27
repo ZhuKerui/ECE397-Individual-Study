@@ -1,14 +1,14 @@
 import csv
 import io
-import json
-import spacy
-from nltk.tokenize import word_tokenize
+# import json
+# import spacy
+# from nltk.tokenize import word_tokenize
 import re
-from spacy_conll import init_parser
-import numpy as np
-import sys
+# from spacy_conll import init_parser
+# import numpy as np
+# import sys
 
-nlp = spacy.load('en_core_web_sm')
+# nlp = spacy.load('en_core_web_sm')
 
 # with io.open('../../dataset/word2vec/mag_cs_keywords.csv', 'r', encoding='utf-8') as load_file:
 #     csv_reader = csv.reader(load_file)
@@ -37,23 +37,39 @@ nlp = spacy.load('en_core_web_sm')
 #                 if cnt % 1000 == 0:
 #                     print(cnt)
 
-with io.open('../../dataset/word2vec/sent.txt', 'r', encoding='utf-8') as load_file:
-    with io.open('../../dataset/word2vec/sent2.txt', 'w', encoding='utf-8') as dump_file:
+# with io.open('../../dataset/word2vec/sent.txt', 'r', encoding='utf-8') as load_file:
+#     with io.open('../../dataset/word2vec/sent2.txt', 'w', encoding='utf-8') as dump_file:
+#         cnt = 0
+#         not_finish = False
+#         for line in load_file:
+#             line = line.strip()
+#             if line[-1] == '.':
+#                 if cnt == 0:
+#                     dump_file.write(line)
+#                 elif not_finish:
+#                     dump_file.write(' '+line)
+#                     not_finish = False
+#                 else:
+#                     dump_file.write('\n'+line)
+#                 cnt += 1
+#             else:
+#                 dump_file.write(' '+line)
+#                 not_finish = True
+#             if cnt % 10000 == 0:
+#                 print(cnt)
+
+with io.open('../../dataset/keywords.csv', 'r', encoding='utf-8') as load_file:
+    with io.open('../../dataset/keywords.txt', 'w', encoding='utf-8') as dump_file:
+        f_csv = csv.reader(load_file)
         cnt = 0
-        not_finish = False
-        for line in load_file:
-            line = line.strip()
-            if line[-1] == '.':
-                if cnt == 0:
-                    dump_file.write(line)
-                elif not_finish:
-                    dump_file.write(' '+line)
-                    not_finish = False
-                else:
-                    dump_file.write('\n'+line)
-                cnt += 1
-            else:
-                dump_file.write(' '+line)
-                not_finish = True
-            if cnt % 10000 == 0:
-                print(cnt)
+        for row in f_csv:
+            cnt += 1
+            if cnt == 1:
+                continue
+            raw_kw = row[0].lower()
+            if '(' in raw_kw and ')' in raw_kw:
+                raw_kw = re.sub(u'[(](.*?)[)]', '', raw_kw).strip()
+            if ',' in raw_kw:
+                continue
+            dump_file.write(raw_kw + '\n')
+        
