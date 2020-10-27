@@ -58,18 +58,16 @@ import re
 #             if cnt % 10000 == 0:
 #                 print(cnt)
 
-with io.open('../../dataset/keywords.csv', 'r', encoding='utf-8') as load_file:
-    with io.open('../../dataset/keywords.txt', 'w', encoding='utf-8') as dump_file:
+with io.open('../../dataset/node2vec/keywords.csv', 'r', encoding='utf-8') as load_file:
+    with io.open('../../dataset/node2vec/keywords.txt', 'w', encoding='utf-8') as dump_file:
+        header = load_file.readline()
         f_csv = csv.reader(load_file)
-        cnt = 0
+        
         for row in f_csv:
-            cnt += 1
-            if cnt == 1:
-                continue
             raw_kw = row[0].lower()
-            if '(' in raw_kw and ')' in raw_kw:
+            if '(' in raw_kw and raw_kw.index('(') != 0:
                 raw_kw = re.sub(u'[(](.*?)[)]', '', raw_kw).strip()
-            if ',' in raw_kw:
-                continue
+            # if ',' in raw_kw:
+            #     continue
             dump_file.write(raw_kw + '\n')
         
