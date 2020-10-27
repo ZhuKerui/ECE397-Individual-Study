@@ -58,16 +58,28 @@ import re
 #             if cnt % 10000 == 0:
 #                 print(cnt)
 
-with io.open('../../dataset/node2vec/keywords.csv', 'r', encoding='utf-8') as load_file:
-    with io.open('../../dataset/node2vec/keywords.txt', 'w', encoding='utf-8') as dump_file:
-        header = load_file.readline()
-        f_csv = csv.reader(load_file)
+# with io.open('../../dataset/node2vec/keywords.csv', 'r', encoding='utf-8') as load_file:
+#     with io.open('../../dataset/node2vec/keywords.txt', 'w', encoding='utf-8') as dump_file:
+#         header = load_file.readline()
+#         f_csv = csv.reader(load_file)
         
-        for row in f_csv:
-            raw_kw = row[0].lower()
-            if '(' in raw_kw and raw_kw.index('(') != 0:
-                raw_kw = re.sub(u'[(](.*?)[)]', '', raw_kw).strip()
-            # if ',' in raw_kw:
-            #     continue
-            dump_file.write(raw_kw + '\n')
-        
+#         for row in f_csv:
+#             raw_kw = row[0].lower()
+#             if '(' in raw_kw and raw_kw.index('(') != 0:
+#                 raw_kw = re.sub(u'[(](.*?)[)]', '', raw_kw).strip()
+#             # if ',' in raw_kw:
+#             #     continue
+#             dump_file.write(raw_kw + '\n')
+
+with io.open('../../dataset/node2vec/keywords.txt', 'r', encoding='utf-8') as load_file:
+    cnt = 0
+    size = 6000
+    dump_file = None
+    for word in load_file:
+        if cnt % size == 0:
+            if dump_file is not None:
+                dump_file.close()
+            dump_file = io.open('../../dataset/node2vec/part' + str(int(cnt/size)) + '.txt', 'w', encoding='utf-8')
+        dump_file.write(word)
+        cnt += 1
+    dump_file.close()
