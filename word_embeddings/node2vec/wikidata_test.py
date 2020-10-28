@@ -34,7 +34,7 @@ def find_related(keyword_csv, related_set):
             load_csv = csv.reader(load_file)
             client = Client()
             instance_of = Entity('P31', client)
-            subclass_of = Entity('P297', client)
+            subclass_of = Entity('P279', client)
             part_of = Entity('P361', client)
             facet_of = Entity('P1269', client)
             manifestation_of = Entity('P1557', client)
@@ -45,7 +45,7 @@ def find_related(keyword_csv, related_set):
                 entity = client.get(id, load=True)
                 myDict[id] = {}
                 myDict[id]['P31'] = [item.id for item in entity.getlist(instance_of)]
-                myDict[id]['P297'] = [item.id for item in entity.getlist(subclass_of)]
+                myDict[id]['P279'] = [item.id for item in entity.getlist(subclass_of)]
                 myDict[id]['P361'] = [item.id for item in entity.getlist(part_of)]
                 myDict[id]['P1269'] = [item.id for item in entity.getlist(facet_of)]
                 myDict[id]['P1557'] = [item.id for item in entity.getlist(manifestation_of)]
