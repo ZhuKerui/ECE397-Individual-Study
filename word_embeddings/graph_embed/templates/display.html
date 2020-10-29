@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+{% load static %}
+<html>
+
+<head>
+	<title>Graph Embedding</title>
+
+	<link rel="StyleSheet" href="{% static 'css/dtree.css' %}" type="text/css" />
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/dtree.js' %}"></script>
+
+</head>
+
+<body>
+
+	<h2>Graph Embedding Demo</h2>
+
+	<div>
+		<input type="text" placeholder="Keyword" id="g_search_keyword" />
+		<input type="text" placeholder="threshold" id="g_threshold" />
+		<button type="button" id="g_search_related_keyword" >Search</button>
+	</div>
+
+	<div class="dtree" id="g_tree_display"></div>
+
+	<div class="display" id="g_related_display"></div>
+
+	<h2>Word2vec Embedding Demo</h2>
+
+	<div>
+		<input type="text" placeholder="Keyword" id="w_search_keyword" />
+		<input type="text" placeholder="threshold" id="w_threshold" />
+		<button type="button" id="w_search_related_keyword" >Search</button>
+	</div>
+
+	<div class="dtree" id="w_tree_display"></div>
+
+	<div class="display" id="w_related_display"></div>
+
+	<h2>Dependency-Based Embedding Demo</h2>
+
+	<div>
+		<input type="text" placeholder="Keyword" id="d_search_keyword" />
+		<input type="text" placeholder="threshold" id="d_threshold" />
+		<button type="button" id="d_search_related_keyword" >Search</button>
+	</div>
+
+	<div class="dtree" id="d_tree_display"></div>
+
+	<div class="display" id="d_related_display"></div>
+
+
+<script>
+
+	// objName = 'd';
+
+	// d = new dTree(objName);
+
+	// node_cnt = 0;
+
+	// function add_node(pid, name, link, group_mem){
+	// 	d.add(node_cnt, pid, name, link, group_mem);
+	// 	node_cnt += 1;
+	// 	return node_cnt-1;
+	// }
+
+	// function add_folder(pid, name, group_mem){
+	// 	id = add_node(pid, name, 'javascript:void(0);', group_mem);
+	// 	add_node(id, 'fake_node');
+	// 	return id;
+	// }
+
+	// $('#search_central_keyword').click(function(){
+	// 	$.ajax({
+	// 		'url':'/init_ck/',
+	// 		'data':{
+	// 			"central_keyword":$("#central_keyword").val()
+	// 		},
+	// 		'success' :function(ret){
+	// 			$('#cluster_display').empty();
+	// 			if (ret["status"]){
+	// 				d = new dTree(objName);
+	// 				node_cnt = 0;
+	// 				add_node(-1, 'Tree Display for "' + ret["central_keyword"] + '"');
+	// 				add_folder(0, ret["central_keyword"]);
+	// 				$('#tree_display')[0].innerHTML = d.toString();
+	// 			} else {
+	// 				$('#tree_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+	// 			}
+	// 		}
+	// 	});
+	// });
+
+	// function search_topic_similar (id) {
+
+	// 	ai = parseInt(id.split(objName)[1]);
+
+	// 	if (!d.isOpen(ai)){
+
+	// 		tr_threshold = $("#t"+objName+ai+"_th1").val();
+	// 		fc_threshold = $("#t"+objName+ai+"_th2").val();
+	// 		central_keyword = $("#s"+objName+ai)[0].innerHTML;
+			
+	// 		if (d.isThresholdChanged(ai, tr_threshold, fc_threshold)){
+	// 			d.storeThreshold(ai, tr_threshold, fc_threshold);
+	// 			$.ajax({
+	// 				'url':'/get_tr/',
+	// 				'data':{
+	// 					"central_keyword":central_keyword,
+	// 					"topic_related_threshold":tr_threshold,
+	// 					"function_cluster_threshold":fc_threshold,
+	// 				},
+	// 				'success' :function(ret){
+	// 					pid = d.removeNode(ai);
+	// 					if (ret["status"]){
+	// 						children = ret["children"];
+	// 						for (var child in children){
+	// 							// if (child == central_keyword) {
+	// 							// 	continue;
+	// 							// }
+	// 							add_folder(pid, child, children[child]);
+	// 						}
+	// 						$('#tree_display')[0].innerHTML = d.toString();
+	// 					} else {
+	// 						$('#tree_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+	// 					}
+	// 				}
+	// 			});
+	// 		}
+	// 	}
+
+	// 	d.o(ai);
+
+	// }
+
+	// function draw_cluster(ai) {
+
+	// 	str = d.get_cluster(ai);
+
+	// 	$('#cluster_display')[0].innerHTML = str;
+
+	// 	d.s(ai);
+
+	// 	return false;
+
+	// }
+
+	$('#g_search_related_keyword').click(function(){
+		$.ajax({
+			'url':'/g_search_related/',
+			'data':{
+				"search_keyword":$("#g_search_keyword").val(),
+				"threshold":$("#g_threshold").val()
+			},
+			'success' :function(ret){
+				$('#g_related_display').empty();
+				if (ret["status"]){
+					str = "<p>";
+					ret["related"].forEach(element => {
+						str += element;
+						str += "&emsp;";
+					});
+					str += "</p>"
+					$('#g_related_display')[0].innerHTML = str;
+				} else {
+					$('#g_related_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+	});
+
+	$('#w_search_related_keyword').click(function(){
+		$.ajax({
+			'url':'/w_search_related/',
+			'data':{
+				"search_keyword":$("#w_search_keyword").val(),
+				"threshold":$("#w_threshold").val()
+			},
+			'success' :function(ret){
+				$('#w_related_display').empty();
+				if (ret["status"]){
+					str = "<p>";
+					ret["related"].forEach(element => {
+						str += element;
+						str += "&emsp;";
+					});
+					str += "</p>"
+					$('#w_related_display')[0].innerHTML = str;
+				} else {
+					$('#w_related_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+	});
+
+	$('#d_search_related_keyword').click(function(){
+		$.ajax({
+			'url':'/d_search_related/',
+			'data':{
+				"search_keyword":$("#d_search_keyword").val(),
+				"threshold":$("#d_threshold").val()
+			},
+			'success' :function(ret){
+				$('#d_related_display').empty();
+				if (ret["status"]){
+					str = "<p>";
+					ret["related"].forEach(element => {
+						str += element;
+						str += "&emsp;";
+					});
+					str += "</p>"
+					$('#d_related_display')[0].innerHTML = str;
+				} else {
+					$('#d_related_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+	});
+</script>
+
+</body>
+
+</html>

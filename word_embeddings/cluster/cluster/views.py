@@ -28,7 +28,7 @@ def get_topic_related(request):
     ck = request.GET.get('central_keyword')
     tr_threshold = float(request.GET.get('topic_related_threshold'))
     fc_threshold = float(request.GET.get('function_cluster_threshold'))
-    tr_list = MyCluster.get_topic_related(ck, tr_threshold)
+    tr_list = MyCluster.get_related(ck, tr_threshold)
     vocab = [item[1] for item in tr_list]
     # cluster_num, cluster_set, cluster_center_vecs, w2c = MyCluster.get_function_similar_cluster(vocab, fc_threshold, ck)
     cluster_num, cluster_set, cluster_center_vecs, w2c = MyCluster.get_function_similar_cluster(vocab, fc_threshold)
