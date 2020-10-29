@@ -71,21 +71,21 @@ import re
 #             #     continue
 #             dump_file.write(raw_kw + '\n')
 
-# with io.open('../../dataset/node2vec/keywords.txt', 'r', encoding='utf-8') as load_file:
+# with io.open('../../dataset/node2vec/mytriple.csv', 'r', encoding='utf-8') as load_file:
 #     cnt = 0
-#     size = 6000
+#     size = 12000
 #     dump_file = None
 #     for word in load_file:
 #         if cnt % size == 0:
 #             if dump_file is not None:
 #                 dump_file.close()
-#             dump_file = io.open('../../dataset/node2vec/part' + str(int(cnt/size)) + '.txt', 'w', encoding='utf-8')
+#             dump_file = io.open('./node2vec/part' + str(int(cnt/size)) + '.csv', 'w', encoding='utf-8')
 #         dump_file.write(word)
 #         cnt += 1
 #     dump_file.close()
 
-with io.open('../../dataset/node2vec/mytriple.txt', 'w', encoding='utf-8') as dump_file:
-    for i in range(14):
-        with io.open('./node2vec/part'+str(i)+'_o.txt', 'r', encoding='utf-8') as load_file:
+with io.open('../../dataset/node2vec/myjson.json', 'w', encoding='utf-8') as dump_file:
+    for i in range(6):
+        with io.open('./node2vec/part'+str(i)+'_o.json', 'r', encoding='utf-8') as load_file:
             for line in load_file:
                 dump_file.write(line)
