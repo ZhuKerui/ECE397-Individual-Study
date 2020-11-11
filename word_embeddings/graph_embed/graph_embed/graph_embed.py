@@ -77,32 +77,35 @@ def find_related(keyword_csv, related_set):
 
 class Graph_Embed:
     def preprocess_raw_data(self, f_triple:str, f_json:str, f_edgelist:str) -> None:
-        self._vocab = []
-        self._w2q = {}
-        q_set = set()
+        q_list = []
+        q2w = {}
 
         with io.open(f_triple, 'r', encoding='utf-8') as triple_file:
             triple_csv = csv.reader(triple_file)
             for row in triple_csv:
                 word = row[0].replace(' ', '_')
-                self._vocab.append(word)
-                self._w2q[word] = row[1]
-                q_set.add(row[1])
-                    
-        self._q = list(q_set)
-        q2id = {q:i for i,q in enumerate(self._q)}
+                q_list.append(row[1].strip('Q'))
+                q2w[row[1].strip('Q')] = word
 
         self._g = nx.Graph()
-        self._g.add_nodes_from(range(len(self._q)))
+        q_set = set(q_list)
         with io.open(f_json, 'r', encoding='utf-8') as json_file:
             relations = json.load(json_file)
             for q in relations.keys():
-                nodeId = q2id[q]
+                q_num = q.strip('Q')
+                if q_num not in q_set:
+                    continue
                 for property in Commons.Properties:
                     if relations[q][property]:
                         for targetQ in relations[q][property]:
-                            if targetQ in q_set:
-                                self._g.add_edge(nodeId, q2id[targetQ])
+                            targetQ_num = targetQ.strip('Q')
+                            if targetQ_num in q_set:
+                                self._g.add_edge(q_num, targetQ_num)
+        self._q = list(self._g.nodes())
+        self._w = [q2w[q] for q in self._q]
+        self._q2i = {q:i for i, q in enumerate(self._q)}
+        self._w2i = {w:i for i, w in enumerate(self._w)}
+        self._w2q = {self._w[i]:self._q[i] for i in range(len(self._q))}
         nx.write_edgelist(self._g, f_edgelist, delimiter=' ', data=False)
 
     def vecs2nps(self, f_emb, f_vecs):
@@ -111,65 +114,50 @@ class Graph_Embed:
         first=fh.readline()
         size=list(map(int,first.strip().split()))
 
-        self._q_vecs=np.zeros((size[0],size[1]),float)
+        self._vecs=np.zeros((len(self._q),size[1]),float)
 
-        q = []
-        for i,line in enumerate(fh):
+        for line in fh:
             line = line.strip().split()
-            q.append(self._q[int(line[0])])
-            self._q_vecs[i,] = np.array(list(map(float,line[1:])))
+            try:
+                idx = self._q2i[line[0]]
+                self._vecs[idx,] = np.array(list(map(float,line[1:])))
+            except Exception as e:
+                print(e.args)
 
-        self._q = q
-        self._q2i = {q:i for i,q in enumerate(self._q)}
-
-        self._vecs = np.zeros((len(self._vocab),size[1]),float)
-        for i, w in enumerate(self._vocab):
-            if self._w2q[w] in self._q2i.keys():
-                self._vecs[i] = self._q_vecs[self._q2i[self._w2q[w]]]
-            else:
-                self._vecs[i] = np.zeros(size[1],float)
-
-        np.save(foutname+".npy",self._q_vecs)
+        np.save(foutname+".npy",self._vecs)
         with io.open(foutname+".json", "w", encoding='utf-8') as outf:
             json.dump(self._w2q, outf)
-        with io.open(foutname+".q", "w", encoding='utf-8') as outf:
-            outf.write(" ".join(self._q))
         with io.open(foutname+".vocab", "w", encoding='utf-8') as outf:
-            outf.write(" ".join(self._vocab))
+            outf.write(" ".join(self._w))
 
     def load_nps(self, f_vecs):
-        self._q_vecs = np.load(f_vecs+'.npy')
-        self._vocab = io.open(f_vecs+'.vocab').read().split()
-        self._q = io.open(f_vecs+'.q').read().split()
+        self._vecs = np.load(f_vecs+'.npy')
+        self._w = io.open(f_vecs+'.vocab').read().split()
         self._w2q = json.load(io.open(f_vecs+'.json'))
+        self._q = [self._w2q[w] for w in self._w]
+        self._w2i = {w:i for i,w in enumerate(self._w)}
         self._q2i = {q:i for i,q in enumerate(self._q)}
-        self._vecs = np.zeros((len(self._vocab),len(self._q_vecs[0])),float)
-        for i, w in enumerate(self._vocab):
-            if self._w2q[w] in self._q2i.keys():
-                self._vecs[i] = self._q_vecs[self._q2i[self._w2q[w]]]
-            else:
-                self._vecs[i] = np.zeros(len(self._q_vecs[0]),float)
 
     def is_word_exist(self, word):
-        return word in self._w2q.keys()
+        return word in self._w
 
     def is_q_exist(self, q):
-        return q in self._q2i.keys()
+        return q in self._q
 
     def get_similarity(self, word1, word2):
-        if word1 not in self._w2q.keys():
+        if word1 not in self._w:
             print('"' + word1 + '" is not in the vocabulary')
             return 0
-        elif word2 not in self._w2q.keys():
+        elif word2 not in self._w:
             print('"' + word2 + '" is not in the vocabulary')
             return 0
-        vec1 = simple_normalize(self._vecs[self._q2i[self._w2q[word1]]])
-        vec2 = simple_normalize(self._vecs[self._q2i[self._w2q[word2]]])
+        vec1 = simple_normalize(self._vecs[self._w2i[word1]])
+        vec2 = simple_normalize(self._vecs[self._w2i[word2]])
         return vec1.dot(vec2)
         
     def get_related(self, central_word, threshold, similarity=False):
-        if central_word in self._w2q.keys():
-            return self._get_similar(simple_normalize(self._q_vecs[self._q2i[self._w2q[central_word]]]), ugly_normalize(self._vecs), self._vocab, threshold, similarity)
+        if central_word in self._w:
+            return self._get_similar(simple_normalize(self._vecs[self._w2i[central_word]]), ugly_normalize(self._vecs), self._w, threshold, similarity)
         else:
             return None
 
