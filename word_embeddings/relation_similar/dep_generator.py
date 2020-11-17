@@ -3,12 +3,10 @@ import io
 import spacy
 from nltk.tokenize import word_tokenize
 import re
-from spacy_conll import init_parser
 import numpy as np
 import sys
 
 nlp = spacy.load('en_core_web_sm')
-last_end_line = 1076000
 
 def json_generator(json_file):
     with io.open(json_file, 'r', encoding='utf-8') as load_file:
@@ -21,8 +19,6 @@ def extract_sent(json_file, store_file):
         cnt = 0
         for jsonObj in json_generator(json_file):
             cnt += 1
-            if cnt <= last_end_line:
-                continue
             para = jsonObj['abstract'].strip().replace('\n', ' ')
             latex_str = re.search(r'\$.*?\$', para)
             while latex_str:
@@ -48,10 +44,10 @@ class Dep_Based_Embed_Generator:
 
                 word = word.strip()
                 # Directly add the '_' connected keyword
-                self.keywords.add(word.replace(' ', '_'))
+                self.keywords.add(word.replace(' ', '_').replace('-', '_'))
 
                 # Insert the keyword to the tree structure
-                if ' ' not in word:
+                if ' ' not in word and '-' not in word:
                     # If the word is an atomic word instead of a phrase
                     if word not in self.MyTree.keys():
                         # If this is the first time that this word is inserted to the tree
@@ -62,7 +58,7 @@ class Dep_Based_Embed_Generator:
                     # If the word has already been inserted as an atomic word, then we do nothing
                 else:
                     # If the word is an phrase
-                    phrase = word.split(' ')
+                    phrase = re.split('[ -]', word)
                     length = len(phrase)
                     fw = phrase[0]
                     if fw not in self.MyTree.keys():
@@ -203,7 +199,12 @@ class Dep_Based_Embed_Generator:
                 vocab.append(line[0])
                 wvecs.append(np.array(list(map(float,line[1:]))))
 
-        np.save(output_file+".npy",np.array(wvecs, float))
+        self.vocab = vocab
+        self.wvecs = np.array(wvecs, float)
+        np.save(output_file+".npy",self.wvecs)
         with open(output_file+".vocab","w") as outf:
-            outf.write(" ".join(vocab))
+            outf.write(" ".join(self.vocab))
             
+    def load_word_vector(self, load_file):
+        self.vocab = io.open(load_file + '.vocab', 'r', encoding='utf-8').readline().split()
+        self.wvecs = np.load(load_file + '.npy')

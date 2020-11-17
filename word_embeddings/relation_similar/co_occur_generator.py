@@ -45,6 +45,10 @@ def generate_keyword_set_from_wv(wv_file, keyword_file):
             for line in load_file:
                 dump_file.write(line.split()[0] + '\n')
 
+class WeightType:
+    INT = 0
+    FLOAT = 1
+
 class Co_Occur_Generator(Dep_Based_Embed_Generator):
     def extract_co_occur(self, reformed_file:str, co_occur_output_file:str):
         if self.keywords is None:
@@ -122,3 +126,28 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
             for k1, sub_dict in pair_dict.items():
                 for k2, freq in sub_dict.items():
                     csv_f.writerow([k1, k2, freq])
+
+    def load_pairs(self, pair_file, weight_type:WeightType=WeightType.INT, weight_threshold=None):
+        self.pairs = {}
+        with io.open(pair_file, 'r', encoding='utf-8') as load_file:
+            csv_r = csv.reader(load_file)
+            for row in csv_r:
+                if weight_threshold is not None:
+                    weight = int(row[2]) if weight_type == WeightType.INT else float(row[2])
+                    if weight < weight_threshold:
+                        continue
+                if row[0] not in self.pairs.keys():
+                    self.pairs[row[0]] = []
+                if row[1] not in self.pairs.keys():
+                    self.pairs[row[1]] = []
+                self.pairs[row[0]].append(row[1])
+                self.pairs[row[1]].append(row[0])
+    
+    def get_related(self, keyword):
+        if self.pairs is None:
+            print('The pairs are not loaded, please load the pairs first.')
+            return None
+        if keyword not in self.pairs:
+            print('The keyword "%s" does not exist in the keyword list' % keyword)
+            return None
+        return self.pairs[keyword]
