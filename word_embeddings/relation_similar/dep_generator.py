@@ -137,28 +137,32 @@ class Dep_Based_Embed_Generator:
                 reformed_sent += tail_buf
         return ' '.join(reformed_sent)
 
-    def process_sents(self, sent_file, reformed_sent_file):
+    def process_sents(self, sent_file, reformed_sent_file, start_line:int=0, end_line:int=None):
         with io.open(reformed_sent_file, 'w', encoding='utf-8') as output_file:
             with io.open(sent_file, 'r', encoding='utf-8') as load_file:
-                cnt = 0
-                for line in load_file:
-                    cnt += 1
+                idx = -1
+                for idx, line in enumerate(load_file):
+                    if idx < start_line:
+                        continue
                     sent = line.strip()
                     if sent:
                         reformed = self.process_sent(sent)
                         if reformed:
                             output_file.write(reformed)
                             output_file.write('\n')
-                    if cnt % 1000 == 0:
-                        print(cnt)
-                print('Process sentences accomplished with {:d} lines processed'.format(cnt))
+                    if end_line is not None and idx >= end_line - 1:
+                        break
+                    if idx % 1000 == 0:
+                        print(idx)
+                print('Process sentences accomplished with {:d} lines processed'.format(1 + idx - start_line))
 
-    def extract_context(self, reformed_file:str, context_file:str):
+    def extract_context(self, reformed_file:str, context_file:str, start_line:int=0, end_line:int=None):
         with io.open(context_file, 'w', encoding='utf-8') as output_file:
             with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
-                cnt = 0
-                for line in load_file:
-                    cnt += 1
+                idx = -1
+                for idx, line in enumerate(load_file):
+                    if idx < start_line:
+                        continue
                     if not line:
                         continue
                     doc = nlp(line)
@@ -185,9 +189,11 @@ class Dep_Based_Embed_Generator:
 
                         # if word.head.text and word.dep_ not in self.bad_deps:
                         output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
-                    if cnt % 1000 == 0:
-                        print(cnt)
-                print('Extract context accomplished with {:d} lines processed'.format(cnt))
+                    if end_line is not None and idx >= end_line - 1:
+                        break
+                    if idx % 1000 == 0:
+                        print(idx)
+                print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
 
     def extract_word_vector(self, origin_file, output_file):
         fh=open(origin_file)

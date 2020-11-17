@@ -50,14 +50,15 @@ class WeightType:
     FLOAT = 1
 
 class Co_Occur_Generator(Dep_Based_Embed_Generator):
-    def extract_co_occur(self, reformed_file:str, co_occur_output_file:str):
+    def extract_co_occur(self, reformed_file:str, co_occur_output_file:str, start_line:int=0, end_line:int=None):
         if self.keywords is None:
             print('Keywords are not loaded, please use "build_word_tree(input_txt, dump_file)" or  "load_word_tree(json_file)" to load keywords')
             return
         pair_dict = {}
         with io.open(reformed_file, 'r', encoding='utf-8') as sents:
-            cnt = 0
-            for sent in sents:
+            for idx, sent in enumerate(sents):
+                if idx < start_line:
+                    continue
                 words = sent.strip().split()
                 co_occur_set = set()
                 for word in words:
@@ -78,24 +79,26 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                                     sub_dict[word_2] += 1
                                 else:
                                     sub_dict[word_2] = 1
-                cnt += 1
-                if cnt % 10000 == 0:
-                    print(cnt)
+                if end_line is not None and idx >= end_line - 1:
+                    break
+                if idx % 10000 == 0:
+                    print(idx)
         with io.open(co_occur_output_file, 'w', encoding='utf-8') as output:
             csv_f = csv.writer(output)
             for k1, sub_dict in pair_dict.items():
                 for k2, freq in sub_dict.items():
                     csv_f.writerow([k1, k2, freq])
 
-    def extract_semantic_related(self, reformed_file:str, co_occur_output_file:str):
+    def extract_semantic_related(self, reformed_file:str, co_occur_output_file:str, start_line:int=0, end_line:int=None):
         if self.keywords is None:
             print('Keywords are not loaded, please use "build_word_tree(input_txt, dump_file)" or  "load_word_tree(json_file)" to load keywords')
             return
         pair_dict = {}
         with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
-            cnt = 0
-            for line in load_file:
-                cnt += 1
+            idx = -1
+            for idx, line in enumerate(load_file):
+                if idx < start_line:
+                    continue
                 if not line:
                     continue
                 doc = nlp(line)
@@ -118,8 +121,10 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                                 else:
                                     sub_dict[word_2] = 1
 
-                if cnt % 1000 == 0:
-                    print(cnt)
+                if end_line is not None and idx >= end_line - 1:
+                    break
+                if idx % 1000 == 0:
+                    print(idx)
         
         with io.open(co_occur_output_file, 'w', encoding='utf-8') as output:
             csv_f = csv.writer(output)
