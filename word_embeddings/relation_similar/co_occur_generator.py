@@ -132,27 +132,47 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                 for k2, freq in sub_dict.items():
                     csv_f.writerow([k1, k2, freq])
 
-    def load_pairs(self, pair_file, weight_type:WeightType=WeightType.INT, weight_threshold=None):
+    def load_pairs(self, pair_file):
         self.pairs = {}
+        self.related = {}
+        Z = 0
+        word_freq = {}
+        print('Start loading pairs...')
         with io.open(pair_file, 'r', encoding='utf-8') as load_file:
             csv_r = csv.reader(load_file)
             for row in csv_r:
-                if weight_threshold is not None:
-                    weight = int(row[2]) if weight_type == WeightType.INT else float(row[2])
-                    if weight < weight_threshold:
-                        continue
-                if row[0] not in self.pairs.keys():
-                    self.pairs[row[0]] = []
-                if row[1] not in self.pairs.keys():
-                    self.pairs[row[1]] = []
-                self.pairs[row[0]].append(row[1])
-                self.pairs[row[1]].append(row[0])
+                cnt = int(row[2])
+                pair_key = row[0] + '__' + row[1] if row[0] < row[1] else row[1] + '__' + row[0]
+                if pair_key not in self.pairs.keys():
+                    self.pairs[pair_key] = {'cnt':cnt, 'npmi':0}
+                else:
+                    self.pairs[pair_key]['cnt'] += cnt
+                if row[0] not in word_freq:
+                    word_freq[row[0]] = cnt
+                else:
+                    word_freq[row[0]] += cnt
+                if row[1] not in word_freq:
+                    word_freq[row[1]] = cnt
+                else:
+                    word_freq[row[1]] += cnt
+                Z += 2 * cnt
+        print('Start building related pairs for each word and doing NPMI analysis...')
+        for pair, pair_dict in self.pairs.items():
+            word0, word1 = pair.split('__')
+            if word0 not in self.related.keys():
+                self.related[word0] = set()
+            if word1 not in self.related.keys():
+                self.related[word1] = set()
+            self.related[word0].add(word1)
+            self.related[word1].add(word0)
+            pair_dict['npmi'] = -math.log((2 * Z * pair_dict['cnt']) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_dict['cnt'] / Z)
+        
     
     def get_related(self, keyword):
-        if self.pairs is None:
+        if self.related is None:
             print('The pairs are not loaded, please load the pairs first.')
             return None
-        if keyword not in self.pairs:
+        if keyword not in self.related:
             print('The keyword "%s" does not exist in the keyword list' % keyword)
             return None
-        return self.pairs[keyword]
+        return self.related[keyword]

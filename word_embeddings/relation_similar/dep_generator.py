@@ -32,6 +32,14 @@ def extract_sent(json_file, store_file):
         print(cnt)
 
 
+def tailor(output_file, input_prefix, input_posfix, num):
+    with io.open(output_file, 'w', encoding='utf-8') as dump_file:
+        for i in range(num):
+            with io.open(input_prefix + str(i) + input_posfix, 'r', encoding='utf-8') as load_file:
+                for line in load_file:
+                    if line.strip():
+                        dump_file.write(line)
+
 class Dep_Based_Embed_Generator:
 
     def build_word_tree(self, input_txt, dump_file):
@@ -105,7 +113,7 @@ class Dep_Based_Embed_Generator:
     def process_sent(self, sent):
         if not sent:
             return ''
-        word_tokens = word_tokenize(sent.lower())
+        word_tokens = word_tokenize(sent.lower().replace('-', ' '))
         reformed_sent = []
         i = 0
         while i < len(word_tokens):
