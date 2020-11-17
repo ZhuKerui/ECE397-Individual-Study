@@ -66,18 +66,19 @@ class Dep_Based_Embed_Generator:
                     temp_dict = self.MyTree.copy()
                     parent_node = fw
                     for i in range(1, length):
-                        sw = phrase[i]
-                        if sw not in temp_dict[parent_node].keys():
-                            # The second word is inserted to as the child of parent node the first time
-                            temp_dict[parent_node][sw] = {}
-                        if i == length - 1:
-                            # If the second word is the last word in the phrase
-                            if "" not in temp_dict[parent_node][sw].keys():
-                                temp_dict[parent_node][sw][""] = ""
-                        else:
-                            # If the second word is not the last word in the phrase
-                            temp_dict = temp_dict[parent_node].copy()
-                            parent_node = sw
+                        if phrase[i]:
+                            sw = phrase[i]
+                            if sw not in temp_dict[parent_node].keys():
+                                # The second word is inserted to as the child of parent node the first time
+                                temp_dict[parent_node][sw] = {}
+                            if i == length - 1:
+                                # If the second word is the last word in the phrase
+                                if "" not in temp_dict[parent_node][sw].keys():
+                                    temp_dict[parent_node][sw][""] = ""
+                            else:
+                                # If the second word is not the last word in the phrase
+                                temp_dict = temp_dict[parent_node].copy()
+                                parent_node = sw
                 if cnt % 1000 == 0:
                     print(cnt)
             print('Building word tree is accomplished with {:d} words added'.format(cnt))
