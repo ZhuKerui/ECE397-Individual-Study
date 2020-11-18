@@ -31,6 +31,17 @@ def extract_sent(json_file, store_file):
                 print(cnt)
         print(cnt)
 
+def ugly_normalize(vecs):
+   normalizers = np.sqrt((vecs * vecs).sum(axis=1))
+   normalizers[normalizers==0]=1
+   return (vecs.T / normalizers).T
+
+def simple_normalize(vec):
+    normalizer = np.sqrt(np.matmul(vec, vec))
+    if normalizer == 0:
+        normalizer = 1
+    return vec / normalizer
+
 
 def tailor(output_file, input_prefix, input_posfix, num):
     with io.open(output_file, 'w', encoding='utf-8') as dump_file:
@@ -111,6 +122,9 @@ class Dep_Based_Embed_Generator:
                 yield head
 
     def process_sent(self, sent):
+        if self.MyTree is None:
+            print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
+            return
         if not sent:
             return ''
         word_tokens = word_tokenize(sent.lower().replace('-', ' '))
@@ -165,6 +179,9 @@ class Dep_Based_Embed_Generator:
                 print('Process sentences accomplished with {:d} lines processed'.format(1 + idx - start_line))
 
     def extract_context(self, reformed_file:str, context_file:str, start_line:int=0, end_line:int=None):
+        if self.keywords is None:
+            print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
+            return
         with io.open(context_file, 'w', encoding='utf-8') as output_file:
             with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
                 idx = -1
@@ -204,6 +221,9 @@ class Dep_Based_Embed_Generator:
                 print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
 
     def extract_word_vector(self, origin_file, output_file):
+        if self.keywords is None:
+            print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
+            return
         fh=open(origin_file)
         first=fh.readline()
         wvecs=[]
@@ -216,6 +236,8 @@ class Dep_Based_Embed_Generator:
 
         self.vocab = vocab
         self.wvecs = np.array(wvecs, float)
+        self.n_wvecs = ugly_normalize(self.wvecs)
+        self.vocab2i = {word:i for i, word in enumerate(self.vocab)}
         np.save(output_file+".npy",self.wvecs)
         with open(output_file+".vocab","w") as outf:
             outf.write(" ".join(self.vocab))
@@ -223,3 +245,5 @@ class Dep_Based_Embed_Generator:
     def load_word_vector(self, load_file):
         self.vocab = io.open(load_file + '.vocab', 'r', encoding='utf-8').readline().split()
         self.wvecs = np.load(load_file + '.npy')
+        self.n_wvecs = ugly_normalize(self.wvecs)
+        self.vocab2i = {word:i for i, word in enumerate(self.vocab)}

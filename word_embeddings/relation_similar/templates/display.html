@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+{% load static %}
+<html>
+
+<head>
+    <title>Relation Similarity</title>
+    
+    <link rel="StyleSheet" href="{% static 'css/display.css' %}" type="text/css" />
+
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+
+</head>
+
+<body>
+
+<h2>Input Your Central Keyword</h2>
+
+<div>
+    <input type="text" placeholder="Central Keyword" id="central_keyword" />
+</div>
+<div>
+    <select id="pair_set">
+        <option value ="co_occur">Co-occur</option>
+        <option value ="semantic_related">Semantic-related</option>
+    </select>
+    <input type="text" placeholder="Count Threadhold" id="cnt_threshold" />
+    <input type="text" placeholder="NPMI Threadhold" id="npmi_threshold" />
+</div>
+<div>
+    <input type="text" placeholder="eps" id="eps" />
+    <input type="text" placeholder="min-samples" id="min_samples" />
+</div>
+<button type="button" id="search" >Search</button>
+
+<div id="cluster_display"></div>
+
+
+<script>
+
+	$('#search').click(function(){
+		$.ajax({
+			'url':'/search/',
+			'data':{
+                "central_keyword":$("#central_keyword").val(),
+                "pair_set":$('#pair_set').val(),
+                "cnt_threshold":$('#cnt_threshold').val(),
+                "npmi_threshold":$('#npmi_threshold').val(),
+                "eps":$('#eps').val(),
+                "min_samples":$('#min_samples').val()
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    clusters = ret["clusters"];
+                    str = "";
+                    for (var cluster_id = 0; cluster_id < clusters.length; cluster_id++){
+                        if (cluster_id == clusters.length - 1){
+                            str += "<p>Discrete Points:</p><p>";
+                        }else{
+                            str += "<p>Cluster " + cluster_id + ":</p><p>";
+                        }
+                        for (var idx in clusters[cluster_id]){
+                            str += clusters[cluster_id][idx];
+                            str += ",&nbsp;"
+                        }
+                        str += "</p>"
+                    }
+					$('#cluster_display')[0].innerHTML = str;
+				} else {
+					$('#cluster_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+	});
+
+</script>
+
+</body>
+
+</html>

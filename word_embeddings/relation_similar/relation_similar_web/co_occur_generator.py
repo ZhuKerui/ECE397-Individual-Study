@@ -1,12 +1,12 @@
 import json
 import io
-import spacy
-import re
+from nltk import metrics
 import numpy as np
 import csv
 import math
+from sklearn.cluster import DBSCAN
 
-from dep_generator import *
+from relation_similar_web.dep_generator import Dep_Based_Embed_Generator
 
 def nmpi_analysis(co_occur_file, related_pair_file):
     Z = 0.
@@ -44,10 +44,6 @@ def generate_keyword_set_from_wv(wv_file, keyword_file):
         with io.open(keyword_file, 'w', encoding='utf-8') as dump_file:
             for line in load_file:
                 dump_file.write(line.split()[0] + '\n')
-
-class WeightType:
-    INT = 0
-    FLOAT = 1
 
 class Co_Occur_Generator(Dep_Based_Embed_Generator):
     def extract_co_occur(self, reformed_file:str, co_occur_output_file:str, start_line:int=0, end_line:int=None):
@@ -166,8 +162,26 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
             self.related[word0].add(word1)
             self.related[word1].add(word0)
             pair_dict['npmi'] = -math.log((2 * Z * pair_dict['cnt']) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_dict['cnt'] / Z)
+
+        self._pairs_save = self.pairs
         
-    
+    def filter(self, min_count:int=1, min_npmi:float=-1.0):
+        if self._pairs_save is None:
+            print("You haven't loaded pairs yet, please use load_pairs(pair_file) to load the pairs")
+            return
+        self.pairs = {}
+        self.related = {}
+        for pair, item in self._pairs_save.items():
+            if item['cnt'] >= min_count and item['npmi'] >= min_npmi:
+                self.pairs[pair] = item
+                word0, word1 = pair.split('__')
+                if word0 not in self.related.keys():
+                    self.related[word0] = set()
+                if word1 not in self.related.keys():
+                    self.related[word1] = set()
+                self.related[word0].add(word1)
+                self.related[word1].add(word0)
+
     def get_related(self, keyword):
         if self.related is None:
             print('The pairs are not loaded, please load the pairs first.')
@@ -176,3 +190,18 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
             print('The keyword "%s" does not exist in the keyword list' % keyword)
             return None
         return self.related[keyword]
+
+    def dbscan_cluster(self, central_word, eps:float=0.7, min_samples:int=3):
+        if self.n_wvecs is None:
+            print("You haven't load vectors yet, please use load_word_vector(load_file) or extract_word_vector(origin_file, output_file) to load the vectors")
+            return None
+        related_list = list(self.get_related(central_word))
+        vecs = np.array([self.n_wvecs[self.vocab2i[word]] for word in related_list if word in self.vocab])
+        clustering = DBSCAN(eps=eps, min_samples=min_samples, metric='cosine').fit(vecs)
+        cluster_num = max(clustering.labels_) + 1
+        clusters = []
+        for i in range(cluster_num + 1):
+            clusters.append(set())
+        for word_idx, cluster_id in enumerate(clustering.labels_):
+            clusters[cluster_id].add(related_list[word_idx])
+        return clusters
