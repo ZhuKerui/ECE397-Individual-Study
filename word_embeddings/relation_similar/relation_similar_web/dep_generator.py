@@ -8,28 +8,28 @@ import sys
 
 nlp = spacy.load('en_core_web_sm')
 
-def json_generator(json_file):
+def extract_sent(json_file, store_file, start_line:int=0, end_line:int=None):
     with io.open(json_file, 'r', encoding='utf-8') as load_file:
-        for line in load_file:
-            yield json.loads(line)
-
-
-def extract_sent(json_file, store_file):
-    with io.open(store_file, 'a', encoding='utf-8') as output:
-        cnt = 0
-        for jsonObj in json_generator(json_file):
-            cnt += 1
-            para = jsonObj['abstract'].strip().replace('\n', ' ')
-            latex_str = re.search(r'\$.*?\$', para)
-            while latex_str:
-                para = para.replace(latex_str.group(), '')
+        with io.open(store_file, 'w', encoding='utf-8') as output:
+            idx = -1
+            for idx, line in enumerate(load_file):
+                if idx < start_line:
+                    continue
+                jsonObj = json.loads(line)
+                para = jsonObj['abstract'].strip().replace('\n', ' ')
                 latex_str = re.search(r'\$.*?\$', para)
-            doc = nlp(para)
-            for sentence in doc.sents:
-                output.write(str(sentence) + '\n')
-            if cnt % 1000 == 0:
-                print(cnt)
-        print(cnt)
+                while latex_str:
+                    para = para.replace(latex_str.group(), '')
+                    latex_str = re.search(r'\$.*?\$', para)
+                doc = nlp(para)
+                for sentence in doc.sents:
+                    output.write(str(sentence) + '\n')
+
+                if end_line is not None and idx >= end_line - 1:
+                    break
+                if idx % 1000 == 0:
+                    print(idx)
+            print(idx)
 
 def ugly_normalize(vecs):
    normalizers = np.sqrt((vecs * vecs).sum(axis=1))
