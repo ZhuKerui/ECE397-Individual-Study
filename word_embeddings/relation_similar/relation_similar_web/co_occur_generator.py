@@ -1,12 +1,12 @@
 import json
 import io
-from nltk import metrics
+from sklearn.metrics import silhouette_score
 import numpy as np
 import csv
 import math
 from sklearn.cluster import DBSCAN
 
-from relation_similar_web.dep_generator import Dep_Based_Embed_Generator
+from relation_similar_web.dep_generator import *
 
 def nmpi_analysis(co_occur_file, related_pair_file):
     Z = 0.
@@ -128,6 +128,45 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                 for k2, freq in sub_dict.items():
                     csv_f.writerow([k1, k2, freq])
 
+    def extract_semantic_related_from_dep(self, dep_context_file:str, semantic_related_output:str, start_line:int=0, end_line:int=None):
+        if self.keywords is None:
+            print('Keywords are not loaded, please use "build_word_tree(input_txt, dump_file)" or  "load_word_tree(json_file)" to load keywords')
+            return
+        pair_dict = {}
+        with io.open(dep_context_file, 'r', encoding='utf-8') as load_file:
+            idx = -1
+            for idx, line in enumerate(load_file):
+                if idx < start_line:
+                    continue
+                if not line:
+                    continue
+                word0, word1 = line.strip().split()
+                word1 = word1.split('_', 1)[1]
+                if word1 in self.keywords:
+                    pair = [word0, word1]
+                    pair.sort()
+                    word_1 = pair[0]
+                    word_2 = pair[1]
+                    sub_dict = pair_dict.get(word_1)
+                    if sub_dict is None:
+                        pair_dict[word_1] = {word_2 : 1}
+                    else:
+                        if word_2 in sub_dict.keys():
+                            sub_dict[word_2] += 1
+                        else:
+                            sub_dict[word_2] = 1
+
+                if end_line is not None and idx >= end_line - 1:
+                    break
+                if idx % 100000 == 0:
+                    print(idx)
+        
+        with io.open(semantic_related_output, 'w', encoding='utf-8') as output:
+            csv_f = csv.writer(output)
+            for k1, sub_dict in pair_dict.items():
+                for k2, freq in sub_dict.items():
+                    csv_f.writerow([k1, k2, freq])
+                    
     def load_pairs(self, pair_file):
         self.pairs = {}
         self.related = {}
@@ -196,12 +235,14 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
             print("You haven't load vectors yet, please use load_word_vector(load_file) or extract_word_vector(origin_file, output_file) to load the vectors")
             return None
         related_list = list(self.get_related(central_word))
-        vecs = np.array([self.n_wvecs[self.vocab2i[word]] for word in related_list if word in self.vocab])
+        valid_related_list = [word for word in related_list if word in self.vocab]
+        vecs = np.array([self.n_wvecs[self.vocab2i[word]] for word in valid_related_list])
         clustering = DBSCAN(eps=eps, min_samples=min_samples, metric='cosine').fit(vecs)
+        score = silhouette_score(vecs, clustering.labels_, metric='cosine')
         cluster_num = max(clustering.labels_) + 1
         clusters = []
         for i in range(cluster_num + 1):
             clusters.append(set())
         for word_idx, cluster_id in enumerate(clustering.labels_):
-            clusters[cluster_id].add(related_list[word_idx])
-        return clusters
+            clusters[cluster_id].add(valid_related_list[word_idx])
+        return score, clusters

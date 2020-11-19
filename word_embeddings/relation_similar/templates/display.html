@@ -33,6 +33,14 @@
 </div>
 <button type="button" id="search" >Search</button>
 
+<div>
+    <input type="text" placeholder="keyword1" id="keyword_1" />
+    <input type="text" placeholder="keyword2" id="keyword_2" />
+    <button type="button" id="cal_similarity">get cosine distance</button>
+</div>
+
+<div id="cosine_dist_display"></div>
+
 <div id="cluster_display"></div>
 
 
@@ -52,7 +60,7 @@
 			'success' :function(ret){
 				if (ret["status"]){
                     clusters = ret["clusters"];
-                    str = "";
+                    str = "<p><font color='red'>Silhouette Score: " + ret["score"] + "</font></p>";
                     for (var cluster_id = 0; cluster_id < clusters.length; cluster_id++){
                         if (cluster_id == clusters.length - 1){
                             str += "<p>Discrete Points:</p><p>";
@@ -68,6 +76,26 @@
 					$('#cluster_display')[0].innerHTML = str;
 				} else {
 					$('#cluster_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+	});
+
+
+    $('#cal_similarity').click(function(){
+		$.ajax({
+			'url':'/cal_similarity/',
+			'data':{
+                "keyword_1":$("#keyword_1").val(),
+                "keyword_2":$('#keyword_2').val(),
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    distance = ret["distance"];
+                    str = "<p>Cosine Distance between " + $("#keyword_1").val() + " and " + $("#keyword_2").val() + " is " + distance + "</p>";
+					$('#cosine_dist_display')[0].innerHTML = str;
+				} else {
+					$('#cosine_dist_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
 				}
 			}
 		});

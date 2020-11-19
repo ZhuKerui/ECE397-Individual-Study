@@ -247,3 +247,9 @@ class Dep_Based_Embed_Generator:
         self.wvecs = np.load(load_file + '.npy')
         self.n_wvecs = ugly_normalize(self.wvecs)
         self.vocab2i = {word:i for i, word in enumerate(self.vocab)}
+
+    def get_similarity(self, kw1, kw2):
+        if kw1 in self.vocab and kw2 in self.vocab:
+            return self.n_wvecs[self.vocab2i[kw1]].dot(self.n_wvecs[self.vocab2i[kw2]])
+        else:
+            return None
