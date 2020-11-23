@@ -56,9 +56,11 @@ class Sent2KW(Dep_Based_Embed_Generator):
                 json.dump(self.relation_record, dump_file)
 
     def load_relation(self):
-        self.relation_record = json.load(self.relation_record_file)
+        self.relation_record = json.load(io.open(self.relation_record_file, 'r', encoding='utf-8'))
 
     def get_sent_by_relation(self, relation, count):
+        if relation not in self.relation_record.keys():
+            return None
         with io.open(self.reformed_file, 'r', encoding='utf-8') as load_file:
             if count > len(self.relation_record[relation]):
                 sent_list = self.relation_record[relation]

@@ -12,6 +12,8 @@ sent2kw = Sent2KW()
 # co_occur.load_word_tree('../../../dataset/relation_similar/wordtree.json')
 # semantic_related.load_word_tree('../../../dataset/relation_similar/wordtree.json')
 sent2kw.load_word_tree('../../../dataset/relation_similar/wordtree.json')
+sent2kw.register_files('../../../dataset/relation_similar/temp_sent.txt', '../../../dataset/relation_similar/temp_relation_record.json')
+sent2kw.load_relation()
 # co_occur.load_word_vector('../../../dataset/relation_similar/big_vecs')
 # semantic_related.load_word_vector('../../../dataset/relation_similar/big_vecs')
 # print('Start loading co-occur pairs...')
@@ -33,6 +35,18 @@ def sent_analysis(request):
     content['status'] = True
     logging.debug(content['co_occur_kw'])
     logging.debug(content['semantic_related_kw'])
+    return JsonResponse(content, safe=False)
+
+def get_sent_by_relation(request):
+    relation = request.GET.get('relation')
+    count = request.GET.get('count')
+    ret = sent2kw.get_sent_by_relation(relation, count)
+    content = {}
+    if ret is not None:
+        content['status'] = True
+        content['sents_kws'] = ret
+    else:
+        content['status'] = False
     return JsonResponse(content, safe=False)
 
 def search(request):
