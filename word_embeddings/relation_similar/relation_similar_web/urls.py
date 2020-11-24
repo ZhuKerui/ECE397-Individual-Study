@@ -24,4 +24,5 @@ urlpatterns = [
     path('cal_similarity/', views.cal_similarity),
     path('sent_analysis/', views.sent_analysis),
     path('get_sent_by_relation/', views.get_sent_by_relation),
+    path('search_relation/', views.search_relation),
 ]

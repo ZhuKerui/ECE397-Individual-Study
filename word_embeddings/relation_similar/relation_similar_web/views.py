@@ -12,7 +12,7 @@ sent2kw = Sent2KW()
 # co_occur.load_word_tree('../../../dataset/relation_similar/wordtree.json')
 # semantic_related.load_word_tree('../../../dataset/relation_similar/wordtree.json')
 sent2kw.load_word_tree('../../../dataset/relation_similar/wordtree.json')
-sent2kw.register_files('../../../dataset/relation_similar/temp_sent.txt', '../../../dataset/relation_similar/temp_relation_record.json')
+sent2kw.register_files('../../../dataset/relation_similar/reformed.txt', '../../../dataset/relation_similar/relation_record.json')
 sent2kw.load_relation()
 # co_occur.load_word_vector('../../../dataset/relation_similar/big_vecs')
 # semantic_related.load_word_vector('../../../dataset/relation_similar/big_vecs')
@@ -39,7 +39,7 @@ def sent_analysis(request):
 
 def get_sent_by_relation(request):
     relation = request.GET.get('relation')
-    count = request.GET.get('count')
+    count = int(request.GET.get('count'))
     ret = sent2kw.get_sent_by_relation(relation, count)
     content = {}
     if ret is not None:
@@ -47,6 +47,17 @@ def get_sent_by_relation(request):
         content['sents_kws'] = ret
     else:
         content['status'] = False
+    return JsonResponse(content, safe=False)
+
+def search_relation(request):
+    relation_count = int(request.GET.get('relation_count'))
+    relations = [[rel, len(item)] for rel, item in sent2kw.relation_record.items()]
+    relations.sort(key=lambda x: x[1], reverse=True)
+    if relation_count > len(relations):
+        relation_count = len(relations)
+    content = {}
+    content['status'] = True
+    content['relations'] = relations[0:relation_count]
     return JsonResponse(content, safe=False)
 
 def search(request):

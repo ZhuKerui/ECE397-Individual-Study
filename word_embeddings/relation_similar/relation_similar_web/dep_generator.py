@@ -61,12 +61,12 @@ class Dep_Based_Embed_Generator:
             for word in load_file:
                 cnt += 1
 
-                word = word.strip()
+                word = word.strip().replace('-', '_')
                 # Directly add the '_' connected keyword
                 self.keywords.add(word.replace(' ', '_').replace('-', '_'))
 
                 # Insert the keyword to the tree structure
-                if ' ' not in word and '-' not in word:
+                if ' ' not in word:
                     # If the word is an atomic word instead of a phrase
                     if word not in self.MyTree.keys():
                         # If this is the first time that this word is inserted to the tree
@@ -77,7 +77,7 @@ class Dep_Based_Embed_Generator:
                     # If the word has already been inserted as an atomic word, then we do nothing
                 else:
                     # If the word is an phrase
-                    phrase = re.split('[ -]', word)
+                    phrase = word.split()
                     length = len(phrase)
                     fw = phrase[0]
                     if fw not in self.MyTree.keys():
@@ -127,7 +127,7 @@ class Dep_Based_Embed_Generator:
             return
         if not sent:
             return ''
-        word_tokens = word_tokenize(sent.lower().replace('-', ' '))
+        word_tokens = word_tokenize(sent.lower().replace('-', '_'))
         reformed_sent = []
         i = 0
         while i < len(word_tokens):

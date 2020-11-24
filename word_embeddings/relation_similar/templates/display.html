@@ -38,6 +38,25 @@
 <br>
 <br>
 
+<h3>Check semantic-related examples</h3>
+<div>
+    <input type="text" id="semantic_relation_num" placeholder="The number of top frequent semantic relation" />
+    <button type="button" id="search_top_freq_relation">Search relation</button>
+</div>
+
+<div id="search_top_freq_relation_display"></div>
+
+<div>
+    <input type="text" id="wanted_relation" placeholder="The semantic relation to check out" />
+    <input type="text" id="wanted_relation_num" placeholder="The number of examples" />
+    <button type="button" id="search_relation_example">Search relation</button>
+</div>
+
+<div id="search_relation_example_display"></div>
+
+<br>
+<br>
+
 <h2>Input Your Central Keyword</h2>
 
 <div>
@@ -96,7 +115,6 @@
 			}
 		});
 	});
-
 
     $('#cal_similarity').click(function(){
 		$.ajax({
@@ -163,6 +181,63 @@
 			}
 		});
 	});
+
+    $('#search_top_freq_relation').click(function(){
+        console.log($("#semantic_relation_num").val());
+		$.ajax({
+			'url':'/search_relation/',
+			'data':{
+                "relation_count":$("#semantic_relation_num").val(),
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    str = "<p>";
+                    relations = ret["relations"];
+                    relations.forEach(element => {
+                        str += element[0] + "(" + element[1] + "),&nbsp;";
+                    });
+                    str += "</p>";
+                    $('#search_top_freq_relation_display')[0].innerHTML = str;
+				} else {
+					$('#search_top_freq_relation_display')[0].innerHTML = '<p>ERROE</p>';
+				}
+			}
+		});
+	});
+
+    $('#search_relation_example').click(function(){
+		$.ajax({
+			'url':'/get_sent_by_relation/',
+			'data':{
+                "relation":$("#wanted_relation").val(),
+                "count":$("#wanted_relation_num").val(),
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    str = "<p>";
+                    sents_kws = ret["sents_kws"];
+                    sents_kws.forEach(element => {
+                        word_tokens = element[0].split(" ");
+                        for(var i in word_tokens){
+                            if(Number(i) == element[1]){
+                                str += "<font color='red'>" + word_tokens[i] + "</font> ";
+                            }else if(Number(i) == element[2]){
+                                str += "<font color='blue'>" + word_tokens[i] + "</font> ";
+                            }else{
+                                str += word_tokens[i] + " ";
+                            }
+                        }
+                        str += "<font color='green'>" + element[3] + "</font><br>";
+                    });
+                    str += "</p>"
+                    $('#search_relation_example_display')[0].innerHTML = str;
+				} else {
+					$('#search_relation_example_display')[0].innerHTML = '<p>The relation does not exist.</p>';
+				}
+			}
+		});
+	});
+
 </script>
 
 </body>
