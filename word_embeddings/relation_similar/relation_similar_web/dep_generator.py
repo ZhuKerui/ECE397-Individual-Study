@@ -177,7 +177,7 @@ class Dep_Based_Embed_Generator:
                 reformed_sent += tail_buf
         return ' '.join(reformed_sent).replace(' - ', '-')
 
-    def __extract_context(self, id_:int, corpus:str, context_file:str, reformed_file:str=None, sent_split:bool=False, start_line:int=0, lines:int=0):
+    def extract_context(self, id_:int, corpus:str, context_file:str, reformed_file:str=None, sent_split:bool=False, start_line:int=0, lines:int=0):
         if lines <= 0:
             return
         global is_exit
@@ -239,7 +239,7 @@ class Dep_Based_Embed_Generator:
                 else:
                     print('Extract context accomplished with %d lines processed' % (1 + idx - start_line))
 
-    def extract_context(self, corpus, context_file:str, reformed_file:str=None, thread_num:int=1):
+    def extract_context_multithread(self, corpus, context_file:str, reformed_file:str=None, thread_num:int=1):
         global is_exit
         if self.keywords is None:
             print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
@@ -268,7 +268,7 @@ class Dep_Based_Embed_Generator:
                 lines = unit_lines
             else:
                 lines = line_count - unit_lines * i
-            t = threading.Thread(target=self.__extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines))
+            t = threading.Thread(target=self.extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines))
             t.setDaemon(True)
             threads.append(t)
         for i in range(thread_num):
