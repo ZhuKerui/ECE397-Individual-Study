@@ -1,4 +1,3 @@
-from numpy.lib.twodim_base import tri
 from relation_similar_web.dep_generator import *
 
 class Sent2KW(Dep_Based_Embed_Generator):

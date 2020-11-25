@@ -46,7 +46,9 @@ def generate_keyword_set_from_wv(wv_file, keyword_file):
                 dump_file.write(line.split()[0] + '\n')
 
 class Co_Occur_Generator(Dep_Based_Embed_Generator):
-    def extract_co_occur(self, reformed_file:str, co_occur_output_file:str, start_line:int=0, end_line:int=None):
+    def extract_co_occur(self, reformed_file:str, co_occur_output_file:str, start_line:int=0, lines:int=0):
+        if lines <= 0:
+            return
         if self.keywords is None:
             print('Keywords are not loaded, please use "build_word_tree(input_txt, dump_file)" or  "load_word_tree(json_file)" to load keywords')
             return
@@ -75,7 +77,8 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                                     sub_dict[word_2] += 1
                                 else:
                                     sub_dict[word_2] = 1
-                if end_line is not None and idx >= end_line - 1:
+                cnt = idx - start_line
+                if cnt >= lines - 1:
                     break
                 if idx % 10000 == 0:
                     print(idx)
@@ -85,50 +88,7 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                 for k2, freq in sub_dict.items():
                     csv_f.writerow([k1, k2, freq])
 
-    def extract_semantic_related(self, reformed_file:str, co_occur_output_file:str, start_line:int=0, end_line:int=None):
-        if self.keywords is None:
-            print('Keywords are not loaded, please use "build_word_tree(input_txt, dump_file)" or  "load_word_tree(json_file)" to load keywords')
-            return
-        pair_dict = {}
-        with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
-            idx = -1
-            for idx, line in enumerate(load_file):
-                if idx < start_line:
-                    continue
-                if not line:
-                    continue
-                doc = nlp(line)
-                for word in doc:
-                    if word.text.lower() not in self.keywords:
-                        continue
-                    word_txt = word.text.lower()
-                    for child in word.children:
-                        if child.text in self.keywords:
-                            pair = [word_txt, child.text.lower()]
-                            pair.sort()
-                            word_1 = pair[0]
-                            word_2 = pair[1]
-                            sub_dict = pair_dict.get(word_1)
-                            if sub_dict is None:
-                                pair_dict[word_1] = {word_2 : 1}
-                            else:
-                                if word_2 in sub_dict.keys():
-                                    sub_dict[word_2] += 1
-                                else:
-                                    sub_dict[word_2] = 1
-
-                if end_line is not None and idx >= end_line - 1:
-                    break
-                if idx % 1000 == 0:
-                    print(idx)
-        
-        with io.open(co_occur_output_file, 'w', encoding='utf-8') as output:
-            csv_f = csv.writer(output)
-            for k1, sub_dict in pair_dict.items():
-                for k2, freq in sub_dict.items():
-                    csv_f.writerow([k1, k2, freq])
-
-    def extract_semantic_related_from_dep(self, dep_context_file:str, semantic_related_output:str, start_line:int=0, end_line:int=None):
+    def extract_semantic_related(self, dep_context_file:str, semantic_related_output:str):
         if self.keywords is None:
             print('Keywords are not loaded, please use "build_word_tree(input_txt, dump_file)" or  "load_word_tree(json_file)" to load keywords')
             return
@@ -136,8 +96,6 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
         with io.open(dep_context_file, 'r', encoding='utf-8') as load_file:
             idx = -1
             for idx, line in enumerate(load_file):
-                if idx < start_line:
-                    continue
                 if not line:
                     continue
                 word0, word1 = line.strip().split()
@@ -156,8 +114,6 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                         else:
                             sub_dict[word_2] = 1
 
-                if end_line is not None and idx >= end_line - 1:
-                    break
                 if idx % 100000 == 0:
                     print(idx)
         

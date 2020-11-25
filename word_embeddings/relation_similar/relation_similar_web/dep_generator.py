@@ -168,7 +168,7 @@ class Dep_Based_Embed_Generator:
                 reformed_sent += tail_buf
         return ' '.join(reformed_sent).replace(' - ', '-')
 
-    def __extract_context(self, id_:int, corpus:str, context_file:str, reformed_file:str=None, start_line:int=0, lines:int=0):
+    def __extract_context(self, id_:int, corpus:str, context_file:str, reformed_file:str=None, sent_split:bool=False, start_line:int=0, lines:int=0):
         if lines <= 0:
             return
         reformed_output_file = None
@@ -185,12 +185,14 @@ class Dep_Based_Embed_Generator:
                         continue
                     if reformed_output_file is not None:
                         line = self._process_sent(line)
-                        if line:
-                            reformed_output_file.write(line + '\n')
-                        else:
+                        if not line:
                             continue
+                        if not sent_split:
+                            reformed_output_file.write(line + '\n')
                     doc = nlp(line)
                     for sentence in doc.sents:
+                        if reformed_output_file is not None and sent_split:
+                            reformed_output_file.write(sentence + '\n')
                         for word in sentence:
                             if word.text not in self.keywords:
                                 continue
