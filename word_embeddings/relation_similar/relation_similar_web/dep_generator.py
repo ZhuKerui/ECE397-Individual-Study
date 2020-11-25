@@ -4,8 +4,17 @@ import spacy
 import numpy as np
 import threading
 import os
+import signal
+from time import sleep
 
 nlp = spacy.load('en_core_web_sm')
+
+is_exit = False
+
+def multithread_kill(signum, frame):
+    global is_exit
+    is_exit = True
+    print("receive a signal %d, is_exit = %d"%(signum, is_exit))
 
 def extract_sent(json_file, store_file, start_line:int=0, end_line:int=None):
     with io.open(json_file, 'r', encoding='utf-8') as load_file:
@@ -171,6 +180,7 @@ class Dep_Based_Embed_Generator:
     def __extract_context(self, id_:int, corpus:str, context_file:str, reformed_file:str=None, sent_split:bool=False, start_line:int=0, lines:int=0):
         if lines <= 0:
             return
+        global is_exit
         reformed_output_file = None
         if reformed_file is not None:
             reformed_output_file = io.open(reformed_file, 'w', encoding='utf-8')
@@ -178,6 +188,8 @@ class Dep_Based_Embed_Generator:
             with io.open(corpus, 'r', encoding='utf-8') as load_file:
                 idx = -1
                 for idx, line in enumerate(load_file):
+                    if is_exit:
+                        break
                     if idx < start_line:
                         continue
                     line = line.strip()
@@ -218,12 +230,17 @@ class Dep_Based_Embed_Generator:
                         break
                     if cnt % 100 == 0:
                         print('Thread %d has processed %.2f' %(id_, float(cnt) * 100 / lines))
+                        sleep(0.5)
 
                 if reformed_output_file is not None:
                     reformed_output_file.close()
-                print('Extract context accomplished with %d lines processed' % (1 + idx - start_line))
+                if is_exit:
+                    print('Thread %d is terminated' % (id_))
+                else:
+                    print('Extract context accomplished with %d lines processed' % (1 + idx - start_line))
 
     def extract_context(self, corpus, context_file:str, reformed_file:str=None, thread_num:int=1):
+        global is_exit
         if self.keywords is None:
             print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
             return
@@ -236,6 +253,9 @@ class Dep_Based_Embed_Generator:
             line_count += 1
         unit_lines = line_count / thread_num
         threads = []
+        signal.signal(signal.SIGINT, multithread_kill)
+        signal.signal(signal.SIGTERM, multithread_kill)
+        is_exit = False
         for i in range(thread_num):
             # id:int, corpus:str, context_file:str, reformed_file:str=None, start_line:int=0, lines:int=0
             id_ = i
@@ -248,11 +268,17 @@ class Dep_Based_Embed_Generator:
                 lines = unit_lines
             else:
                 lines = line_count - unit_lines * i
-            threads.append(threading.Thread(target=self.__extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines)))
+            t = threading.Thread(target=self.__extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines))
+            t.setDaemon(True)
+            threads.append(t)
         for i in range(thread_num):
             threads[i].start()
-        for i in range(thread_num):
-            threads[i].join()
+        while 1:
+            alive = False
+            for i in range(thread_num):
+                alive = alive or threads[i].isAlive()
+            if not alive:
+                break
         tailor(context_file, context_file, '', thread_num, remove=True)
         if reformed_file is not None:
             tailor(reformed_file, reformed_file, '', thread_num, remove=True)
