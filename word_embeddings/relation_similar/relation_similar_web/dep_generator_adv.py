@@ -5,6 +5,8 @@ from nltk.tokenize import word_tokenize
 import re
 import numpy as np
 import sys
+import threading
+import os
 
 nlp = spacy.load('en_core_web_sm')
 
@@ -39,13 +41,15 @@ def simple_normalize(vec):
     return vec / normalizer
 
 
-def tailor(output_file, input_prefix, input_posfix, num):
+def tailor(output_file, input_prefix, input_posfix, num, remove=False):
     with io.open(output_file, 'w', encoding='utf-8') as dump_file:
         for i in range(num):
             with io.open(input_prefix + str(i) + input_posfix, 'r', encoding='utf-8') as load_file:
                 for line in load_file:
                     if line.strip():
                         dump_file.write(line)
+            if remove:
+                os.remove(input_prefix + str(i) + input_posfix)
 
 class Dep_Based_Embed_Generator:
 
@@ -111,14 +115,14 @@ class Dep_Based_Embed_Generator:
         for key in node.keys():
             if key:
                 for child in self.__read_word_tree(key, node[key]):
-                    if head:
+                    if head and head != '-':
                         yield head + '_' + child
                     else:
                         yield child
             else:
                 yield head
 
-    def process_sent(self, sent):
+    def __process_sent(self, sent):
         if self.MyTree is None:
             print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
             return
@@ -152,112 +156,92 @@ class Dep_Based_Embed_Generator:
                     i += 1
                 # Change the keyword into one uniformed word and add it to the reformed_sent
                 if phrase_buf:
-                    reformed_sent.append('_'.join(phrase_buf))
+                    reformed_sent.append('_'.join(phrase_buf).replace('_-_', '_'))
                 reformed_sent += tail_buf
-        return ' '.join(reformed_sent)
+        return ' '.join(reformed_sent).replace(' - ', '-')
 
-    def process_sents(self, sent_file, reformed_sent_file, start_line:int=0, end_line:int=None):
-        with io.open(reformed_sent_file, 'w', encoding='utf-8') as output_file:
-            with io.open(sent_file, 'r', encoding='utf-8') as load_file:
+    def __extract_context(self, id_:int, corpus:str, context_file:str, reformed_file:str=None, start_line:int=0, lines:int=0):
+        if lines <= 0:
+            return
+        if reformed_file is not None:
+            reformed_output_file = io.open(reformed_file, 'w', encoding='utf-8')
+        with io.open(context_file, 'w', encoding='utf-8') as context_output_file:
+            with io.open(corpus, 'r', encoding='utf-8') as load_file:
                 idx = -1
                 for idx, line in enumerate(load_file):
                     if idx < start_line:
                         continue
-                    sent = line.strip()
-                    if sent:
-                        reformed = self.process_sent(sent)
-                        if reformed:
-                            output_file.write(reformed)
-                            output_file.write('\n')
-                    if end_line is not None and idx >= end_line - 1:
-                        break
-                    if idx % 1000 == 0:
-                        print(idx)
-                print('Process sentences accomplished with {:d} lines processed'.format(1 + idx - start_line))
+                    line = line.strip()
+                    if not line:
+                        continue
+                    if reformed_file is not None:
+                        line = self.__process_sent(line)
+                        if line:
+                            reformed_output_file.write(line + '\n')
+                        else:
+                            continue
+                    doc = nlp(line)
+                    for sentence in doc.sents:
+                        for word in sentence:
+                            if word.text not in self.keywords:
+                                continue
+                            word_txt = word.text.lower()
+                            for child in word.children:
+                                if child.dep_ == 'prep':
+                                    relation = ''
+                                    child_txt = ''
+                                    for grand_child in child.children:
+                                        if grand_child.dep_ == 'pobj':
+                                            relation = 'prep_' + child.text.lower()
+                                            child_txt = grand_child.text.lower()
+                                    if not relation:
+                                        continue
+                                else:
+                                    relation = child.dep_
+                                    child_txt = child.text.lower()
+                                context_output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
 
-    def extract_context(self, reformed_file:str, context_file:str, start_line:int=0, end_line:int=None):
+                            context_output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
+                    cnt = idx - start_line
+                    if cnt >= lines - 1:
+                        break
+                    if cnt % 100 == 0:
+                        print('Thread %d has processed %.2f%' %(id_, float(cnt) * 100 / lines))
+                print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
+
+    def extract_context_adv(self, corpus, context_file:str, reformed_file:str=None, thread_num:int=1):
         if self.keywords is None:
             print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
             return
-        with io.open(context_file, 'w', encoding='utf-8') as output_file:
-            with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
-                idx = -1
-                for idx, line in enumerate(load_file):
-                    if idx < start_line:
-                        continue
-                    if not line:
-                        continue
-                    doc = nlp(line)
-                    for word in doc:
-                        if word.text not in self.keywords:
-                            continue
-                        word_txt = word.text.lower()
-                        for child in word.children:
-                            if child.dep_ == 'prep':
-                                relation = ''
-                                child_txt = ''
-                                for grand_child in child.children:
-                                    if grand_child.dep_ == 'pobj':
-                                        relation = 'prep_' + child.text.lower()
-                                        child_txt = grand_child.text.lower()
-                                if not relation:
-                                    continue
-                            # elif child.dep_ in self.bad_deps:
-                                # continue
-                            else:
-                                relation = child.dep_
-                                child_txt = child.text.lower()
-                            output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
-
-                        # if word.head.text and word.dep_ not in self.bad_deps:
-                        output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
-                    if end_line is not None and idx >= end_line - 1:
-                        break
-                    if idx % 1000 == 0:
-                        print(idx)
-                print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
-
-    def extract_context_adv(self, corpus, context_file:str, reformed_file:str=None, thread:int=1):
-        if self.keywords is None:
-            print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
+        if thread_num <= 0:
             return
-        with io.open(context_file, 'w', encoding='utf-8') as output_file:
-            with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
-                idx = -1
-                for idx, line in enumerate(load_file):
-                    if idx < start_line:
-                        continue
-                    if not line:
-                        continue
-                    doc = nlp(line)
-                    for word in doc:
-                        if word.text not in self.keywords:
-                            continue
-                        word_txt = word.text.lower()
-                        for child in word.children:
-                            if child.dep_ == 'prep':
-                                relation = ''
-                                child_txt = ''
-                                for grand_child in child.children:
-                                    if grand_child.dep_ == 'pobj':
-                                        relation = 'prep_' + child.text.lower()
-                                        child_txt = grand_child.text.lower()
-                                if not relation:
-                                    continue
-                            # elif child.dep_ in self.bad_deps:
-                                # continue
-                            else:
-                                relation = child.dep_
-                                child_txt = child.text.lower()
-                            output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
-
-                        # if word.head.text and word.dep_ not in self.bad_deps:
-                        output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
-                    if end_line is not None and idx >= end_line - 1:
-                        break
-                    if idx % 1000 == 0:
-                        print(idx)
-                print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
+        line_count = -1
+        with io.open(corpus, 'r', encoding='utf-8') as load_file:
+            for line_count, line in enumerate(load_file):
+                pass
+            line_count += 1
+        unit_lines = line_count / thread_num
+        threads = []
+        for i in range(thread_num):
+            # id:int, corpus:str, context_file:str, reformed_file:str=None, start_line:int=0, lines:int=0
+            id_ = i
+            temp_context_file = context_file + str(id_)
+            temp_reformed_file = None
+            if reformed_file is not None:
+                temp_reformed_file = reformed_file + str(id_) + '.txt'
+            start_line = unit_lines * id_
+            if i < thread_num - 1:
+                lines = unit_lines
+            else:
+                lines = line_count - unit_lines * i
+            threads.append(threading.Thread(target=self.__extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, start_line, lines)))
+        for i in range(thread_num):
+            threads[i].start()
+        for i in range(thread_num):
+            threads[i].join()
+        tailor(context_file, context_file, '', thread_num, remove=True)
+        if reformed_file is not None:
+            tailor(reformed_file, reformed_file, '.txt', thread_num, remove=True)
 
     def extract_word_vector(self, origin_file, output_file):
         if self.keywords is None:
