@@ -192,7 +192,7 @@ class Dep_Based_Embed_Generator:
                     doc = nlp(line)
                     for sentence in doc.sents:
                         if reformed_output_file is not None and sent_split:
-                            reformed_output_file.write(sentence + '\n')
+                            reformed_output_file.write(sentence.text + '\n')
                         for word in sentence:
                             if word.text not in self.keywords:
                                 continue
@@ -248,7 +248,7 @@ class Dep_Based_Embed_Generator:
                 lines = unit_lines
             else:
                 lines = line_count - unit_lines * i
-            threads.append(threading.Thread(target=self.__extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, start_line, lines)))
+            threads.append(threading.Thread(target=self.__extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines)))
         for i in range(thread_num):
             threads[i].start()
         for i in range(thread_num):
