@@ -217,6 +217,48 @@ class Dep_Based_Embed_Generator:
                         print(idx)
                 print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
 
+    def extract_context_adv(self, corpus, context_file:str, reformed_file:str=None, thread:int=1):
+        if self.keywords is None:
+            print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
+            return
+        with io.open(context_file, 'w', encoding='utf-8') as output_file:
+            with io.open(reformed_file, 'r', encoding='utf-8') as load_file:
+                idx = -1
+                for idx, line in enumerate(load_file):
+                    if idx < start_line:
+                        continue
+                    if not line:
+                        continue
+                    doc = nlp(line)
+                    for word in doc:
+                        if word.text not in self.keywords:
+                            continue
+                        word_txt = word.text.lower()
+                        for child in word.children:
+                            if child.dep_ == 'prep':
+                                relation = ''
+                                child_txt = ''
+                                for grand_child in child.children:
+                                    if grand_child.dep_ == 'pobj':
+                                        relation = 'prep_' + child.text.lower()
+                                        child_txt = grand_child.text.lower()
+                                if not relation:
+                                    continue
+                            # elif child.dep_ in self.bad_deps:
+                                # continue
+                            else:
+                                relation = child.dep_
+                                child_txt = child.text.lower()
+                            output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
+
+                        # if word.head.text and word.dep_ not in self.bad_deps:
+                        output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
+                    if end_line is not None and idx >= end_line - 1:
+                        break
+                    if idx % 1000 == 0:
+                        print(idx)
+                print('Extract context accomplished with {:d} lines processed'.format(1 + idx - start_line))
+
     def extract_word_vector(self, origin_file, output_file):
         if self.keywords is None:
             print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
