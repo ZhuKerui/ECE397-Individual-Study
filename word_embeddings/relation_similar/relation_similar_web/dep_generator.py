@@ -230,7 +230,6 @@ class Dep_Based_Embed_Generator:
                         break
                     if cnt % 100 == 0:
                         print('Thread %d has processed %.2f' %(id_, float(cnt) * 100 / lines))
-                        sleep(0.5)
 
                 if reformed_output_file is not None:
                     reformed_output_file.close()
