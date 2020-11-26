@@ -2,7 +2,7 @@ from relation_similar_web.dep_generator import *
 
 class Sent2KW(Dep_Based_Embed_Generator):
     def find_kw(self, sent):
-        word_tokens = word_tokenize(sent.lower().replace('-', ' '))
+        word_tokens = [w.text for w in nlp(sent.lower())]
         keywords = []
         for idx, word_token in enumerate(word_tokens):
             if word_token in self.keywords:
@@ -70,7 +70,7 @@ class Sent2KW(Dep_Based_Embed_Generator):
                 self.relation_record[key] += value
             else:
                 self.relation_record[key] = value
-                
+
     def get_sent_by_relation(self, relation, count):
         if relation not in self.relation_record.keys():
             return None

@@ -71,8 +71,7 @@
     <input type="text" placeholder="NPMI Threadhold" id="npmi_threshold" />
 </div>
 <div>
-    <input type="text" placeholder="eps" id="eps" />
-    <input type="text" placeholder="min-samples" id="min_samples" />
+    <input type="text" placeholder="k" id="k" />
 </div>
 <button type="button" id="search" >Search</button>
 
@@ -89,8 +88,7 @@
                 "pair_set":$('#pair_set').val(),
                 "cnt_threshold":$('#cnt_threshold').val(),
                 "npmi_threshold":$('#npmi_threshold').val(),
-                "eps":$('#eps').val(),
-                "min_samples":$('#min_samples').val()
+                "k":$('#k').val(),
 			},
 			'success' :function(ret){
 				if (ret["status"]){

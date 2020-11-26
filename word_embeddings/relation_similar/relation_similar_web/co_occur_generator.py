@@ -4,7 +4,8 @@ from sklearn.metrics import silhouette_score
 import numpy as np
 import csv
 import math
-from sklearn.cluster import DBSCAN
+# from sklearn.cluster import DBSCAN
+from relation_similar_web.vdbscan import *
 
 from relation_similar_web.dep_generator import *
 
@@ -186,19 +187,27 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
             return None
         return self.related[keyword]
 
-    def dbscan_cluster(self, central_word, eps:float=0.7, min_samples:int=3):
+    def dbscan_cluster(self, central_word, k:int=3):
         if self.n_wvecs is None:
             print("You haven't load vectors yet, please use load_word_vector(load_file) or extract_word_vector(origin_file, output_file) to load the vectors")
             return None
         related_list = list(self.get_related(central_word))
         valid_related_list = [word for word in related_list if word in self.vocab]
         vecs = np.array([self.n_wvecs[self.vocab2i[word]] for word in valid_related_list])
-        clustering = DBSCAN(eps=eps, min_samples=min_samples, metric='cosine').fit(vecs)
-        score = silhouette_score(vecs, clustering.labels_, metric='cosine')
-        cluster_num = max(clustering.labels_) + 1
+        np.save('temp_vec.npy', vecs)
+        # clustering = DBSCAN(eps=eps, min_samples=min_samples, metric='cosine').fit(vecs)
+        # score = silhouette_score(vecs, clustering.labels_, metric='cosine')
+        # cluster_num = max(clustering.labels_) + 1
+        label = do_cluster(vecs, k)
+        if all(label == -1):
+            score = -1
+        else:
+            score = silhouette_score(vecs, label, metric='cosine')
+        cluster_num = max(label) + 1
         clusters = []
         for i in range(cluster_num + 1):
             clusters.append(set())
-        for word_idx, cluster_id in enumerate(clustering.labels_):
+        # for word_idx, cluster_id in enumerate(clustering.labels_):
+        for word_idx, cluster_id in enumerate(label):
             clusters[cluster_id].add(valid_related_list[word_idx])
         return score, clusters
