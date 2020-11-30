@@ -2,7 +2,7 @@ import json
 import io
 import spacy
 import numpy as np
-import threading
+from multiprocessing import Process
 import os
 import signal
 from time import sleep
@@ -267,7 +267,7 @@ class Dep_Based_Embed_Generator:
                 lines = unit_lines
             else:
                 lines = line_count - unit_lines * i
-            t = threading.Thread(target=self.extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines))
+            t = Process(target=self.extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines))
             t.setDaemon(True)
             threads.append(t)
         for i in range(thread_num):
