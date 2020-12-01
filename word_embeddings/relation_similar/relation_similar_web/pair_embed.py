@@ -17,6 +17,7 @@ class Pair_Embed(Dep_Based_Embed_Generator):
         with io.open(context_file, 'w', encoding='utf-8') as context_output_file:
             with io.open(corpus, 'r', encoding='utf-8') as load_file:
                 idx = -1
+                str_buffer = []
                 for idx, line in enumerate(load_file):
                     if is_exit:
                         break
@@ -35,10 +36,13 @@ class Pair_Embed(Dep_Based_Embed_Generator):
                     for sentence in doc.sents:
                         if reformed_output_file is not None and sent_split:
                             reformed_output_file.write(sentence.text + '\n')
+                        kw2ctx = {}
                         for word in sentence:
                             if word.text not in self.keywords:
                                 continue
-                            word_txt = word.text.lower()
+                            word_txt = word.text
+                            if word_txt not in kw2ctx:
+                                kw2ctx[word_txt] = set()
                             for child in word.children:
                                 if child.dep_ == 'prep':
                                     relation = ''
@@ -52,62 +56,34 @@ class Pair_Embed(Dep_Based_Embed_Generator):
                                 else:
                                     relation = child.dep_
                                     child_txt = child.text.lower()
-                                context_output_file.write(' '.join((word_txt, '_'.join((relation, child_txt)))) + '\n')
+                                kw2ctx[word_txt].add(relation + '_' + child_txt)
 
-                            context_output_file.write(' '.join((word_txt, 'I_'.join((word.dep_, word.head.text.lower())))) + '\n')
+                            kw2ctx[word_txt].add(word.dep_ + 'I_' + word.head.text)
+                        if len(kw2ctx) <= 1:
+                            continue
+                        kws = list(kw2ctx.keys())
+                        for i in range(len(kws)-1):
+                            for j in range(i+1, len(kws)):
+                                pair_1 = kws[i] + '__' + kws[j]
+                                pair_2 = kws[j] + '__' + kws[i]
+                                for ctx in kw2ctx[kws[i]]:
+                                    str_buffer.append(pair_1 + ' h_' + ctx + '\n')
+                                    str_buffer.append(pair_2 + ' t_' + ctx + '\n')
+                                for ctx in kw2ctx[kws[j]]:
+                                    str_buffer.append(pair_1 + ' t_' + ctx + '\n')
+                                    str_buffer.append(pair_2 + ' h_' + ctx + '\n')
                     cnt = idx - start_line
                     if cnt >= lines - 1:
                         break
                     if cnt % 100 == 0:
+                        context_output_file.write(''.join(str_buffer))
+                        str_buffer = []
                         print('Thread %d has processed %.2f' %(id_, float(cnt) * 100 / lines))
 
+                context_output_file.write(''.join(str_buffer))
                 if reformed_output_file is not None:
                     reformed_output_file.close()
                 if is_exit:
                     print('Thread %d is terminated' % (id_))
                 else:
                     print('Extract context accomplished with %d lines processed' % (1 + idx - start_line))
-
-    def extract_context_multithread(self, corpus, context_file:str, reformed_file:str=None, thread_num:int=1):
-        global is_exit
-        if self.keywords is None:
-            print("You haven't load the keywords yet, please use build_word_tree(input_txt, dump_file) or load_word_tree(json_file) to load the keywords")
-            return
-        if thread_num <= 0:
-            return
-        line_count = -1
-        with io.open(corpus, 'r', encoding='utf-8') as load_file:
-            for line_count, line in enumerate(load_file):
-                pass
-            line_count += 1
-        unit_lines = line_count / thread_num
-        threads = []
-        signal.signal(signal.SIGINT, multithread_kill)
-        signal.signal(signal.SIGTERM, multithread_kill)
-        is_exit = False
-        for i in range(thread_num):
-            # id:int, corpus:str, context_file:str, reformed_file:str=None, start_line:int=0, lines:int=0
-            id_ = i
-            temp_context_file = context_file + str(id_)
-            temp_reformed_file = None
-            if reformed_file is not None:
-                temp_reformed_file = reformed_file + str(id_)
-            start_line = unit_lines * id_
-            if i < thread_num - 1:
-                lines = unit_lines
-            else:
-                lines = line_count - unit_lines * i
-            t = Process(target=self.extract_context, args=(id_, corpus, temp_context_file, temp_reformed_file, True, start_line, lines))
-            t.setDaemon(True)
-            threads.append(t)
-        for i in range(thread_num):
-            threads[i].start()
-        while 1:
-            alive = False
-            for i in range(thread_num):
-                alive = alive or threads[i].isAlive()
-            if not alive:
-                break
-        tailor(context_file, context_file, '', thread_num, remove=True)
-        if reformed_file is not None:
-            tailor(reformed_file, reformed_file, '', thread_num, remove=True)
