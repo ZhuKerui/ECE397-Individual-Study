@@ -59,7 +59,7 @@
 
 <h2>Input Your Central Keyword</h2>
 
-<div>
+<!-- <div>
     <input type="text" placeholder="Central Keyword" id="central_keyword" />
 </div>
 <div>
@@ -75,19 +75,65 @@
 </div>
 <button type="button" id="search" >Search</button>
 
+<div id="cluster_display"></div> -->
+
+<div>
+    <input type="text" placeholder="Central Keyword" id="central_keyword" />
+</div>
+<div>
+    <input type="text" placeholder="k" id="k" />
+    <button type="button" id="search" >Search</button>
+</div>
+<div>
+    <input type="text" placeholder="related keyword" id="search_pair" />
+    <input type="text" placeholder="top n similar pairs" id="similar_pair_num" />
+    <button type="button" id="search_similar_pair" >Search similar pairs</button>
+</div>
+
 <div id="cluster_display"></div>
 
 
 <script>
 
-	$('#search').click(function(){
+	// $('#search').click(function(){
+	// 	$.ajax({
+	// 		'url':'/search/',
+	// 		'data':{
+    //             "central_keyword":$("#central_keyword").val(),
+    //             "pair_set":$('#pair_set').val(),
+    //             "cnt_threshold":$('#cnt_threshold').val(),
+    //             "npmi_threshold":$('#npmi_threshold').val(),
+    //             "k":$('#k').val(),
+	// 		},
+	// 		'success' :function(ret){
+	// 			if (ret["status"]){
+    //                 clusters = ret["clusters"];
+    //                 str = "<p><font color='red'>Silhouette Score: " + ret["score"] + "</font></p>";
+    //                 for (var cluster_id = 0; cluster_id < clusters.length; cluster_id++){
+    //                     if (cluster_id == clusters.length - 1){
+    //                         str += "<p>Discrete Points:</p><p>";
+    //                     }else{
+    //                         str += "<p>Cluster " + cluster_id + ":</p><p>";
+    //                     }
+    //                     for (var idx in clusters[cluster_id]){
+    //                         str += clusters[cluster_id][idx];
+    //                         str += ",&nbsp;"
+    //                     }
+    //                     str += "</p>"
+    //                 }
+	// 				$('#cluster_display')[0].innerHTML = str;
+	// 			} else {
+	// 				$('#cluster_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+	// 			}
+	// 		}
+	// 	});
+	// });
+
+    $('#search').click(function(){
 		$.ajax({
 			'url':'/search/',
 			'data':{
                 "central_keyword":$("#central_keyword").val(),
-                "pair_set":$('#pair_set').val(),
-                "cnt_threshold":$('#cnt_threshold').val(),
-                "npmi_threshold":$('#npmi_threshold').val(),
                 "k":$('#k').val(),
 			},
 			'success' :function(ret){

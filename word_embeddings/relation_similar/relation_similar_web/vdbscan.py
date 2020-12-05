@@ -20,7 +20,7 @@ def plot_avg_dist(avg_dist):
 
 def get_slope(avg_dist, interval=1):
     slope = []
-    for i in range(int(len(avg_dist) / interval)):
+    for i in range(int((len(avg_dist) - 1) / interval)):
         slope.append((avg_dist[(i + 1) * interval] - avg_dist[i * interval]) / interval)
     return slope
 
