@@ -1,6 +1,40 @@
 from relation_similar_web.dep_generator import *
-from relation_similar_web.vdbscan import do_cluster
+from relation_similar_web.vdbscan import *
+import math
 import heapq
+
+def resize_pair_vocab(load_file, output_file, npmi_threadhold):
+    Z = 0
+    word_freq = {}
+    pair_freq = {}
+    with io.open(load_file, 'r', encoding='utf-8') as f_load:
+        for row in f_load:
+            pair, freq = row.strip().split(' ')
+            words = pair.split('__')
+            words.sort()
+            word0 = words[0]
+            word1 = words[1]
+            pair = word0 + '__' + word1
+            freq = int(freq)
+            if word0 in word_freq.keys():
+                word_freq[word0] += freq
+            else:
+                word_freq[word0] = freq
+            if word1 in word_freq.keys():
+                word_freq[word1] += freq
+            else:
+                word_freq[word1] = freq
+            pair_freq[pair] = freq
+            Z += 2 * freq
+    Z = float(Z)
+    with io.open(output_file, 'w', encoding='utf-8') as f_output:
+        for pair1, freq in pair_freq.items():
+            word0, word1 = pair1.split('__')
+            pair2 = word1 + '__' + word0
+            npmi = -math.log((2 * Z * pair_freq[pair1]) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_freq[pair1] / Z)
+            if npmi >= npmi_threadhold:
+                f_output.write('%s %d\n%s %d\n' % (pair1, freq, pair2, freq))
+
 
 class Pair_Embed(Dep_Based_Embed_Generator):
     def extract_context(self, line):
