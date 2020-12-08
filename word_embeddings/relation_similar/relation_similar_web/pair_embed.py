@@ -1,5 +1,6 @@
 from relation_similar_web.dep_generator import *
 from relation_similar_web.vdbscan import *
+from sklearn.metrics import silhouette_score
 import math
 import heapq
 
@@ -28,12 +29,22 @@ def resize_pair_vocab(load_file, output_file, npmi_threadhold):
             Z += 2 * freq
     Z = float(Z)
     with io.open(output_file, 'w', encoding='utf-8') as f_output:
+        filtered_list = []
         for pair1, freq in pair_freq.items():
             word0, word1 = pair1.split('__')
             pair2 = word1 + '__' + word0
             npmi = -math.log((2 * Z * pair_freq[pair1]) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_freq[pair1] / Z)
             if npmi >= npmi_threadhold:
-                f_output.write('%s %d\n%s %d\n' % (pair1, freq, pair2, freq))
+                filtered_list.append(pair1, pair2)
+        f_output.write(' '.join(filtered_list))
+
+def filter_ctx(origion_ctx_file, keyword_lst, filtered_ctx_file):
+    keyword_set = set(io.open(keyword_lst, 'r', encoding='utf-8').readline().split(' '))
+    with io.open(origion_ctx_file, 'r', encoding='utf-8') as f_load:
+        with io.open(filtered_ctx_file, 'w', encoding='utf-8') as f_output:
+            for line in f_load:
+                if line.split(' ')[0] in keyword_set:
+                    f_output.write(line)
 
 
 class Pair_Embed(Dep_Based_Embed_Generator):
@@ -93,12 +104,15 @@ class Pair_Embed(Dep_Based_Embed_Generator):
         for cw, idxs in w2set.items():
             self.w2set[cw] = np.array(idxs)
         with io.open(output_file+'.json', 'w', encoding='utf-8') as f_output:
-            json.dump(self.w2set, f_output)
+            json.dump(w2set, f_output)
             
     def load_word_vector(self, load_file):
         Dep_Based_Embed_Generator.load_word_vector(self, load_file)
-        self.w2set = json.load(io.open(load_file + '.json', 'r', encoding='utf-8'))
-
+        w2set = json.load(io.open(load_file + '.json', 'r', encoding='utf-8'))
+        self.w2set = {}
+        for cw, idxs in w2set.items():
+            self.w2set[cw] = np.array(idxs)
+            
     def get_co_occur_pairs(self, cw):
         try:
             self.w2set

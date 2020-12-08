@@ -23,7 +23,7 @@ sent2kw.load_relation()
 # print('Done with loading semantic-related pairs')
 pair_embed = Pair_Embed()
 pair_embed.load_word_tree('../../../dataset/hurry/wordtree.json')
-pair_embed.load_pair_vector('../../../dataset/hurry/pair_vecs')
+pair_embed.load_word_vector('../../../dataset/hurry/pair_vecs')
 
 def index(request):
     return render(request, 'display.html')
