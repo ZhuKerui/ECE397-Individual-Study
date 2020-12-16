@@ -151,17 +151,22 @@ class Pair_Embed(Dep_Based_Embed_Generator):
             clusters[cluster_id].add(pairs[word_idx])
         return score, clusters
 
-    def find_similar_pairs(self, pair, n):
+    def find_similar_pairs(self, cw, kw, n):
         try:
             self.vocab
         except NameError:
             print('Pairs are not loaded')
             return None
+        pair = cw + '__' + kw
         if pair not in self.vocab:
             print('%s does not exist' % (pair))
             return None
+        pairs, vecs = self.get_co_occur_pairs(cw)
+        pairs = [item.split('__')[1] for item in pairs]
         pair_vec = self.wvecs[self.vocab2i[pair]]
-        similarity_vec = self.wvecs.dot(pair_vec)
-        result = heapq.nlargest(n, zip(similarity_vec, self.vocab), key=lambda x: x[0])
-        return_pairs = [item[1].split('__')[1] for item in result]
+        # similarity_vec = self.wvecs.dot(pair_vec)
+        # result = heapq.nlargest(n, zip(similarity_vec, self.vocab), key=lambda x: x[0])
+        similarity_vec = vecs.dot(pair_vec)
+        result = heapq.nlargest(n, zip(similarity_vec, pairs), key=lambda x: x[0])
+        return_pairs = [item[1] for item in result]
         return return_pairs
