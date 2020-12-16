@@ -35,7 +35,8 @@ def resize_pair_vocab(load_file, output_file, npmi_threadhold):
             pair2 = word1 + '__' + word0
             npmi = -math.log((2 * Z * pair_freq[pair1]) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_freq[pair1] / Z)
             if npmi >= npmi_threadhold:
-                filtered_list.append(pair1, pair2)
+                filtered_list.append(pair1)
+                filtered_list.append(pair2)
         f_output.write(' '.join(filtered_list))
 
 def filter_ctx(origion_ctx_file, keyword_lst, filtered_ctx_file):
