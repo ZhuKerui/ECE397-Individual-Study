@@ -109,7 +109,7 @@ class Pair_Generator(Dep_Based_Embed_Generator):
             for i_line, line in enumerate(f_ctx):
                 new_npy_line = np.array(list(map(int, line.strip().split())))
                 npy_list.append(new_npy_line)
-                if (i_line+1) % 300000 == 0:
+                if (i_line+1) % 1000000 == 0:
                     np.save(npy_file+str(block_id)+'.npy', np.array(npy_list, dtype=np.int32))
                     block_id += 1
                     npy_list = []
