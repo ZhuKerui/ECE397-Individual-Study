@@ -115,3 +115,8 @@ class Pair_Generator(Dep_Based_Embed_Generator):
                     npy_list = []
             if len(npy_list) > 0:
                 np.save(npy_file+str(block_id)+'.npy', np.array(npy_list, dtype=np.int32))
+
+    def translate_triple(self, item:np.ndarray):
+        context = [self.key_vocab.itos[item[0]],self.key_vocab.itos[item[1]]]
+        context += [self.ctx_vocab.itos[i] for i in item[2:]]
+        return ' '.join(context)
