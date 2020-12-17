@@ -51,7 +51,7 @@ class Pair_Generator(Dep_Based_Embed_Generator):
             sub_valid_ids = valid_ids[start_i:start_i+self.win]
             keyword_pairs = self.__gen_keyword_pairs(win_idx[sub_kw_mask])
             for pair in keyword_pairs:
-                int_context = [self.key_vocab.stoi[sub_sent[pair[0]]], self.key_vocab.stoi[sub_sent[pair[1]]]] + sub_valid_ids[:pair[0]] + [self.x_placeholder] + sub_valid_ids[pair[0]+1:pair[1]] + [self.y_placeholder] + sub_valid_ids[pair[1]+1:]
+                int_context = [self.key_vocab.stoi[sub_sent[pair[0]]], self.key_vocab.stoi[sub_sent[pair[1]]]] + sub_valid_ids[:pair[0]] + [self.ctx_vocab.stoi[self.x_placeholder]] + sub_valid_ids[pair[0]+1:pair[1]] + [self.ctx_vocab.stoi[self.y_placeholder]] + sub_valid_ids[pair[1]+1:]
                 context.append(' '.join(map(str, int_context)))
                 context.append('\n')
         return ''.join(context)
