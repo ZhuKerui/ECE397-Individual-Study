@@ -61,7 +61,7 @@ class Pair_Generator(Dep_Based_Embed_Generator):
         with open(vocab_file+'_k') as f:
             text = f.read()
             tokens = text.rstrip().split('\n')
-        self.key_vocab = Vocab(tokens, specials=[])
+        self.key_vocab = Vocab(tokens)
 
         with open(vocab_file+'_c') as f:
             text = f.read()
@@ -99,7 +99,7 @@ class Pair_Generator(Dep_Based_Embed_Generator):
         with io.open(vocab_file+'_c', 'w', encoding='utf-8') as f:
             f.write('\n'.join(ctx_selected))
 
-        self.key_vocab = Vocab(key_selected, specials=[])
+        self.key_vocab = Vocab(key_selected)
         self.ctx_vocab = Vocab(ctx_selected, specials=['<unk>', '<pad>', '<X>', '<Y>'])
 
     def context_to_npy(self, context_file, npy_file):
