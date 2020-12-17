@@ -101,3 +101,17 @@ class Pair_Generator(Dep_Based_Embed_Generator):
 
         self.key_vocab = Vocab(key_selected, specials=[])
         self.ctx_vocab = Vocab(ctx_selected, specials=['<unk>', '<pad>', '<X>', '<Y>'])
+
+    def context_to_npy(self, context_file, npy_file):
+        with io.open(context_file, 'r', encoding='utf-8') as f_ctx:
+            npy_list = []
+            block_id = 0
+            for i_line, line in enumerate(f_ctx):
+                new_npy_line = np.array(list(map(int, line.strip().split())))
+                npy_list.append(new_npy_line)
+                if (i_line+1) % 300000 == 0:
+                    np.save(npy_file+str(block_id)+'.npy', np.array(npy_list, dtype=np.int32))
+                    block_id += 1
+                    npy_list = []
+            if len(npy_list) > 0:
+                np.save(npy_file+str(block_id)+'.npy', np.array(npy_list, dtype=np.int32))
