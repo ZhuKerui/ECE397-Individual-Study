@@ -1,6 +1,8 @@
-from relation_similar_web.co_occur_generator import Co_Occur_Generator
-from relation_similar_web.sent2kw import Sent2KW
-from relation_similar_web.pair_embed import Pair_Embed
+import sys 
+sys.path.append("..") 
+from co_occur_generator import Co_Occur_Generator
+from sent2kw import Sent2KW
+from pair_embed import Pair_Embed
 from django.http import request
 from django.shortcuts import render
 from django.http import JsonResponse

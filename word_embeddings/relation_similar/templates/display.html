@@ -10,6 +10,32 @@
 	<!-- jQuery -->
 	<script src="{% static 'js/jquery.min.js' %}"></script>
 
+    <style>
+        .wrap{
+            width:1500px;
+            margin:0 auto;
+            position: relative;
+        }
+        #left{
+            width:700px;
+            word-wrap:break-word;
+            word-break:normal;
+            background: #ccffff;
+            position: absolute;
+            top:0;
+            left:0;
+        }
+        #right{
+            width:700px;
+            word-wrap:break-word;
+            word-break:normal;
+            background: #ffcccc;
+            position: absolute;
+            top:0;
+            right:0;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -63,73 +89,30 @@
     <input type="text" placeholder="Central Keyword" id="central_keyword" />
 </div>
 <div>
-    <select id="pair_set">
-        <option value ="co_occur">Co-occur</option>
-        <option value ="semantic_related">Semantic-related</option>
-    </select>
-    <input type="text" placeholder="Count Threadhold" id="cnt_threshold" />
-    <input type="text" placeholder="NPMI Threadhold" id="npmi_threshold" />
-</div>
-<div>
-    <input type="text" placeholder="k" id="k" />
-</div>
-<button type="button" id="search" >Search</button>
-
-<div id="cluster_display"></div>
-
-{% comment %} <div>
-    <input type="text" placeholder="Central Keyword" id="central_keyword" />
-</div>
-<div>
     <input type="text" placeholder="k" id="k" />
     <button type="button" id="search" >Search</button>
 </div>
+
+<div class="wrap">
+    <section id="left">
+        <h3>Pair Embedding Result</h3>
+        <div id="cluster_display_pair_embed"></div>
+    </section>
+    <section id="right">
+        <h3>Dependency-Based Embedding Result</h3>
+        <div id="cluster_display_base_embed"></div>
+    </section>
+</div>
+
 <div>
     <input type="text" placeholder="related keyword" id="related_keyword" />
     <input type="text" placeholder="top n similar pairs" id="similar_pair_num" />
     <button type="button" id="search_similar_pair" >Search similar pairs</button>
 </div>
 
-<div id="cluster_display"></div> {% endcomment %}
-
-
 <script>
 
-	$('#search').click(function(){
-		$.ajax({
-			'url':'/search/',
-			'data':{
-                "central_keyword":$("#central_keyword").val(),
-                "pair_set":$('#pair_set').val(),
-                "cnt_threshold":$('#cnt_threshold').val(),
-                "npmi_threshold":$('#npmi_threshold').val(),
-                "k":$('#k').val(),
-			},
-			'success' :function(ret){
-				if (ret["status"]){
-                    clusters = ret["clusters"];
-                    str = "<p><font color='red'>Silhouette Score: " + ret["score"] + "</font></p>";
-                    for (var cluster_id = 0; cluster_id < clusters.length; cluster_id++){
-                        if (cluster_id == clusters.length - 1){
-                            str += "<p>Discrete Points:</p><p>";
-                        }else{
-                            str += "<p>Cluster " + cluster_id + ":</p><p>";
-                        }
-                        for (var idx in clusters[cluster_id]){
-                            str += clusters[cluster_id][idx];
-                            str += ",&nbsp;"
-                        }
-                        str += "</p>"
-                    }
-					$('#cluster_display')[0].innerHTML = str;
-				} else {
-					$('#cluster_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
-				}
-			}
-		});
-	});
-
-    {% comment %} $('#search').click(function(){
+    $('#search').click(function(){
 		$.ajax({
 			'url':'/search/',
 			'data':{
@@ -138,21 +121,37 @@
 			},
 			'success' :function(ret){
 				if (ret["status"]){
-                    clusters = ret["clusters"];
+                    clusters_pair = ret["clusters_pair"];
                     str = "<p><font color='red'>Silhouette Score: " + ret["score"] + "</font></p>";
-                    for (var cluster_id = 0; cluster_id < clusters.length; cluster_id++){
-                        if (cluster_id == clusters.length - 1){
+                    for (var cluster_id = 0; cluster_id < clusters_pair.length; cluster_id++){
+                        if (cluster_id == clusters_pair.length - 1){
                             str += "<p>Discrete Points:</p><p>";
                         }else{
                             str += "<p>Cluster " + cluster_id + ":</p><p>";
                         }
-                        for (var idx in clusters[cluster_id]){
-                            str += clusters[cluster_id][idx];
+                        for (var idx in clusters_pair[cluster_id]){
+                            str += clusters_pair[cluster_id][idx];
                             str += ",&nbsp;";
                         }
                         str += "</p>"
                     }
-					$('#cluster_display')[0].innerHTML = str;
+					$('#cluster_display_pair_embed')[0].innerHTML = str;
+
+                    clusters_base = ret["clusters_base"];
+                    str = "<p><font color='red'>Silhouette Score: " + ret["score"] + "</font></p>";
+                    for (var cluster_id = 0; cluster_id < clusters_base.length; cluster_id++){
+                        if (cluster_id == clusters_base.length - 1){
+                            str += "<p>Discrete Points:</p><p>";
+                        }else{
+                            str += "<p>Cluster " + cluster_id + ":</p><p>";
+                        }
+                        for (var idx in clusters_base[cluster_id]){
+                            str += clusters_base[cluster_id][idx];
+                            str += ",&nbsp;";
+                        }
+                        str += "</p>"
+                    }
+					$('#cluster_display_base_embed')[0].innerHTML = str;
 				} else {
 					$('#cluster_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
 				}
@@ -184,7 +183,7 @@
 				}
 			}
 		});
-	}); {% endcomment %}
+	});
 
     $('#cal_similarity').click(function(){
 		$.ajax({
