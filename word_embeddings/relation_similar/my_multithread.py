@@ -8,7 +8,7 @@ import time
 
 # is_exit = False
 
-def tailor(output_file, input_prefix, input_posfix, num, remove=False):
+def tailor(output_file:str, input_prefix:str, input_posfix:str, num:int, remove:bool=False):
     with io.open(output_file, 'w', encoding='utf-8') as dump_file:
         for i in range(num):
             with io.open(input_prefix + str(i) + input_posfix, 'r', encoding='utf-8') as load_file:
@@ -58,7 +58,7 @@ def line_process_wrapper(line_operation, freq:int, input_file:str, output_file:s
             else:
                 print('Extract context accomplished with %d lines processed' % (1 + idx - start_line))
 
-def multithread_wrapper(line_operation, freq:int, input_file:str, output_file:str, thread_num:int=1):
+def multithread_wrapper(line_operation, freq:int, input_file:str, output_file:str, thread_num:int=1, post_operation=None):
     # global is_exit
     
     if thread_num <= 0:
@@ -76,10 +76,11 @@ def multithread_wrapper(line_operation, freq:int, input_file:str, output_file:st
     # signal.signal(signal.SIGINT, multithread_kill)
     # signal.signal(signal.SIGTERM, multithread_kill)
     # is_exit = False
+    line_output_file = ('' if post_operation is None else 'temp_') + output_file
     for i in range(thread_num):
         id_ = None if thread_num == 1 else i
         start_line = unit_lines * i
-        t = multiprocessing.Process(target=line_process_wrapper, args=(line_operation, freq, input_file, output_file, id_, start_line, unit_lines))
+        t = multiprocessing.Process(target=line_process_wrapper, args=(line_operation, freq, input_file, line_output_file, id_, start_line, unit_lines))
         # t.setDaemon(True)
         threads.append(t)
     for i in range(thread_num):
@@ -94,4 +95,8 @@ def multithread_wrapper(line_operation, freq:int, input_file:str, output_file:st
     #         break
 
     if thread_num > 1:
-        tailor(output_file, output_file, '', thread_num, remove=True)
+        tailor(line_output_file, line_output_file, '', thread_num, remove=True)
+    if post_operation is not None:
+        post_operation(line_output_file, output_file)
+        os.remove(line_output_file)
+    

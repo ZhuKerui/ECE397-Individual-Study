@@ -1,7 +1,7 @@
 from collections import defaultdict
 import sys
 from tqdm import tqdm
-from relation_similar_web.vocab import Vocab
+from pair2vec.vocab import Vocab
 
 def read_vocab_from_file(vocab_path, specials):
     tokens = None

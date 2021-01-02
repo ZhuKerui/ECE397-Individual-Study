@@ -1,15 +1,13 @@
-import json
 import io
 from sklearn.metrics import silhouette_score
 import numpy as np
 import csv
 import math
-# from sklearn.cluster import DBSCAN
 from vdbscan import *
 
 from dep_generator import *
 
-def nmpi_analysis(co_occur_file, related_pair_file):
+def nmpi_analysis(co_occur_file:str, related_pair_file:str):
     Z = 0.
     word_freq = {}
     pair_freq = {}
@@ -40,7 +38,7 @@ def nmpi_analysis(co_occur_file, related_pair_file):
             npmi = -math.log((2 * Z * pair_freq[pair]) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_freq[pair] / Z)
             csv_w.writerow([word0, word1, '%.2f' % npmi])
 
-def generate_keyword_set_from_wv(wv_file, keyword_file):
+def generate_keyword_set_from_wv(wv_file:str, keyword_file:str):
     with io.open(wv_file, 'r', encoding='utf-8') as load_file:
         with io.open(keyword_file, 'w', encoding='utf-8') as dump_file:
             for line in load_file:
@@ -83,6 +81,30 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                     break
                 if idx % 10000 == 0:
                     print(idx)
+        with io.open(co_occur_output_file, 'w', encoding='utf-8') as output:
+            csv_f = csv.writer(output)
+            for k1, sub_dict in pair_dict.items():
+                for k2, freq in sub_dict.items():
+                    csv_f.writerow([k1, k2, freq])
+
+    def __extract_co_occur(self, line:str):
+        if not line:
+            return None
+        words = line.strip().split()
+        co_occur_set = set()
+        for word in words:
+            if word in self.keywords:
+                co_occur_set.add(word)
+        if len(co_occur_set) > 1:
+            co_occur_list = list(co_occur_set)
+            co_occur_list.sort()
+            pair_list = []
+            for i in range(len(co_occur_list)-1):
+                for j in range(i + 1, len(co_occur_list)):
+                    pair_list.append('%s,%s' % (co_occur_list[i], co_occur_list[j]))
+            return ' '.join(pair_list)
+        else:
+            return None
         with io.open(co_occur_output_file, 'w', encoding='utf-8') as output:
             csv_f = csv.writer(output)
             for k1, sub_dict in pair_dict.items():

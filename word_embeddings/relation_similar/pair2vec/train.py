@@ -7,10 +7,10 @@ import torch.optim as optim
 from torch.nn.utils import clip_grad_norm
 from tensorboardX import SummaryWriter
 
-from relation_similar_web.model import Pair2Vec
-from relation_similar_web.matrix_data import read_data
-from relation_similar_web.util import get_args, get_config, makedirs
-from relation_similar_web import metrics, util
+from pair2vec.model import Pair2Vec
+from pair2vec.matrix_data import read_data
+from pair2vec.util import get_args, get_config, makedirs
+from pair2vec import metrics, util
 import numpy
 
 import logging

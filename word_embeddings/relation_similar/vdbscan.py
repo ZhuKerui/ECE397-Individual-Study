@@ -1,6 +1,5 @@
 
 import numpy as np
-from sklearn import neighbors
 from sklearn.cluster import DBSCAN
 import matplotlib.pyplot as plt
 import sys

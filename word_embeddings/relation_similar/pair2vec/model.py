@@ -3,9 +3,9 @@ from torch.autograd import Variable
 from typing import Dict
 from torch.nn import Module, Linear, Dropout, Sequential, Embedding, LogSigmoid, ReLU
 from torch.nn.functional import sigmoid, logsigmoid, softmax, normalize, log_softmax
-from relation_similar_web.representation import SpanRepresentation
+from pair2vec.representation import SpanRepresentation
 from torch.nn.init import xavier_normal
-from relation_similar_web.util import pretrained_embeddings_or_xavier
+from pair2vec.util import pretrained_embeddings_or_xavier
 import numpy as np
 from torch.nn.functional import cosine_similarity
 
