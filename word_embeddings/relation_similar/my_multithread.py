@@ -76,7 +76,7 @@ def multithread_wrapper(line_operation, freq:int, input_file:str, output_file:st
     # signal.signal(signal.SIGINT, multithread_kill)
     # signal.signal(signal.SIGTERM, multithread_kill)
     # is_exit = False
-    line_output_file = ('' if post_operation is None else 'temp_') + output_file
+    line_output_file = output_file + ('' if post_operation is None else '_temp')
     for i in range(thread_num):
         id_ = None if thread_num == 1 else i
         start_line = unit_lines * i
