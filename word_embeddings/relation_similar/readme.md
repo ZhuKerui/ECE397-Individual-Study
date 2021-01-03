@@ -4,3 +4,5 @@ d.build_word_tree('../../../dataset/corpus/keyword_f.txt', '../../../dataset/cor
 extract_sent_from_small(80, '../../../dataset/raw_data/small_arxiv.json', '../../../dataset/corpus/small_sent.txt', 10)
 extract_sent_from_big(80, '../../../dataset/raw_data/big_arxiv.json', '../../../dataset/corpus/big_sent.txt', 10)
 d.extract_context(80, '../../../dataset/corpus/small_sent.txt', '../../../dataset/outputs/small_ctx.txt', 10)
+
+p.build_vocab('../../../dataset/corpus/small_sent.txt', '../../../dataset/corpus/vocab')

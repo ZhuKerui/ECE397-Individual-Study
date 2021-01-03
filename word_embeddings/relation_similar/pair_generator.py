@@ -1,14 +1,10 @@
-import io
 import numpy as np
-import spacy
 from collections import Counter
 from pair2vec.vocab import Vocab
 
-from my_multithread import multithread_wrapper
+from my_keywords import *
 
-nlp = spacy.load('en_core_web_sm')
-
-class Pair_Generator():
+class Pair_Generator(Keywords):
     def __init__(self, win=8):
         self.win = win
         self.ignored_pos = set(['PUNCT', 'DET'])
