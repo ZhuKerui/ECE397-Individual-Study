@@ -4,7 +4,7 @@ from typing import Dict
 from torch.nn import Module, Linear, Dropout, Sequential, Embedding, LogSigmoid, ReLU
 from torch.nn.functional import sigmoid, logsigmoid, softmax, normalize, log_softmax
 from representation import SpanRepresentation
-from torch.nn.init import xavier_normal
+from torch.nn.init import xavier_normal_
 from util import pretrained_embeddings_or_xavier
 import numpy as np
 from torch.nn.functional import cosine_similarity

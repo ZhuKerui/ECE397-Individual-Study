@@ -4,7 +4,7 @@ from torch.nn import Module, Linear, Dropout, Sequential, LSTM, Embedding, GRU, 
 from torch.nn.functional import normalize
 from util import masked_softmax
 from torch.autograd import Variable
-from torch.nn.init import xavier_normal, constant
+from torch.nn.init import xavier_normal_, constant
 from util import pretrained_embeddings_or_xavier
 from vocab import Vocab, Vectors
 
@@ -25,7 +25,7 @@ class SpanRepresentation(Module):
         self.init()
 
     def init(self):
-        [xavier_normal(p) for p in self.parameters() if len(p.size()) > 1]
+        [xavier_normal_(p) for p in self.parameters() if len(p.size()) > 1]
         if self.vocab.vectors is not None:
             pretrained = normalize(self.vocab.vectors, dim=-1) if self.normalize_pretrained else self.vocab.vectors
             self.embedding.weight.data.copy_(pretrained)
