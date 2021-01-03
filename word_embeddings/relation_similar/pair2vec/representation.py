@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from torch.nn import Module, Linear, Dropout, Sequential, LSTM, Embedding, GRU, ReLU, Parameter
+from torch.nn.functional import normalize
 from pair2vec.util import masked_softmax
 from torch.autograd import Variable
 from torch.nn.init import xavier_normal, constant

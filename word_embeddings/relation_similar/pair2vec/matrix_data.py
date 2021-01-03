@@ -125,17 +125,21 @@ class TripletIterator():
                     yield tensors
 
 def create_vocab(config, args_, rels_):
-    vocab_path = getattr(config, 'vocab_file', os.path.join(config.triplet_dir, "vocab.txt"))
+    keyword_vocab_path = getattr(config, 'keyword_vocab_file', "keyword_vocab.txt")
+    context_vocab_path = getattr(config, 'context_vocab_file', "context_vocab.txt")
     tokens = None
-    with open(vocab_path+'_k') as f:
+    init_with_pretrained = getattr(config, 'init_with_pretrained', True)
+    with open(keyword_vocab_path) as f:
         text = f.read()
         tokens = text.rstrip().split('\n')
+        vectors_k, vectors_cache_k = (None, None) if not init_with_pretrained else (getattr(config, 'word_vecs_k', 'pretrained_keyword_vec'), getattr(config, 'word_vecs_cache_k', 'data/fasttext'))
+        args_.vocab = Vocab(tokens, vectors=vectors_k, vectors_cache=vectors_cache_k)
     specials = ['<unk>', '<pad>', '<X>', '<Y>'] if config.compositional_rels else ['<unk>', '']
-    init_with_pretrained = getattr(config, 'init_with_pretrained', True)
-    vectors_k, vectors_cache_k = (None, None) if not init_with_pretrained else (getattr(config, 'word_vecs_k', 'fasttext.en.300d'), getattr(config, 'word_vecs_cache_k', 'data/fasttext'))
-    vectors_c, vectors_cache_c = (None, None) if not init_with_pretrained else (getattr(config, 'word_vecs_c', 'fasttext.en.300d'), getattr(config, 'word_vecs_cache_c', 'data/fasttext'))
-    args_.vocab = Vocab(tokens, vectors=vectors_k, vectors_cache=vectors_cache_k)
-    rels_.vocab = Vocab(tokens, specials=specials, vectors=vectors_c, vectors_cache=vectors_cache_c)
+    with open(context_vocab_path) as f:
+        text = f.read()
+        tokens = text.rstrip().split('\n')
+        vectors_c, vectors_cache_c = (None, None) if not init_with_pretrained else (getattr(config, 'word_vecs_c', 'pretrained_context_vec'), getattr(config, 'word_vecs_cache_c', 'data/fasttext'))
+        rels_.vocab = Vocab(tokens, specials=specials, vectors=vectors_c, vectors_cache=vectors_cache_c)
 
 def read(filenames):
     for fname in filenames:
@@ -156,10 +160,10 @@ def read_dev(fname, limit=None, compositional_rels=True, type_scores_file=None, 
 def dev_data(sample):
     yield sample
 
-def create_dataset(config, triplet_dir=None):
-    triplet_dir = config.triplet_dir if triplet_dir is None else triplet_dir
-    #files = [os.path.join(config.triplet_dir, fname) for fname in os.listdir(config.triplet_dir) if fname.endswith('.npy')]
-    files = [os.path.join(triplet_dir, 'triplet' + str(i) + '.npy') for i in range(0, 1000)]
+def create_dataset(config):
+    triplet_dir = config.triplet_dir if hasattr(config, 'triplet_dir') else './'
+    triplet_name = config.triplet_name if hasattr(config, 'triplet_name') else 'triplet'
+    files = [os.path.join(triplet_dir, triplet_name + str(i) + '.npy') for i in range(0, 1000)]
     train_data = _LazyInstances(lambda : iter(read(files[1:])))
     type_scores_file = config.type_scores_file if hasattr(config, 'type_scores_file') else None
     type_indices_file = config.type_indices_file if hasattr(config, 'type_indices_file') else None
