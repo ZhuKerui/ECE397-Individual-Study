@@ -67,8 +67,9 @@ class Pair_Generator(Keywords):
             kw_mask[kw.i] = True
             word = kw
             while True:
-                if word.pos_ not in self.ignored_pos:
-                    mask[word.i] = self.ctx_vocab.stoi[word.text] != 0
+                # if word.pos_ not in self.ignored_pos:
+                #     mask[word.i] = self.ctx_vocab.stoi[word.text] != 0
+                mask[word.i] = self.ctx_vocab.stoi[word.text] != 0
                 if word.dep_ == 'ROOT':
                     break
                 word = word.head
