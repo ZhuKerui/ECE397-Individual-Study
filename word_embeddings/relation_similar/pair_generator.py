@@ -92,7 +92,7 @@ class Pair_Generator(Keywords):
                 start = max(0, x_id - min(available_margin, self.margin))
                 end = min(y_id + self.margin, start + self.win - 1)
                 int_context = [self.key_vocab.stoi[filtered_sent[x_id]], self.key_vocab.stoi[filtered_sent[y_id]]] + valid_ids[start:x_id] + [self.ctx_vocab.stoi[self.x_placeholder]] + valid_ids[x_id+1:y_id] + [self.ctx_vocab.stoi[self.y_placeholder]] + valid_ids[y_id+1:end+1]
-                int_context += [self.ctx_vocab.stoi[self.pad]] * (self.win - len(int_context))
+                int_context += [self.ctx_vocab.stoi[self.pad]] * (self.win + 2 - len(int_context))
                 context.append(' '.join(map(str, int_context)))
                 context.append('\n')
 
