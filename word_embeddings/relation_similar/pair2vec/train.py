@@ -39,14 +39,15 @@ def prepare_env(args, config):
 def main(args, config):
     prepare_env(args, config)
     train_data, dev_data, train_iterator, dev_iterator, args_field, rels_field = read_data(config, preindex=True)
-
+    print('read_data done')
     model_type = getattr(config, 'model_type', 'sampling')
     if model_type == 'sampling':
         model = Pair2Vec(config, args_field.vocab, rels_field.vocab)
     else:
         raise NotImplementedError()
-
+    print('model setup done')
     model.cuda()
+    print('model.cuda() done')
     params = filter(lambda p: p.requires_grad, model.parameters())
     opt = optim.SGD(params, lr=config.lr)
 
