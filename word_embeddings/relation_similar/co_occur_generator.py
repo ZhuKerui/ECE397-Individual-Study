@@ -6,30 +6,50 @@ import math
 from collections import Counter
 
 from vdbscan import do_cluster
-from dep_generator import *
+from my_keywords import Keyword_Vocab
+from my_multithread import multithread_wrapper
 
-class Co_Occur_Generator(Dep_Based_Embed_Generator):
-    def __nmpi_analysis(self, counter:dict, output_file):
-        Z = 0.
-        word_freq = {}
+def dbscan_cluster(vecs:np.ndarray, vocab:list, k:int=3):
+    label = do_cluster(vecs, k)
+    if all(label == -1):
+        score = -1
+    else:
+        score = silhouette_score(vecs, label, metric='cosine')
+    cluster_num = max(label) + 1
+    clusters = []
+    for i in range(cluster_num + 1):
+        clusters.append(set())
+    for word_idx, cluster_id in enumerate(label):
+        clusters[cluster_id].add(vocab[word_idx])
+    return score, clusters
+
+def nmpi_analysis(counter:dict, output_file:str):
+    print('Start NPMI analysis ...')
+    Z = 0.
+    word_freq = {}
+    for pair, freq in counter.items():
+        word0, word1 = pair.split('__')
+        if word0 in word_freq.keys():
+            word_freq[word0] += freq
+        else:
+            word_freq[word0] = freq
+        if word1 in word_freq.keys():
+            word_freq[word1] += freq
+        else:
+            word_freq[word1] = freq
+        Z += 2 * freq
+
+    with io.open(output_file+'.csv', 'w', encoding='utf-8') as dump_file:
+        csv_w = csv.writer(dump_file)
         for pair, freq in counter.items():
             word0, word1 = pair.split('__')
-            if word0 in word_freq.keys():
-                word_freq[word0] += freq
-            else:
-                word_freq[word0] = freq
-            if word1 in word_freq.keys():
-                word_freq[word1] += freq
-            else:
-                word_freq[word1] = freq
-            Z += 2 * freq
+            npmi = -math.log((2 * Z * freq) / (word_freq[word0] * word_freq[word1])) / math.log(2 * freq / Z)
+            csv_w.writerow([pair, freq, '%.2f' % npmi])
+    print('NPMI analysis is done.')
 
-        with io.open(output_file+'.csv', 'w', encoding='utf-8') as dump_file:
-            csv_w = csv.writer(dump_file)
-            for pair, freq in counter.items():
-                word0, word1 = pair.split('__')
-                npmi = -math.log((2 * Z * freq) / (word_freq[word0] * word_freq[word1])) / math.log(2 * freq / Z)
-                csv_w.writerow([pair, freq, '%.2f' % npmi])
+class Co_Occur_Generator:
+    def __init__(self, keyword_vocab:Keyword_Vocab):
+        self.keyword_vocab = keyword_vocab
 
     def __extract_co_occur(self, line:str):
         if not line:
@@ -37,7 +57,7 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
         words = line.strip().split()
         co_occur_set = set()
         for word in words:
-            if word in self.keywords:
+            if word in self.keyword_vocab.stoi:
                 co_occur_set.add(word)
         if len(co_occur_set) > 1:
             co_occur_list = list(co_occur_set)
@@ -52,11 +72,13 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
 
     def extract_co_occur(self, freq:int, input_file:str, output_file:str, thread_num:int=1):
         def count_pair(line_output_file, output_file):
+            print('Start counting ...')
             pair_counter = Counter()
             with io.open(line_output_file, 'r', encoding='utf-8') as line_output:
                 for line in line_output:
                     pair_counter.update(Counter(line.strip().split()))
-            self.__nmpi_analysis(pair_counter, output_file)
+            print('Counting is done.')
+            nmpi_analysis(pair_counter, output_file)
         multithread_wrapper(self.__extract_co_occur, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num, post_operation=count_pair)
 
     def extract_semantic_related(self, dep_context_file:str, output_file:str):
@@ -67,7 +89,7 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                     continue
                 word0, word1 = line.strip().split()
                 word1 = word1.split('_', 1)[1]
-                if word1 in self.keywords:
+                if word1 in self.keyword_vocab.stoi:
                     pair = ('%s__%s' % (word0, word1)) if word0 < word1 else ('%s__%s' % (word1, word0))
                     if pair not in pair_dict:
                         pair_dict[pair] = 1
@@ -77,7 +99,7 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
                 if idx % 100000 == 0:
                     print(idx)
         
-        self.__nmpi_analysis(pair_dict, output_file)
+        nmpi_analysis(pair_dict, output_file)
                     
     def load_pairs(self, pair_file):
         self.pairs = {}
@@ -103,21 +125,3 @@ class Co_Occur_Generator(Dep_Based_Embed_Generator):
     def get_related(self, keyword, min_count:int=1, min_npmi:float=-1.0):
         pairs = ((keyword + '__' + w if keyword < w else w + '__' + keyword) for w in self.related[keyword])
         return [w for pair, w in zip(pairs, self.related[keyword]) if self.pairs[pair]['freq'] >= min_count and self.pairs[pair]['npmi'] >= min_npmi]
-
-    def dbscan_cluster(self, central_word, k:int=3, min_count:int=1, min_npmi:float=-1.0):
-        related_list = self.get_related(central_word, min_count=min_count, min_npmi=min_npmi)
-        valid_related_list = [word for word in related_list if word in self.vocab]
-        vecs = np.array([self.n_wvecs[self.vocab2i[word]] for word in valid_related_list])
-        np.save('temp_vec.npy', vecs)
-        label = do_cluster(vecs, k)
-        if all(label == -1):
-            score = -1
-        else:
-            score = silhouette_score(vecs, label, metric='cosine')
-        cluster_num = max(label) + 1
-        clusters = []
-        for i in range(cluster_num + 1):
-            clusters.append(set())
-        for word_idx, cluster_id in enumerate(label):
-            clusters[cluster_id].add(valid_related_list[word_idx])
-        return score, clusters

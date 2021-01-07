@@ -1,173 +1,73 @@
-from dep_generator import *
-from vdbscan import *
-from sklearn.metrics import silhouette_score
-import math
+import csv
+import io
 import heapq
+import numpy as np
 
-def resize_pair_vocab(load_file, output_file, npmi_threadhold):
-    Z = 0
-    word_freq = {}
-    pair_freq = {}
-    with io.open(load_file, 'r', encoding='utf-8') as f_load:
-        for row in f_load:
-            pair, freq = row.strip().split(' ')
-            words = pair.split('__')
-            words.sort()
-            word0 = words[0]
-            word1 = words[1]
-            pair = word0 + '__' + word1
-            freq = int(freq)
-            if word0 in word_freq.keys():
-                word_freq[word0] += freq
-            else:
-                word_freq[word0] = freq
-            if word1 in word_freq.keys():
-                word_freq[word1] += freq
-            else:
-                word_freq[word1] = freq
-            pair_freq[pair] = freq
-            Z += 2 * freq
-    Z = float(Z)
-    with io.open(output_file, 'w', encoding='utf-8') as f_output:
-        filtered_list = []
-        for pair1, freq in pair_freq.items():
-            word0, word1 = pair1.split('__')
-            pair2 = word1 + '__' + word0
-            npmi = -math.log((2 * Z * pair_freq[pair1]) / (word_freq[word0] * word_freq[word1])) / math.log(2 * pair_freq[pair1] / Z)
-            if npmi >= npmi_threadhold:
-                filtered_list.append(pair1)
-                filtered_list.append(pair2)
-        f_output.write(' '.join(filtered_list))
-
-def filter_ctx(origion_ctx_file, keyword_lst, filtered_ctx_file):
-    keyword_set = set(io.open(keyword_lst, 'r', encoding='utf-8').readline().split(' '))
-    with io.open(origion_ctx_file, 'r', encoding='utf-8') as f_load:
-        with io.open(filtered_ctx_file, 'w', encoding='utf-8') as f_output:
-            for line in f_load:
-                if line.split(' ')[0] in keyword_set:
-                    f_output.write(line)
+from my_keywords import Vocab_Base, Keyword_Vocab
+from my_multithread import multithread_wrapper
 
 
-class Pair_Embed(Dep_Based_Embed_Generator):
-    def extract_context(self, line):
+class Pair_Embed(Vocab_Base):
+    def __init__(self, keyword_vocab:Keyword_Vocab, word_list:list=['<unk>'], vectors: np.ndarray=None):
+        super().__init__(word_list=word_list, vectors=vectors)
+        self.keyword_vocab = keyword_vocab
+
+    def generate_pair_vocab(self, pair_file, min_count:int=1, min_npmi:float=-1):
+        with io.open(pair_file, 'r', encoding='utf-8') as pair_f:
+            csv_r = csv.reader(pair_f)
+            new_vocab = []
+            for row in csv_r:
+                if int(row[1]) >= min_count and float(row[2]) >= min_npmi:
+                    new_vocab.append(row[0])
+                    word0, word1 = row[0].split('__')
+                    new_vocab.append('%s__%s' % (word1, word0))
+            super().__init__(word_list=['<unk>'] + new_vocab)
+
+    def __extract_context(self, line:str):
         if not line:
             return None
-        doc = nlp(line)
         kw2ctx = {}
-        for word in doc:
-            if word.text not in self.keywords:
-                continue
-            word_txt = word.text
-            if word_txt not in kw2ctx:
-                kw2ctx[word_txt] = set()
-            for child in word.children:
-                if child.dep_ == 'prep':
-                    relation = ''
-                    child_txt = ''
-                    for grand_child in child.children:
-                        if grand_child.dep_ == 'pobj':
-                            relation = 'prep_' + child.text.lower()
-                            child_txt = grand_child.text.lower()
-                    if not relation:
-                        continue
-                else:
-                    relation = child.dep_
-                    child_txt = child.text.lower()
-                kw2ctx[word_txt].add(relation + '_' + child_txt)
-
-            kw2ctx[word_txt].add(word.dep_ + 'I_' + word.head.text)
+        triplets = self.keyword_vocab.find_keyword_context_dependency(line)
+        for keyword, context, relation in triplets:
+            if keyword.text not in kw2ctx:
+                kw2ctx[keyword.text] = set()
+            kw2ctx[keyword.text].add('%s_%s' % (relation, context.text))
         if len(kw2ctx) <= 1:
             return None
         kws = list(kw2ctx.keys())
         str_buffer = []
         for i in range(len(kws)-1):
             for j in range(i+1, len(kws)):
-                pair_1 = kws[i] + '__' + kws[j]
-                pair_2 = kws[j] + '__' + kws[i]
-                for ctx in kw2ctx[kws[i]]:
-                    str_buffer.append(pair_1 + ' h_' + ctx + '\n')
-                    str_buffer.append(pair_2 + ' t_' + ctx + '\n')
-                for ctx in kw2ctx[kws[j]]:
-                    str_buffer.append(pair_1 + ' t_' + ctx + '\n')
-                    str_buffer.append(pair_2 + ' h_' + ctx + '\n')
+                pair_1 = '%s__%s' % (kws[i], kws[j])
+                pair_2 = '%s__%s' % (kws[j], kws[i])
+                if pair_1 in self.stoi:
+                    for ctx in kw2ctx[kws[i]]:
+                        str_buffer.append('%s h_%s\n' % (pair_1, ctx))
+                        str_buffer.append('%s t_%s\n' % (pair_2, ctx))
+                    for ctx in kw2ctx[kws[j]]:
+                        str_buffer.append('%s t_%s\n' % (pair_1, ctx))
+                        str_buffer.append('%s h_%s\n' % (pair_2, ctx))
 
         return ''.join(str_buffer)
 
-    def extract_word_vector(self, load_file, output_file):
-        Dep_Based_Embed_Generator.extract_word_vector(self, load_file, output_file)
-        w2set = {}
-        for word, idx in self.vocab2i.items():
-            cw = word.split('__')[0]
-            if cw not in w2set:
-                w2set[cw] = []
-            w2set[cw].append(idx)
-        self.w2set = {}
-        for cw, idxs in w2set.items():
-            self.w2set[cw] = np.array(idxs)
-        with io.open(output_file+'.json', 'w', encoding='utf-8') as f_output:
-            json.dump(w2set, f_output)
+    def extract_context(self, freq:int, input_file:str, output_file:str, thread_num:int=1):
+        multithread_wrapper(self.__extract_context, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
             
-    def load_word_vector(self, load_file):
-        Dep_Based_Embed_Generator.load_word_vector(self, load_file)
-        w2set = json.load(io.open(load_file + '.json', 'r', encoding='utf-8'))
-        self.w2set = {}
-        for cw, idxs in w2set.items():
-            self.w2set[cw] = np.array(idxs)
-            
-    def get_co_occur_pairs(self, cw):
-        try:
-            self.w2set
-        except NameError:
-            print('Pairs are not loaded')
-            return None
-        if cw not in self.w2set:
-            print('%s does not exist' % (cw))
-            return None
-        idxs = self.w2set[cw]
-        pair_vecs = self.wvecs[idxs]
-        pairs = [self.vocab[i] for i in idxs]
-        return (pairs, pair_vecs)
-        
-    def dbscan_cluster(self, cw, k:int=3):
-        try:
-            self.w2set
-        except NameError:
-            print('Pairs are not loaded')
-            return None
-        if cw not in self.w2set:
-            print('%s does not exist' % (cw))
-            return None
-        pairs, vecs = self.get_co_occur_pairs(cw)
-        pairs = [item.split('__')[1] for item in pairs]
-        label = do_cluster(vecs, k)
-        if all(label == -1):
-            score = -1
-        else:
-            score = silhouette_score(vecs, label, metric='cosine')
-        clusters = []
-        cluster_num = max(label) + 1
-        for i in range(cluster_num + 1):
-            clusters.append(set())
-        for word_idx, cluster_id in enumerate(label):
-            clusters[cluster_id].add(pairs[word_idx])
-        return score, clusters
+    def get_vectors(self, pairs)->np.ndarray:
+        if not isinstance(pairs, list):
+            pairs = [pairs]
+        idxs = np.array([self.stoi[pair] for pair in pairs])
+        return self.vectors[idxs]
 
-    def find_similar_pairs(self, cw, kw, n):
-        try:
-            self.vocab
-        except NameError:
-            print('Pairs are not loaded')
-            return None
-        pair = cw + '__' + kw
-        if pair not in self.vocab:
-            print('%s does not exist' % (pair))
-            return None
-        pairs, vecs = self.get_co_occur_pairs(cw)
-        pairs = [item.split('__')[1] for item in pairs]
-        pair_vec = self.wvecs[self.vocab2i[pair]]
-        # similarity_vec = self.wvecs.dot(pair_vec)
-        # result = heapq.nlargest(n, zip(similarity_vec, self.vocab), key=lambda x: x[0])
-        similarity_vec = vecs.dot(pair_vec)
-        result = heapq.nlargest(n, zip(similarity_vec, pairs), key=lambda x: x[0])
-        return_pairs = [item[1] for item in result]
-        return return_pairs
+    # def find_similar_pairs(self, cw, kw, n):
+    #     pair = cw + '__' + kw
+    #     if pair not in self.vocab:
+    #         print('%s does not exist' % (pair))
+    #         return None
+    #     pairs, vecs = self.get_co_occur_pairs(cw)
+    #     pairs = [item.split('__')[1] for item in pairs]
+    #     pair_vec = self.wvecs[self.vocab2i[pair]]
+    #     similarity_vec = vecs.dot(pair_vec)
+    #     result = heapq.nlargest(n, zip(similarity_vec, pairs), key=lambda x: x[0])
+    #     return_pairs = [item[1] for item in result]
+    #     return return_pairs

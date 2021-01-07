@@ -1,35 +1,14 @@
-from dep_generator import *
+from my_keywords import *
 
-class Sent2KW(Dep_Based_Embed_Generator):
-    def find_kw(self, sent):
-        word_tokens = [w.text for w in nlp(sent.lower())]
-        keywords = []
-        for idx, word_token in enumerate(word_tokens):
-            if word_token in self.keywords:
-                keywords.append(idx)
-        return keywords
+class Sent2KW(Keyword_Base):
+    def find_kw_idx(self, sent:str):
+        keywords = self.find_keyword_tokens(sent)
+        kw_idx = [keyword.i for keyword in keywords]
+        return kw_idx
 
-    def find_semantic_related_kw(self, sent):
-        doc = nlp(sent.lower())
-        ret = []
-        for word in doc:
-            if word.text not in self.keywords:
-                continue
-            for child in word.children:
-                child_id = -1
-                if child.dep_ == 'prep':
-                    relation = 'prep_' + child.text
-                    for grand_child in child.children:
-                        if grand_child.dep_ == 'pobj':
-                            if grand_child.text in self.keywords:
-                                child_id = grand_child.i
-                            break
-                else:
-                    relation = child.dep_
-                    if child.text in self.keywords:
-                        child_id = child.i
-                if child_id >= 0:
-                    ret.append([word.i, child_id, relation])
+    def find_semantic_related_kw_idx(self, sent):
+        triplets = self.find_keyword_context_dependency(sent)
+        ret = [(keyword.i, child.i, relation) for keyword, child, relation in triplets if child.text in self.keywords]
         return ret
 
     def register_files(self, reformed_file, relation_record_file):

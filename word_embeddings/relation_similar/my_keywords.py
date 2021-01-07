@@ -1,12 +1,43 @@
+import numpy as np
 import json
 import io
 import spacy
+from collections import defaultdict, Counter
 
 from my_multithread import multithread_wrapper
 
 nlp = spacy.load('en_core_web_sm')
 
-class Keywords:
+def extract_sent_from_big(freq:int, input_file:str, output_file:str, thread_num:int=1):
+    def extract_sent(line:str):
+        if not line:
+            return None
+        jsonObj = json.loads(line)
+        para = jsonObj['abstract'].strip().replace('\n', ' ').replace('$', '').replace('--', ', ').replace('-', ' - ')
+        return para + '\n'
+    multithread_wrapper(extract_sent, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
+
+def extract_sent_from_small(freq:int, input_file:str, output_file:str, thread_num:int=1):
+    def extract_sent(line:str):
+        if line.find('"abstract": "') == 0:
+            para = line.split(':', 1)[1].strip(' ",')
+            para = para.replace('\\n', ' ').replace('$', '').replace('--', ', ').replace('-', ' - ')
+            return para + '\n'
+    multithread_wrapper(extract_sent, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
+
+def ugly_normalize(vecs:np.ndarray):
+   normalizers = np.sqrt((vecs * vecs).sum(axis=1))
+   normalizers[normalizers==0]=1
+   return (vecs.T / normalizers).T
+
+def simple_normalize(vec:np.ndarray):
+    normalizer = np.sqrt(np.matmul(vec, vec))
+    if normalizer == 0:
+        normalizer = 1
+    return vec / normalizer
+
+
+class Keyword_Base:
 
     def build_word_tree(self, input_txt:str, dump_file:str):
         self.MyTree = {}
@@ -122,3 +153,131 @@ class Keywords:
 
     def process_sent(self, freq:int, input_file:str, output_file:str, thread_num:int=1):
         multithread_wrapper(self.__process_sent, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
+
+
+class Vocab_Base:
+    def __init__(self, word_list:list=['<unk>'], vectors:np.ndarray=None):
+        self.itos = word_list
+        self.stoi = defaultdict(_default_unk_index)
+        self.stoi.update({tok: i for i, tok in enumerate(self.itos)})
+        self.vectors = vectors if vectors is not None and len(vectors) == len(self.itos) else None
+
+    def __eq__(self, other):
+        if self.stoi != other.stoi:
+            return False
+        if self.itos != other.itos:
+            return False
+        if self.vectors != other.vectors:
+            return False
+        return True
+
+    def __len__(self):
+        return len(self.itos)
+
+    def read_embedding_file(self, source_file:str, save_file:str=None):
+        with io.open(source_file, 'r', encoding='utf-8') as fh:
+            first=fh.readline()
+            line_num, vec_len = first.strip().split(' ')
+            line_num = int(line_num)
+            vec_len = int(vec_len)
+            vectors = np.zeros((len(self.itos), vec_len), dtype=np.float)
+            try:
+                for i in range(line_num):
+                    line = fh.readline().strip().split()
+                    idx = self.stoi[line[0]]
+                    if idx != 0 or line[0] == self.itos[0]:
+                        vectors[idx] = np.array(list(map(float,line[1:])))
+            except:
+                print('Broken file')
+                return
+
+            self.vectors = ugly_normalize(np.array(vectors, float))
+            if save_file is not None:
+                self.save_vocab(save_file)
+                self.save_vector(save_file)
+    
+    def save_vocab(self, save_file:str):
+        with io.open(save_file+'.vocab', 'w', encoding='utf-8') as save_f:
+            save_f.write('\n'.join(self.itos))
+    
+    def save_vector(self, save_file:str):
+        if self.vectors:
+            np.save(save_file+'.npy', self.vectors)
+
+    def load_vocab(self, load_file:str):
+        self.itos = io.open(load_file + '.vocab', 'r', encoding='utf-8').read().split('\n')
+        self.stoi = defaultdict(_default_unk_index)
+        self.stoi.update({tok: i for i, tok in enumerate(self.itos)})
+
+    def load_vector(self, load_file:str):
+        vectors = np.load(load_file + '.npy')
+        if vectors is not None and len(vectors) == len(self.itos):
+            self.vectors = vectors
+        else:
+            print('vector file does not meet requirement')
+
+
+class Keyword_Vocab(Vocab_Base):
+    def __init__(self, word_list:list=['<unk>'], vectors:np.ndarray=None):
+        super().__init__(word_list=word_list, vectors=vectors)
+
+    def find_keyword_tokens(self, sent:str):
+        ret = [word_token for word_token in nlp(sent.lower()) if self.stoi[word_token.text] != 0]
+        return ret
+
+    def find_keyword_context_dependency(self, sent:str):
+        keywords = self.find_keyword_tokens(sent)
+        triplets = []
+        for keyword in keywords:
+            for child in keyword.children:
+                child_token = None
+                if child.dep_ == 'prep':
+                    relation = 'prep_' + child.text
+                    for grand_child in child.children:
+                        if grand_child.dep_ == 'pobj':
+                            child_token = grand_child
+                            break
+                else:
+                    relation = child.dep_
+                    child_token = child
+                if child_token is not None:
+                    triplets.append((keyword, child_token, relation))
+            triplets.append((keyword, keyword.head, keyword.dep_ + 'I'))
+        return triplets
+
+
+class Vocab_Generator(Keyword_Base):
+
+    def build_vocab(self, corpus_file, vocab_file, special_key=['<unk>'], special_ctx=['<unk>'], thr=10):
+        ctx_counter = Counter()
+        key_counter = Counter()
+        with open(corpus_file, mode='r', encoding='utf-8') as f:
+            for i_line, line in enumerate(f):
+                words = line.strip().split()
+                ctx_counter.update(Counter(words))
+                key_counter.update(Counter([word for word in words if word in self.keywords]))
+                if i_line % 1000000 == 0:
+                    print(i_line)
+
+        words_and_frequencies = sorted(ctx_counter.items(), key=lambda tup: tup[1], reverse=True)
+        ctx_selected = []
+        for word, freq in words_and_frequencies:
+            if freq < thr:
+                break
+            ctx_selected.append(word)
+        words_and_frequencies = sorted(key_counter.items(), key=lambda tup: tup[1], reverse=True)
+        key_selected = []
+        for word, freq in words_and_frequencies:
+            if freq < thr:
+                break
+            key_selected.append(word)
+        
+        key_vocab = Keyword_Vocab(special_key + key_selected)
+        ctx_vocab = Vocab_Base(special_ctx + ctx_selected)
+        key_vocab.save_vocab(vocab_file + '_key')
+        ctx_vocab.save_vocab(vocab_file + '_ctx')
+        return key_vocab, ctx_vocab
+
+
+def _default_unk_index():
+    return 0
