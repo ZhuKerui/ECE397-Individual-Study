@@ -201,7 +201,7 @@ class Vocab_Base:
             save_f.write('\n'.join(self.itos))
     
     def save_vector(self, save_file:str):
-        if self.vectors:
+        if self.vectors is not None:
             np.save(save_file+'.npy', self.vectors)
 
     def load_vocab(self, load_file:str):

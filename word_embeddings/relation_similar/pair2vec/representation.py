@@ -2,11 +2,11 @@ import numpy as np
 import torch
 from torch.nn import Module, Linear, Dropout, Sequential, LSTM, Embedding, GRU, ReLU, Parameter
 from torch.nn.functional import normalize
-from util import masked_softmax
+from pair2vec.util import masked_softmax
 from torch.autograd import Variable
 from torch.nn.init import xavier_normal_, constant
-from util import pretrained_embeddings_or_xavier
-from vocab import Vocab, Vectors
+from pair2vec.util import pretrained_embeddings_or_xavier
+from pair2vec.vocab import Vocab, Vectors
 
 class SpanRepresentation(Module):
     def __init__(self, config, d_output, vocab):

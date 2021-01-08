@@ -1,5 +1,5 @@
-from vocab import Vocab
-from indexed_field import Field
+from pair2vec.vocab import Vocab
+from pair2vec.indexed_field import Field
 from torch.autograd import Variable
 import torch
 import numpy as np
@@ -7,7 +7,7 @@ import numpy as np
 from typing import Optional, Dict, Union, Sequence, Iterable, Iterator, TypeVar, List
 from tqdm import tqdm
 from collections import defaultdict, Counter, OrderedDict
-import util
+import pair2vec.util
 import os
 import random
 

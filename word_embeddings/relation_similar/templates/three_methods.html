@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+{% load static %}
+<html>
+
+<head>
+    <title>Relation Similarity</title>
+    
+    <link rel="StyleSheet" href="{% static 'css/display.css' %}" type="text/css" />
+
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+
+    <style>
+        .wrap{
+            width:1800px;
+            margin:0 auto;
+            position: relative;
+        }
+        #left{
+            width:900px;
+            word-wrap:break-word;
+            word-break:normal;
+            background: #ccffff;
+            position: absolute;
+            top:0;
+            left:0;
+        }
+        #right{
+            width:900px;
+            word-wrap:break-word;
+            word-break:normal;
+            background: #ffcccc;
+            position: absolute;
+            top:0;
+            right:0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h2>Some helper tools</h2>
+<h3>Check keywords cosine distance</h3>
+<div>
+    <input type="text" placeholder="keyword1" id="keyword_1" />
+    <input type="text" placeholder="keyword2" id="keyword_2" />
+    <button type="button" id="cal_similarity">get cosine distance</button>
+</div>
+
+<div id="cosine_dist_display"></div>
+
+<br>
+<br>
+
+<h2>Input Your Central Keyword</h2>
+
+<div>
+    <input type="text" placeholder="Central Keyword" id="central_keyword" />
+</div>
+<div>
+    <input type="text" placeholder="k" id="k" />
+    <button type="button" id="search" >Search</button>
+</div>
+
+<br>
+<br>
+
+{% comment %} <div class="wrap"> {% endcomment %}
+    <div>
+        <h3>Pair Embedding Result</h3>
+        <div id="cluster_display_pair_embed"></div>
+    </div>
+
+    <br>
+<br>
+
+    <div>
+        <h3>Dependency-Based Embedding Result</h3>
+        <div id="cluster_display_base_embed"></div>
+    </div>
+{% comment %} </div> {% endcomment %}
+
+<br>
+<br>
+
+    <div>
+        <h3>Pair2vec Embedding Result</h3>
+        <div id="cluster_display_pair2vec_embed"></div>
+    </div>
+
+{% comment %} <div>
+    <input type="text" placeholder="related keyword" id="related_keyword" />
+    <input type="text" placeholder="top n similar pairs" id="similar_pair_num" />
+    <button type="button" id="search_similar_pair" >Search similar pairs</button>
+</div> {% endcomment %}
+
+<script>
+
+    function generate_cluster_str(cluster, score){
+        str = "<p><font color='red'>Silhouette Score: " + score + "</font></p>";
+        for (var cluster_id = 0; cluster_id < cluster.length; cluster_id++){
+            if (cluster_id == cluster.length - 1){
+                str += "<p>Discrete Points:</p><p>";
+            }else{
+                str += "<p>Cluster " + cluster_id + ":</p><p>";
+            }
+            for (var idx in cluster[cluster_id]){
+                str += cluster[cluster_id][idx];
+                str += ",&nbsp;";
+            }
+            str += "</p>"
+        }
+        return str
+    }
+
+    $('#search').click(function(){
+		$.ajax({
+			'url':'/search/',
+			'data':{
+                "central_keyword":$("#central_keyword").val(),
+                "k":$('#k').val(),
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    dg_score = ret["dg_score"];
+                    dg_clusters = ret["dg_clusters"];
+                    pe_score = ret["pe_score"];
+                    pe_clusters = ret["pe_clusters"];
+                    pg_score = ret["pg_score"];
+                    pg_clusters = ret["pg_clusters"];
+                    str = generate_cluster_str(pe_clusters, pe_score);
+					$('#cluster_display_pair_embed')[0].innerHTML = str;
+                    str = generate_cluster_str(dg_clusters, dg_score);
+					$('#cluster_display_base_embed')[0].innerHTML = str;
+                    str = generate_cluster_str(pg_clusters, pg_score);
+					$('#cluster_display_pair2vec_embed')[0].innerHTML = str;
+				} else {
+					$('#cluster_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+	});
+
+</script>
+
+</body>
+
+</html>

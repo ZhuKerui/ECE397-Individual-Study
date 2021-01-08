@@ -7,10 +7,10 @@ import torch.optim as optim
 from torch.nn.utils import clip_grad_norm
 from tensorboardX import SummaryWriter
 
-from model import Pair2Vec
-from matrix_data import read_data
-from util import get_args, get_config, makedirs
-import metrics, util
+from pair2vec.model import Pair2Vec
+from pair2vec.matrix_data import read_data
+from pair2vec.util import get_args, get_config, makedirs
+import pair2vec.metrics, pair2vec.util
 import numpy
 
 import logging

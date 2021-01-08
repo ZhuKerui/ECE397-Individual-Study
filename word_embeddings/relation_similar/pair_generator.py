@@ -1,3 +1,7 @@
+import torch
+from pyhocon import ConfigFactory
+
+from pair2vec.model import MLP
 from my_keywords import *
 
 class Pair_Generator:
@@ -8,6 +12,7 @@ class Pair_Generator:
         self.unk, self.pad, self.x_placeholder, self.y_placeholder = '<unk>', '<pad>', '<X>', '<Y>'
         self.key_vocab = keyword_vocab
         self.ctx_vocab = context_vocab
+        self.vectors = None
 
     def __extract_context(self, line):
         doc = nlp(line)
@@ -101,3 +106,34 @@ class Pair_Generator:
         context = [list(map(int, line.split())) for line in context_txt]
         for item in context:
             print(self.translate_triple(item))
+
+    def load_inference_model(self, model_file:str):
+        model = torch.load(model_file, map_location='cpu')
+        mlp_config = ConfigFactory.parse_file('pair2vec/mlp_config.json')
+        self.mlp = MLP(mlp_config)
+        mlp_state_dict = {
+            'mlp.1.weight': model['state_dict']['predict_relations.mlp.1.weight'],
+            'mlp.1.bias': model['state_dict']['predict_relations.mlp.1.bias'],
+            'mlp.4.weight': model['state_dict']['predict_relations.mlp.4.weight'],
+            'mlp.4.bias': model['state_dict']['predict_relations.mlp.4.bias'],
+            'mlp.7.weight': model['state_dict']['predict_relations.mlp.7.weight'],
+            'mlp.7.bias': model['state_dict']['predict_relations.mlp.7.bias'],
+            'mlp.10.weight': model['state_dict']['predict_relations.mlp.10.weight'],
+            'mlp.10.bias': model['state_dict']['predict_relations.mlp.10.bias']
+        }
+        self.mlp.load_state_dict(state_dict=mlp_state_dict)
+        self.vectors = model['state_dict']['represent_arguments.weight']
+
+    def get_vectors(self, keyword_pair):
+        if not isinstance(keyword_pair, list):
+            keyword_pair = [keyword_pair]
+        
+        idx_batch = [[self.key_vocab.stoi[kw1], self.key_vocab.stoi[kw2]] for kw1, kw2 in keyword_pair]
+        idx_batch = np.array(idx_batch, dtype=np.int)
+        idx_batch_torch = torch.from_numpy(idx_batch)
+        obj_idx_batch = idx_batch_torch[:, 1]
+        sub_idx_batch = idx_batch_torch[:, 0]
+        obj_vecs = self.vectors[obj_idx_batch]
+        sub_vecs = self.vectors[sub_idx_batch]
+        vectors = self.mlp(sub_vecs, obj_vecs).detach().numpy()
+        return ugly_normalize(vectors)
