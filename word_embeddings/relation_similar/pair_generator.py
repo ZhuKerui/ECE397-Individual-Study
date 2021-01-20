@@ -1,9 +1,12 @@
 import torch
 from pyhocon import ConfigFactory
+import sys
+sys.path.append('..')
 
-from pair2vec.model import MLP, SpanRepresentation
+from relation_similar.pair2vec.model import MLP
+from relation_similar.pair2vec.representation import SpanRepresentation
 from my_keywords import *
-from pair2vec.vocab import Vocab
+from relation_similar.pair2vec.vocab import Vocab
 
 class Pair_Generator:
     def __init__(self, keyword_vocab:Keyword_Vocab, context_vocab:Vocab_Base, win=8, margin=1):
@@ -183,3 +186,14 @@ class Pair_Generator:
         sub_vecs = self.vectors[sub_idx_batch]
         vectors = self.mlp(sub_vecs, obj_vecs).detach().numpy()
         return ugly_normalize(vectors)
+
+if __name__ == '__main__':
+    kv = Keyword_Vocab()
+    cv = Vocab_Base()
+    key_vocab_file = sys.argv[1]
+    ctx_vocab_file = sys.argv[2]
+    kv.load_vocab(key_vocab_file)
+    cv.load_vocab(ctx_vocab_file)
+    pg = Pair_Generator(kv, cv)
+    # pg.load_inference_model('../../../dataset/outputs/pair2vec/triplets_1_big_model.pt')
+    pg.extract_context(80, sys.argv[3], sys.argv[4], 30)

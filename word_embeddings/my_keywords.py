@@ -3,27 +3,11 @@ import json
 import io
 import spacy
 from collections import defaultdict, Counter
-
+import sys
+sys.path.append('..')
 from my_multithread import multithread_wrapper
 
 nlp = spacy.load('en_core_web_sm')
-
-def extract_sent_from_big(freq:int, input_file:str, output_file:str, thread_num:int=1):
-    def extract_sent(line:str):
-        if not line:
-            return None
-        jsonObj = json.loads(line)
-        para = jsonObj['abstract'].strip().replace('\n', ' ').replace('$', '').replace('--', ', ').replace('-', ' - ')
-        return para + '\n'
-    multithread_wrapper(extract_sent, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
-
-def extract_sent_from_small(freq:int, input_file:str, output_file:str, thread_num:int=1):
-    def extract_sent(line:str):
-        if line.find('"abstract": "') == 0:
-            para = line.split(':', 1)[1].strip(' ",')
-            para = para.replace('\\n', ' ').replace('$', '').replace('--', ', ').replace('-', ' - ')
-            return para + '\n'
-    multithread_wrapper(extract_sent, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
 
 def ugly_normalize(vecs:np.ndarray):
    normalizers = np.sqrt((vecs * vecs).sum(axis=1))
@@ -158,7 +142,7 @@ class Keyword_Base:
 class Vocab_Base:
     def __init__(self, word_list:list=['<unk>'], vectors:np.ndarray=None):
         self.itos = word_list
-        self.stoi = defaultdict(_default_unk_index)
+        self.stoi = defaultdict(lambda: 0)
         self.stoi.update({tok: i for i, tok in enumerate(self.itos)})
         self.vectors = vectors if vectors is not None and len(vectors) == len(self.itos) else None
 
@@ -193,24 +177,24 @@ class Vocab_Base:
 
             self.vectors = ugly_normalize(np.array(vectors, float))
             if save_file is not None:
-                self.save_vocab(save_file)
-                self.save_vector(save_file)
+                self.save_vocab(save_file+'.vocab')
+                self.save_vector(save_file+'.npy')
     
     def save_vocab(self, save_file:str):
-        with io.open(save_file+'.vocab', 'w', encoding='utf-8') as save_f:
+        with io.open(save_file, 'w', encoding='utf-8') as save_f:
             save_f.write('\n'.join(self.itos))
     
     def save_vector(self, save_file:str):
         if self.vectors is not None:
-            np.save(save_file+'.npy', self.vectors)
+            np.save(save_file, self.vectors)
 
     def load_vocab(self, load_file:str):
-        self.itos = io.open(load_file + '.vocab', 'r', encoding='utf-8').read().split('\n')
-        self.stoi = defaultdict(_default_unk_index)
+        self.itos = io.open(load_file, 'r', encoding='utf-8').read().split('\n')
+        self.stoi = defaultdict(lambda: 0)
         self.stoi.update({tok: i for i, tok in enumerate(self.itos)})
 
     def load_vector(self, load_file:str):
-        vectors = np.load(load_file + '.npy')
+        vectors = np.load(load_file)
         if vectors is not None and len(vectors) == len(self.itos):
             self.vectors = vectors
         else:
@@ -274,10 +258,7 @@ class Vocab_Generator(Keyword_Base):
         
         key_vocab = Keyword_Vocab(special_key + key_selected)
         ctx_vocab = Vocab_Base(special_ctx + ctx_selected)
-        key_vocab.save_vocab(vocab_file + '_key')
-        ctx_vocab.save_vocab(vocab_file + '_ctx')
+        key_vocab.save_vocab(vocab_file + '_key.vocab')
+        ctx_vocab.save_vocab(vocab_file + '_ctx.vocab')
         return key_vocab, ctx_vocab
 
-
-def _default_unk_index():
-    return 0

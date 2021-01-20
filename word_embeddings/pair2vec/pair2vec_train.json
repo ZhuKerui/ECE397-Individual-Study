@@ -2,11 +2,11 @@
     "compositional_rels": true,
     "compositional_args": false,
     "positional_rels": false,
-    "triplet_dir": "../../../dataset/outputs/pair2vec/triplets_1/",
+    "triplet_dir": "../data/outputs/pair2vec/",
     "triplet_name": "big_triplet",
-    "save_path": "../../../dataset/outputs/pair2vec/",
-    "keyword_vocab_file": "../../../dataset/corpus/big_key.vocab",
-    "context_vocab_file": "../../../dataset/corpus/big_ctx.vocab",
+    "save_path": "../data/outputs/pair2vec/",
+    "keyword_vocab_file": "../data/corpus/big_key.vocab",
+    "context_vocab_file": "../data/corpus/big_ctx.vocab",
     "train_batch_size": 600,
     "dev_batch_size": 1000,
     "normalize_args": true,
@@ -40,6 +40,6 @@
     "init_with_pretrained": false,
     "word_vecs_k": "",
     "word_vecs_c": "",
-    "word_vecs_cache_k": "../../../dataset/outputs/pair2vec/cache",
-    "word_vecs_cache_c": "../../../dataset/outputs/pair2vec/cache"
+    "word_vecs_cache_k": "../data/outputs/pair2vec/cache",
+    "word_vecs_cache_c": "../data/outputs/pair2vec/cache"
 }

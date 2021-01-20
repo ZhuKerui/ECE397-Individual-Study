@@ -1,7 +1,8 @@
 import glob
 import os
 import time
-
+import sys
+sys.path.append('..')
 import torch
 import torch.optim as optim
 from torch.nn.utils import clip_grad_norm_

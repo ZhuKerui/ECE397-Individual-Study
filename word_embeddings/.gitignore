@@ -1,7 +1,3 @@
 __pycache__
 .vscode
-.npy
-.vocab
-.txt
-helper.py
-.vscode
+data/

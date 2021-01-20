@@ -1,7 +1,8 @@
 import csv
 import io
-import heapq
 import numpy as np
+import sys
+sys.path.append('..')
 
 from my_keywords import Vocab_Base, Keyword_Vocab
 from my_multithread import multithread_wrapper
@@ -59,15 +60,10 @@ class Pair_Embed(Vocab_Base):
         idxs = np.array([self.stoi[pair] for pair in pairs])
         return self.vectors[idxs]
 
-    # def find_similar_pairs(self, cw, kw, n):
-    #     pair = cw + '__' + kw
-    #     if pair not in self.vocab:
-    #         print('%s does not exist' % (pair))
-    #         return None
-    #     pairs, vecs = self.get_co_occur_pairs(cw)
-    #     pairs = [item.split('__')[1] for item in pairs]
-    #     pair_vec = self.wvecs[self.vocab2i[pair]]
-    #     similarity_vec = vecs.dot(pair_vec)
-    #     result = heapq.nlargest(n, zip(similarity_vec, pairs), key=lambda x: x[0])
-    #     return_pairs = [item[1] for item in result]
-    #     return return_pairs
+if __name__ == '__main__':
+    kv = Keyword_Vocab()
+    kv.load_vocab(sys.argv[1])
+    pe = Pair_Embed(kv)
+    pe.generate_pair_vocab(sys.argv[2], min_count=5, min_npmi=0.15)
+    pe.save_vocab(sys.argv[2])
+    pe.extract_context(80, sys.argv[3], sys.argv[4], thread_num=30)

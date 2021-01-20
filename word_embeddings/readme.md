@@ -1,1 +1,9 @@
-./word2vec -train ../../../dataset/reform_sent.txt -output ori_word_embed.txt -cbow 0 -size 200 -window 5 -negative 15 -threads 10 -binary 0
+# Kerui's Project Main Page
+
+> This is the main source code for Kerui Zhu's FORWARD Lab project.
+
+## Setup
+
+```bash
+./sh/setup.sh
+```

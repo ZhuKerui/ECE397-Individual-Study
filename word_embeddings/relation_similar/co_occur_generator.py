@@ -4,8 +4,10 @@ import numpy as np
 import csv
 import math
 from collections import Counter
+import sys
+sys.path.append('..')
 
-from vdbscan import do_cluster
+from relation_similar.vdbscan import do_cluster
 from my_keywords import Keyword_Vocab
 from my_multithread import multithread_wrapper
 
@@ -39,7 +41,7 @@ def nmpi_analysis(counter:dict, output_file:str):
             word_freq[word1] = freq
         Z += 2 * freq
 
-    with io.open(output_file+'.csv', 'w', encoding='utf-8') as dump_file:
+    with io.open(output_file, 'w', encoding='utf-8') as dump_file:
         csv_w = csv.writer(dump_file)
         for pair, freq in counter.items():
             word0, word1 = pair.split('__')
@@ -125,3 +127,9 @@ class Co_Occur_Generator:
     def get_related(self, keyword, min_count:int=1, min_npmi:float=-1.0):
         pairs = ((keyword + '__' + w if keyword < w else w + '__' + keyword) for w in self.related[keyword])
         return [w for pair, w in zip(pairs, self.related[keyword]) if self.pairs[pair]['freq'] >= min_count and self.pairs[pair]['npmi'] >= min_npmi]
+
+if __name__ == '__main__':
+    kv = Keyword_Vocab()
+    kv.load_vocab(sys.argv[1])
+    cog = Co_Occur_Generator(keyword_vocab=kv)
+    cog.extract_co_occur(80, sys.argv[2], sys.argv[3], thread_num=30)

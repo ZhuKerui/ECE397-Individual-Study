@@ -1,4 +1,9 @@
-from my_keywords import *
+import sys
+sys.path.append('..')
+import numpy as np
+
+from my_keywords import Keyword_Vocab
+from my_multithread import multithread_wrapper
 
 class Dep_Based_Embed_Generator(Keyword_Vocab):
 
@@ -36,3 +41,9 @@ class Dep_Based_Embed_Generator(Keyword_Vocab):
             return self.vectors[idx_1].dot(self.vectors[idx_2])
         else:
             return None
+
+if __name__ == '__main__':
+    kv = Keyword_Vocab()
+    kv.load_vocab(sys.argv[1])
+    dg = Dep_Based_Embed_Generator(kv)
+    dg.extract_context(80, sys.argv[2], sys.argv[3], 30)
