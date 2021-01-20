@@ -4,13 +4,13 @@ import time
 
 import torch
 import torch.optim as optim
-from torch.nn.utils import clip_grad_norm
+from torch.nn.utils import clip_grad_norm_
 from tensorboardX import SummaryWriter
 
 from pair2vec.model import Pair2Vec
 from pair2vec.matrix_data import read_data
-from pair2vec.util import get_args, get_config, makedirs
-import pair2vec.metrics, pair2vec.util
+from pair2vec.util import get_args, get_config, makedirs, resume_from, save_checkpoint
+from pair2vec.metrics import positive_predictions_for
 import numpy
 
 import logging
@@ -53,7 +53,7 @@ def main(args, config):
 
     checkpoint = None
     if args.resume_snapshot:
-        checkpoint = util.resume_from(args.resume_snapshot, model, opt)
+        checkpoint = resume_from(args.resume_snapshot, model, opt)
 
     writer = SummaryWriter(comment="_" + args.exp)
 
@@ -128,7 +128,7 @@ def train(train_data, dev_data, train_iterator, dev_iterator, model, config, opt
                 train_loss = train_eval_stats.average()[0]
                 if train_loss < best_train_loss:
                     best_train_loss = train_loss
-                    util.save_checkpoint(config, model, opt, epoch, iterations, train_eval_stats, dev_eval_stats, 'best_train_snapshot')
+                    save_checkpoint(config, model, opt, epoch, iterations, train_eval_stats, dev_eval_stats, 'best_train_snapshot')
 
                 # reset train stats
                 train_eval_stats = EvaluationStatistics(config)
@@ -137,12 +137,12 @@ def train(train_data, dev_data, train_iterator, dev_iterator, model, config, opt
             elif iterations % config.log_every == 0:
                 stats_logger.log( epoch, iterations, batch_index, train_eval_stats, dev_eval_stats)
         train_loss = train_eval_stats.average()[0]
-        util.save_checkpoint(config, model, opt, epoch, iterations, train_eval_stats, dev_eval_stats, 'epoch_train_snapshot', remove=False)
+        save_checkpoint(config, model, opt, epoch, iterations, train_eval_stats, dev_eval_stats, 'epoch_train_snapshot', remove=False)
 
 
 def rescale_gradients(model, grad_norm):
     parameters_to_clip = [p for p in model.parameters() if p.grad is not None]
-    clip_grad_norm(parameters_to_clip, grad_norm)
+    clip_grad_norm_(parameters_to_clip, grad_norm)
 
 
 def save(config, model, loss, iterations, name):
@@ -187,8 +187,8 @@ class EvaluationStatistics:
             observed_probabilities = output_dict['observed_probabilities']
             self.n_examples += observed_probabilities.size()[0]
             sampled_probabilities = output_dict['sampled_probabilities']
-            self.pos_pred += metrics.positive_predictions_for(observed_probabilities, self.threshold)
-            self.neg_pred += metrics.positive_predictions_for(sampled_probabilities, self.threshold)
+            self.pos_pred += positive_predictions_for(observed_probabilities, self.threshold)
+            self.neg_pred += positive_predictions_for(sampled_probabilities, self.threshold)
         else:
             self.n_examples += 1
     

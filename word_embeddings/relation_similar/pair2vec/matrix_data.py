@@ -133,13 +133,13 @@ def create_vocab(config, args_, rels_):
         text = f.read()
         tokens = text.rstrip().split('\n')
         vectors_k, vectors_cache_k = (None, None) if not init_with_pretrained else (getattr(config, 'word_vecs_k', 'pretrained_keyword_vec'), getattr(config, 'word_vecs_cache_k', 'data/fasttext'))
-        args_.vocab = Vocab(tokens, vectors=vectors_k, vectors_cache=vectors_cache_k)
-    specials = ['<unk>', '<pad>', '<X>', '<Y>'] if config.compositional_rels else ['<unk>', '']
+        args_.vocab = Vocab(tokens, vectors=vectors_k, vectors_cache=vectors_cache_k, specials=[])
+    # specials = ['<unk>', '<pad>', '<X>', '<Y>'] if config.compositional_rels else ['<unk>', '']
     with open(context_vocab_path) as f:
         text = f.read()
         tokens = text.rstrip().split('\n')
         vectors_c, vectors_cache_c = (None, None) if not init_with_pretrained else (getattr(config, 'word_vecs_c', 'pretrained_context_vec'), getattr(config, 'word_vecs_cache_c', 'data/fasttext'))
-        rels_.vocab = Vocab(tokens, specials=specials, vectors=vectors_c, vectors_cache=vectors_cache_c)
+        rels_.vocab = Vocab(tokens, specials=[], vectors=vectors_c, vectors_cache=vectors_cache_c)
 
 def read(filenames):
     for fname in filenames:

@@ -2,7 +2,8 @@ import torch
 from torch.autograd import Variable
 from typing import Dict
 from torch.nn import Module, Linear, Dropout, Sequential, Embedding, LogSigmoid, ReLU
-from torch.nn.functional import sigmoid, logsigmoid, softmax, normalize, log_softmax
+from torch.nn.functional import logsigmoid, softmax, normalize, log_softmax
+from torch import sigmoid
 from pair2vec.representation import SpanRepresentation
 from torch.nn.init import xavier_normal_
 from pair2vec.util import pretrained_embeddings_or_xavier

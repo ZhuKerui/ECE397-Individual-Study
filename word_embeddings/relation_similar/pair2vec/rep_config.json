@@ -1,0 +1,8 @@
+{
+    "d_embed": 300,
+    "n_lstm_layers": 1,
+    "dropout": 0.0,
+    "d_lstm_hidden": 100,
+    "d_lstm_input": 300,
+    "d_rels": 300
+}
