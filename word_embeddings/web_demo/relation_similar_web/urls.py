@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('search/', views.search),
+    path('search_related/', views.search_related),
+    path('search_relation/', views.search_relation),
     # path('cal_similarity/', views.cal_similarity),
     # path('sent_analysis/', views.sent_analysis),
     # path('get_sent_by_relation/', views.get_sent_by_relation),

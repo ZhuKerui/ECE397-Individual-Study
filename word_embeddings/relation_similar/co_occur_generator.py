@@ -125,6 +125,8 @@ class Co_Occur_Generator:
         self._pairs_save = self.pairs
 
     def get_related(self, keyword, min_count:int=1, min_npmi:float=-1.0):
+        if keyword not in self.related:
+            return None
         pairs = ((keyword + '__' + w if keyword < w else w + '__' + keyword) for w in self.related[keyword])
         return [w for pair, w in zip(pairs, self.related[keyword]) if self.pairs[pair]['freq'] >= min_count and self.pairs[pair]['npmi'] >= min_npmi]
 

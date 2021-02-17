@@ -110,26 +110,33 @@
 #         content['distance'] = 1 - similarity
 #     return JsonResponse(content, safe=False)
 
+import heapq
 import sys
 sys.path.append("..")
+import numpy as np
 from django.http import request
 from django.shortcuts import render
 from django.http import JsonResponse
-
-from co_occur_generator import Co_Occur_Generator, dbscan_cluster
-from pair_embed import Pair_Embed
+from relation_similar.co_occur_generator import Co_Occur_Generator, dbscan_cluster
+from relation_similar.pair_embed import Pair_Embed
 from my_keywords import Keyword_Vocab, Vocab_Base
-from dep_generator import Dep_Based_Embed_Generator
-from pair_generator import Pair_Generator
+from relation_similar.dep_generator import Dep_Based_Embed_Generator
+from relation_similar.pair_generator import Pair_Generator
 
-dep_key_vocab_file = '../../../dataset/test_corpus/big_key'
-dep_pair_vocab_file = '../../../dataset/test_corpus/big_pair_key'
-dep_key_embed_file = '../../../dataset/test_corpus/big_dep_emb.txt'
-dep_pair_embed_file = '../../../dataset/test_corpus/big_dep_pair_emb.txt'
-pair2vec_key_vocab_file = '../../../dataset/corpus/big_key'
-pair2vec_ctx_vocab_file = '../../../dataset/corpus/big_ctx'
-pair2vec_model_file = '../../../dataset/outputs/pair2vec/test_model.pt'
-co_occur_pair_file = '../../../dataset/test_corpus/big_dep_pair_train.csv'
+dep_key_vocab_file = '../data/corpus/big_key.vocab'
+dep_key_embed_file = '../data/outputs/dependency_emb/big_dep_emb.txt'
+dep_key_npy_file = '../data/outputs/dependency_emb/big_key.npy'
+
+dep_pair_vocab_file = '../data/outputs/pair_emb/big_pair.vocab'
+dep_pair_embed_file = '../data/outputs/pair_emb/big_pair_emb.txt'
+dep_pair_npy_file = '../data/outputs/pair_emb/big_pair.npy'
+
+pair2vec_key_vocab_file = '../data/corpus/big_key.vocab'
+pair2vec_ctx_vocab_file = '../data/corpus/big_ctx.vocab'
+pair2vec_model_file = '../data/outputs/pair2vec/best_model_2.pt'
+pair2vec_config_file = '../pair2vec/pair2vec_train.json'
+
+co_occur_pair_file = '../data/outputs/co_occur/big_co_occur.csv'
 
 dep_key_vocab = Keyword_Vocab()
 pair2vec_key_vocab = Keyword_Vocab()
@@ -137,9 +144,9 @@ pair2vec_ctx_vocab = Vocab_Base()
 print(1)
 
 dep_key_vocab.load_vocab(dep_key_vocab_file)
-dep_key_vocab.load_vector(dep_key_vocab_file)
+dep_key_vocab.load_vector(dep_key_npy_file)
 # dep_key_vocab.read_embedding_file(dep_key_embed_file)
-# dep_key_vocab.save_vector(dep_key_vocab_file)
+# dep_key_vocab.save_vector(dep_key_npy_file)
 
 pair2vec_key_vocab.load_vocab(pair2vec_key_vocab_file)
 pair2vec_ctx_vocab.load_vocab(pair2vec_ctx_vocab_file)
@@ -149,18 +156,27 @@ dg = Dep_Based_Embed_Generator(dep_key_vocab)
 
 pe = Pair_Embed(dep_key_vocab)
 pe.load_vocab(dep_pair_vocab_file)
-pe.load_vector(dep_pair_vocab_file)
+pe.load_vector(dep_pair_npy_file)
 # pe.read_embedding_file(dep_pair_embed_file)
 # pe.save_vector(dep_pair_vocab_file)
 print(3)
 
 pg = Pair_Generator(pair2vec_key_vocab, pair2vec_ctx_vocab)
-pg.load_inference_model(pair2vec_model_file)
+pg.load_inference_model(pair2vec_model_file, pair2vec_config_file)
 print(4)
 
 cog = Co_Occur_Generator(dep_key_vocab)
 cog.load_pairs(co_occur_pair_file)
 print(5)
+
+ctx_uni = np.load('../data/outputs/pair2vec/filtered_ctx_pat_2.npy')
+# ctx_uni = np.load('../data/outputs/pair2vec/manual_ctx.npy')
+ctx_vectors = pg.get_relation_vectors(ctx_uni)
+
+stanford_ctx_uni = np.load('../data/outputs/pair2vec/stanford_ctx.npy')
+stanford_ctx_vectors = pg.get_relation_vectors(stanford_ctx_uni)
+ollie_ctx_uni = np.load('../data/outputs/pair2vec/ollie_ctx.npy')
+ollie_ctx_vectors = pg.get_relation_vectors(ollie_ctx_uni)
 
 def index(request):
     return render(request, 'three_methods.html')
@@ -201,6 +217,75 @@ def search(request):
         content['pg_score'] = str(pg_score)
     return JsonResponse(content, safe=False)
 
+def search_related(request):
+    global cog
+    ck = request.GET.get('central_keyword')
+    cnt_threshold = 5
+    npmi_threshold = 0.15
+    related_kws = cog.get_related(ck, cnt_threshold, npmi_threshold)
+    content = {}
+    if related_kws is None:
+        content['status'] = 0
+    else:
+        content['status'] = 1
+        content['related_kws'] = related_kws
+    return JsonResponse(content, safe=False)
+
+def search_relation(request):
+    global pg
+    global ctx_uni
+    global ctx_vectors
+    global stanford_ctx_uni
+    global stanford_ctx_vectors
+    global ollie_ctx_uni
+    global ollie_ctx_vectors
+    ck = request.GET.get('central_keyword')
+    keyword = request.GET.get('keyword')
+    n = request.GET.get('n')
+    show_entity = request.GET.get('show_entity')
+    n = int(n)
+    vector = pg.get_vectors((ck, keyword))
+    # results = ctx_vectors.dot(vector.reshape(-1))
+    # top_n = heapq.nlargest(n, enumerate(results), key=lambda x: x[1])
+    # relations = []
+    # for idx, val in top_n:
+    #     if show_entity == 'true':
+    #         context = pg.translate_context(ctx_uni[idx]).replace('<X>', ck).replace('<Y>', keyword)
+    #     else:
+    #         context = pg.translate_context(ctx_uni[idx])
+    #     relations.append(context)
+    # content = {}
+    # if not relations:
+    #     content['status'] = 0
+    # else:
+    #     content['status'] = 1
+    #     content['relations'] = relations
+    ollie_results = ollie_ctx_vectors.dot(vector.reshape(-1))
+    ollie_top_n = heapq.nlargest(n, enumerate(ollie_results), key=lambda x: x[1])
+    ollie_relations = []
+    for idx, val in ollie_top_n:
+        if show_entity == 'true':
+            context = pg.translate_context(ollie_ctx_uni[idx]).replace('<X>', ck).replace('<Y>', keyword)
+        else:
+            context = pg.translate_context(ollie_ctx_uni[idx])
+        ollie_relations.append(context)
+    stanford_results = stanford_ctx_vectors.dot(vector.reshape(-1))
+    stanford_top_n = heapq.nlargest(n, enumerate(stanford_results), key=lambda x: x[1])
+    stanford_relations = []
+    for idx, val in stanford_top_n:
+        if show_entity == 'true':
+            context = pg.translate_context(stanford_ctx_uni[idx]).replace('<X>', ck).replace('<Y>', keyword)
+        else:
+            context = pg.translate_context(stanford_ctx_uni[idx])
+        stanford_relations.append(context)
+    content = {}
+    if not ollie_relations or not stanford_relations:
+        content['status'] = 0
+    else:
+        content['status'] = 1
+        content['ollie_relations'] = ollie_relations
+        content['stanford_relations'] = stanford_relations
+    return JsonResponse(content, safe=False)
 # def find_similar_pairs(request):
 #     global pair_embed
 #     central_keyword = request.GET.get('central_keyword')

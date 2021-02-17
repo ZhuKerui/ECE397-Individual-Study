@@ -14,5 +14,6 @@ python3 helper.py reform_sent ./data/corpus/wordtree.json ./data/corpus/small_se
 python3 helper.py reform_sent ./data/corpus/wordtree.json ./data/corpus/big_sent.txt ./data/corpus/big_reform.txt
 python3 helper.py build_test_corpus ./data/corpus/small_reform.txt ./data/test_corpus/test_reform.txt
 python3 helper.py generate_vocab ./data/corpus/wordtree.json ./data/corpus/big_reform.txt ./data/corpus/big
-python3 helper.py generate_vocab ./data/corpus/wordtree.json ./data/corpus/small_reform.txt ./data/corpus/small
-python3 helper.py generate_vocab ./data/corpus/wordtree.json ./data/test_corpus/test_reform.txt ./data/test_corpus/test
+python3 helper.py filter_ctx ./data/corpus/big_ctx.vocab ./data/corpus/big_ctx.vocab
+# python3 helper.py generate_vocab ./data/corpus/wordtree.json ./data/corpus/small_reform.txt ./data/corpus/small
+# python3 helper.py generate_vocab ./data/corpus/wordtree.json ./data/test_corpus/test_reform.txt ./data/test_corpus/test

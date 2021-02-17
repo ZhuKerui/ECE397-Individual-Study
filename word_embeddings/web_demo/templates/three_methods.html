@@ -53,6 +53,31 @@
 <br>
 <br>
 
+<h3>Check related keywords</h3>
+<div>
+    <input type="text" placeholder="central_keyword" id="search_related_central_keyword" />
+    <button type="button" id="search_related">Search</button>
+</div>
+
+<div id="related_keyword_display"></div>
+
+<br>
+<br>
+
+<h3>Check relation between keywords</h3>
+<div>
+    <input type="text" placeholder="central_keyword" id="check_relation_central_keyword" />
+    <input type="text" placeholder="keyword" id="check_relation_keyword" />
+    <input type="text" placeholder="top n" id="check_relation_num" />
+    <input type="checkbox" id="check_relation_show_entity" />Show entities
+    <button type="button" id="search_relation">Search</button>
+</div>
+
+<div id="check_relation_display"></div>
+
+<br>
+<br>
+
 <h2>Input Your Central Keyword</h2>
 
 <div>
@@ -141,6 +166,68 @@
 			}
 		});
 	});
+
+    $('#search_related').click(function(){
+        $.ajax({
+			'url':'/search_related/',
+			'data':{
+                "central_keyword":$("#search_related_central_keyword").val(),
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    str = "<p>";
+                    related_kws = ret["related_kws"];
+                    related_kws.forEach(element => {
+                        str += element;
+                        str += ",&nbsp;";
+                    });
+                    str += "</p>"
+                    $('#related_keyword_display')[0].innerHTML = str;
+				} else {
+					$('#related_keyword_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+    });
+
+    $('#search_relation').click(function(){
+        $.ajax({
+			'url':'/search_relation/',
+			'data':{
+                "central_keyword":$("#check_relation_central_keyword").val(),
+                "keyword":$("#check_relation_keyword").val(),
+                "n":$("#check_relation_num").val(),
+                "show_entity":document.getElementById("check_relation_show_entity").checked,
+			},
+			'success' :function(ret){
+				if (ret["status"]){
+                    str = "<p>";
+                    // related_kws = ret["relations"];
+                    // related_kws.forEach(element => {
+                    //     str += element;
+                    //     str += "<br>";
+                    // });
+                    // str += "</p>"
+                    stanford_rel = ret["stanford_relations"];
+                    str += "<h3>stanford relations</h3>"
+                    stanford_rel.forEach(element => {
+                        str += element;
+                        str += "<br>";
+                    });
+                    ollie_rel = ret["ollie_relations"];
+                    str += "<h3>ollie relations</h3>"
+                    ollie_rel.forEach(element => {
+                        str += element;
+                        str += "<br>";
+                    });
+                    str += "</p>"
+                    $('#check_relation_display')[0].innerHTML = str;
+				} else {
+					$('#check_relation_display')[0].innerHTML = '<p>The keyword does not exist.</p>';
+				}
+			}
+		});
+    });
 
 </script>
 
