@@ -6,20 +6,8 @@ from collections import defaultdict, Counter
 import sys
 sys.path.append('..')
 from my_multithread import multithread_wrapper
-
+from my_util import ugly_normalize, simple_normalize
 nlp = spacy.load('en_core_web_sm')
-
-def ugly_normalize(vecs:np.ndarray):
-   normalizers = np.sqrt((vecs * vecs).sum(axis=1))
-   normalizers[normalizers==0]=1
-   return (vecs.T / normalizers).T
-
-def simple_normalize(vec:np.ndarray):
-    normalizer = np.sqrt(np.matmul(vec, vec))
-    if normalizer == 0:
-        normalizer = 1
-    return vec / normalizer
-
 
 class Keyword_Base:
 
