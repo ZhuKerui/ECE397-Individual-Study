@@ -1,0 +1,5 @@
+programming language:python,java,c++
+scala:python,java,c++
+communication protocol:bluetooth,wifi,uwb
+operating system:linux,windows,android
+python package:numpy,torch

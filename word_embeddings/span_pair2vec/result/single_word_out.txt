@@ -1,0 +1,1217 @@
+!python<=>programming language
+
+>Similar Relation
+is presentation of
+is familiar with
+is contribution of
+is conceived as
+is kind of
+is equipped with
+is dedicated to
+is language of
+is axiomatization of
+is organized as
+is form of
+is language for
+is written in
+streamline
+piece of
+is connected via
+is designed as
+is logic of
+finally is dedicated to
+is recommended as
+written in
+is example of
+is abstracted as
+is name of
+was conceived as
+is developing
+therefore is equipped with
+is contextualized to
+is written as
+is first implementation of
+undertakes
+is implementing
+is logic for
+specifically is designed as
+is generated via
+serves as
+is realized via
+is named as
+has form as
+has form
+
+>Similar Keyword
+python
+piston
+java thread
+national library
+graphics library
+genomic library
+java library
+academic library
+international technology roadmap
+audit system
+java bytecode
+intel xeon phi coprocessor
+library
+japanese newspaper article
+library of congress
+georgia institute
+matlab
+blog
+lisp machine
+respiratory system
+prolog implementation
+plan library
+object oriented dbms
+french
+chief audit executive
+internal audit
+concurrent library
+peptide spectral library
+class library
+technology roadmap
+deterministic parallel java
+combinator library
+compiler writer
+cdna library
+game engine
+electronic library
+alloy analyzer
+late 19th century
+graphics address remapping table
+digital library
+
+
+!java<=>programming language
+
+>Similar Relation
+is equipped with
+is familiar with
+via
+has revolutionized vision via
+misses via
+is dedicated to
+is grounded on
+is implementing
+finally is dedicated to
+is constructed via
+defined via
+therefore is equipped with
+is described based on
+is conceived as
+is abstracted as
+is generated via
+was conducted as
+is first implementation of
+is developing
+is derandomization of
+is realized via
+dedicated to
+equipped with
+was conceived as
+is connected via
+generated via
+was based on
+is conducted via
+implementing
+is attempted via
+oriented
+is also equipped with
+was designed as
+called as
+serving as
+is synthesized with
+starts with
+is name of
+is designed as
+is interacting with
+
+>Similar Keyword
+java
+deterministic parallel java
+west java
+embedded java
+java thread
+generic platform
+java programmer
+java package
+java software
+piston
+automotive engine
+java compiler
+game engine
+real time java
+python
+android platform
+league
+software simulator
+lisp
+compiler writer
+final project
+technology roadmap
+java bytecodes
+undergraduate software engineering course
+java library
+experimental platform
+rewrite engine
+java card
+spell checker
+workflow engine
+open system
+open system
+java implementation
+jit compiler
+static checker
+chemical abstract
+ph.d. workshop
+aerial survey
+daily routine
+software tool
+
+
+!c++<=>programming language
+
+>Similar Relation
+is recommended as
+is generated via
+streamline
+is implementing
+is organized as
+is first implementation of
+is realized via
+is delegated to
+is connected via
+is designed as
+called as
+is written as
+is named as
+is familiar with
+is new way of
+is example of
+was designed as
+is coarse to
+is contribution of
+is elaborated as
+specifically is designed as
+is form of
+is contextualized to
+misses via
+is kind of
+is freely available as
+is implementation of
+is blend of
+is integrated as
+was developed as
+is written in
+via
+is intended as
+is axiomatization of
+piece of
+is conceived as
+has revolutionized vision via
+is further designed as
+is built upon
+is nucleolus of
+
+>Similar Keyword
+c++
+national library
+genomic library
+graphics library
+library of congress
+class library
+java library
+library
+cdna library
+internal audit
+concurrent library
+java package
+mathematical library
+java bytecode
+international technology roadmap for semiconductors
+java syntax
+wrapper library
+plan library
+standard template library
+international technology roadmap
+java compiler
+circuit breaker
+available package
+template library
+python
+academic library
+chemical library
+parallel library
+compiler
+instructional scaffolding
+large library
+peptide spectral library
+software package
+database engine
+first playable demo
+incremental compiler
+c standard library
+rocket engine
+graphics address remapping table
+combinator library
+
+
+!python<=>scala
+
+>Similar Relation
+has released
+is implementing
+initiates
+is constituted by
+also initiates
+implementing
+is attempted via
+released
+is grounded on
+was built on
+was presented
+has targeted
+has presented
+via
+misses via
+released by
+inspects
+was released as
+was developed by
+adopts
+refactoring
+was developed with
+featuring
+is equipped with
+has run
+has realized
+was presented as
+is built on
+is presented as
+is presented
+spoken by
+was introduced
+has developed
+is released under
+is synthesized with
+was made
+is familiar with
+operates via
+was designed
+has called
+
+>Similar Keyword
+python
+west java
+generic platform
+java
+national library
+test platform
+deterministic parallel java
+matlab
+microarray platform
+undergraduate software engineering course
+embedded java
+java platform
+java thread
+java processor
+parallel platform
+communication library
+prototype software
+graphics library
+hpc environment
+introductory computer graphics course
+phylogenomics
+hpc system
+alloy analyzer
+experimental platform
+database engine
+java library
+piston pump
+workshop organizer
+heterogeneous platform
+java software
+interactive workshop
+production pipeline
+software release
+virtual prototyping
+different microarray platform
+mechanical vibration
+phd workshop
+new platform
+software pipeline
+computer documentation
+
+
+!java<=>scala
+
+>Similar Relation
+via
+has released
+implementing
+is implementing
+has presented
+misses via
+is attempted via
+'s dilemma is
+spoken by
+released by
+is grounded on
+'s is
+released as
+has called
+developed via
+has targeted
+released
+was released as
+synthesized
+refactoring
+was presented as
+is realized via
+was presented
+accompanies
+was built based on
+curating
+'s algorithm is
+conflicting
+'s theorem is
+built upon
+operates via
+|
+generated via
+spoken in
+inspects
+has introduced
+already has
+was built on
+adapted
+is constructed via
+
+>Similar Keyword
+java
+embedded java
+west java
+deterministic parallel java
+java thread
+java bytecode
+generic platform
+java programmer
+java platform
+hypertext document
+java processor
+real time java
+java software
+python
+platform
+java object
+platform independent
+java application
+grammar checker
+database engine
+new platform
+chemical abstract
+freshwater ecosystem
+georgia institute
+radiology report
+parallel platform
+software simulator
+multilingual document
+educational attainment
+acm international symposium
+national library
+java compiler
+static checker
+assisted living facility
+international symposium on wearable computers
+multiple platform
+documentation system
+embedded platform
+test platform
+pan european
+
+
+!c++<=>scala
+
+>Similar Relation
+'s theorem is
+thought
+was integrated with
+is implementing
+was integrated into
+reinforces
+inspects
+is integrated as
+publishes
+undertakes
+featuring
+is integrated to
+migrates to
+provides alternative to
+implementing
+abandons
+is conditional expectation of
+regularizes
+is integrated with
+was developed as
+solver with
+has called
+was developed with
+splits based
+is blend of
+finishes with
+is recommended as
+was introduced
+was used as
+has presented
+combines with
+is named
+finally is integrated with
+abandoning
+accompanies
+is integrated into
+backbone of
+upon
+powering
+is addition to
+
+>Similar Keyword
+c++
+c++ amp
+library
+graphical editor
+aero engine
+combinator library
+theorem prover
+java library
+interactive theorem prover
+freshwater ecosystem
+type checker
+electronic library
+gene library
+spell checker
+acm fellow
+database engine
+cdna library
+class library
+optimizing compiler
+wrapper library
+prolog system
+genomic library
+sage library
+java evolutionary computation toolkit
+secure hash standard
+rc oscillator
+library of congress
+parallel library
+java compiler
+package insert
+rule engine
+fortran compiler
+goldberg polyhedron
+engine control unit
+repair shop
+static checker
+chemical library
+mathematical library
+student paper award
+digital library
+
+
+!bluetooth<=>communication protocol
+
+>Similar Relation
+aims as
+serves as
+is conceived as
+serving as
+is offered
+needs as
+is obstacle
+is dubbed
+must deliver
+seeks
+spawns
+envisions
+thus serving as
+is implementing
+benefited
+hence serves as
+is regarded as
+unlocking
+also serves as
+is gaining momentum as
+has form
+executes
+moreover serves as
+is recommended as
+is designed as
+is connected
+specifically is designed as
+is creating
+comes
+has form as
+consists
+initiates
+thus serves as
+acts
+attempts
+is considered
+is widely regarded as
+has tended
+is considered as
+contributes
+
+>Similar Keyword
+bluetooth
+bluetooth scatternet
+software radio
+communications society
+peer instruction
+multimedia server
+web access
+bluetooth technology
+personal cloud
+sensor cloud
+rail transportation
+radio access technology
+entertainment technology
+lsi technology
+chip area
+dna microarray technology
+access grid
+communications software
+web processing service
+grid technology
+cloud networking
+fpga fabric
+internet radio
+mobile networking
+digital radio
+storage tube
+communications technology
+radio device
+distributed enterprise
+underlay cognitive radio
+unix environment
+social venture capital
+sensor technology
+networking technology
+virtual leader
+scholarly communication
+civic technology
+radio access
+web service interface
+digital signal processor
+
+
+!wifi<=>communication protocol
+
+>Similar Relation
+aims as
+needs as
+is conceived as
+can operate as
+can act as
+serving as
+will need as
+is powered by
+specifically is designed as
+is designed as
+benefited
+can improve energy efficiency as
+thus serving as
+is recommended as
+can work as
+uses as
+is further designed as
+can switch
+is combined as
+requires as
+also employs
+can enable
+rethinking
+aims through
+convince
+operates as
+aims to
+relies as
+was conceived as
+unlocking
+has evolved as
+is considered as
+would enable
+is intended as
+must deliver
+acts as
+is problematic as
+is leveraged as
+brings closer
+separates signal as
+
+>Similar Keyword
+wifi
+social venture capital
+mobile networking
+social networking
+crowd computing
+service deployment
+mobile internet
+sensor networking
+bluetooth
+venture capital
+internet computing
+internet radio
+internet based
+internet of services
+narrowband iot
+darpa internet
+bluetooth scatternet
+wireless web
+networking
+interplanetary internet
+internet
+physical internet
+sensor technology
+enterprise computing
+wireless broadband
+virtual computing
+underlay cognitive radio
+internet topology
+blindness
+human capital
+software deployment
+gpgpu architecture
+green networking
+sensor cloud
+virtual plant
+virtual machining
+services computing
+protocol spoofing
+entertainment technology
+parallel parking
+
+
+!uwb<=>communication protocol
+
+>Similar Relation
+is promising alternative to
+be employed as
+be alternative to
+is conceived as
+is combined as
+thought
+is alternative to
+is as effective as
+rethinking
+is thought as
+could enable
+be seen as
+is decouples
+would enable
+will enable
+is dubbed
+is recommended as
+is viable alternative to
+be regarded as
+splits based
+can enable
+is problematic as
+is closer
+be viewed as
+therefore is
+is widely regarded as
+is efficient as
+is termed as
+be viable alternative to
+is best viewed as
+aims as
+is good alternative to
+deems
+can improve energy efficiency as
+seems as
+brings closer
+is promising candidate towards
+is enabler in
+is also proposed as
+integration into
+
+>Similar Keyword
+uwb
+asynchronous processing
+parallel processing
+digital filtering
+digital processing
+interactive processing
+bidirectional communication
+integrated processing
+implicit communication
+incremental processing
+computerised signal processing
+optical processing
+massively parallel processing
+automated processing
+care staff
+rule processing
+instruction execution
+embedded processing
+sensory processing
+cognitive processing
+xpath processing
+memory protection
+programming skill
+network processing
+self protection
+vector processing
+on line analytical processing
+photographic processing
+custom design
+copy protection
+digital signal processing
+automatic routing
+stream processing
+conditional execution
+tertiary storage
+collaborative processing
+direct execution
+streaking
+molecular communication
+processing
+
+
+!linux<=>operating system
+
+>Similar Relation
+is beginning
+is argued
+acts
+is configuration
+is followed
+has tended
+needs development
+is
+is expressively equivalent to
+is considered
+has tried
+has advantage
+is denoted
+is accomplished via
+phased
+purposes
+is mechanism
+is therefore considered
+is regarded
+acknowledged
+is hybrid system
+is familiar with
+consists
+has turned out
+is equipped with
+is envisioned
+is closer
+prefers
+is based
+has called
+is connected via
+deems
+is closest probabilistic frame to
+is routed via
+consists to
+is precursor to
+is key element of
+needs of
+slicing
+will continue
+
+>Similar Keyword
+linux
+virtual campus
+digital converter
+entertainment technology
+icosahedron
+web scraping
+optic nerve
+email
+internet telephony
+appropriation
+software versioning
+civic technology
+red hat enterprise linux
+digital pen technology
+digital native
+virtual plant
+mobile telephony
+tcp pacing
+internet portal
+bigram
+chatbot
+new york university
+mapreduce job
+social technology
+rfid technology
+electronic warfare
+pragmatic web
+internet radio
+ip telephony
+social bonding
+cognitive radio
+secondary education
+available technology
+mobile technology
+dither
+android malware
+wireless technology
+particular technology
+industrial technology
+virtual travel
+
+
+!windows<=>operating system
+
+>Similar Relation
+is key element of
+hand
+streamline
+are element of
+thus forms
+forms
+is architecture of
+be integral part of
+are integral part of
+be part of
+are cornerstone of
+essential element of
+are conceived
+is element of
+can operate as
+are evolving as
+fuel interest
+are popular choice
+functioning as
+be regarded as
+are part of
+is conceived as
+will enable
+are key components of
+acts
+guides student
+testbed
+conceived
+can enable
+be component of
+would enable
+will need as
+augmented
+therefore is
+can constitute
+architecture of
+'s is
+hearkens as
+mediating
+could become
+
+>Similar Keyword
+windows
+microsoft windows
+multiple windows
+gps
+micrornas
+rfid
+aerosol
+multi port
+hash join
+digital zoom
+optical fibers
+square wave
+cd roms
+vertical tangent
+lower limb
+caenorhabditis
+cactus
+lasers
+plane wave
+tangent
+bokeh
+continuous wave
+gel electrophoresis
+cell assembly
+gossiping
+extrusion
+glauber dynamic
+passive rfid
+participatory budgeting
+glauber
+optical fiber
+multi commodity
+gravitational wave
+half wave
+surface wave
+plucker
+fiber
+fiber
+chromatin fiber
+discrete logarithms
+
+
+!android<=>operating system
+
+>Similar Relation
+is
+is conceived as
+therefore is
+however is
+is shown as
+is as fast as
+was conceived as
+has recently shown as
+is elaborated as
+is proved as
+is seen as
+is named as
+proved as
+is thought as
+has form
+be seen as
+serves as
+has form as
+is decouples
+is generally regarded as
+is considered as
+has evolved as
+thus is
+be
+consists as
+is widely considered as
+specifically is designed as
+is deployed as
+is recommended as
+is organized as
+acts as
+is utilized as
+is as
+is regarded as
+is widely accepted as
+is as expressive as
+be written as
+is gaining momentum as
+is intended as
+is designed as
+
+>Similar Keyword
+android
+android
+digital legacy
+intel scc
+desktop videoconferencing
+android smartphone
+virtual heritage
+telephony
+spider web
+kazakh
+virtual studio
+virtual instrument
+latin america
+polymer chemistry
+chatbot
+translator
+electrical conductor
+popular web
+movielens
+lego mindstorms
+cognitive dissonance
+rna isoforms
+virtual observatory
+article withdrawal
+tutoring system
+medical genetics
+botany
+mobile telephony
+panel session
+crystallography
+sicstus prolog
+ieee
+java virtual machine
+interactive web
+elastic cloud
+wire sizing
+online journalism
+fungal genetics
+behavioural genetics
+web system
+
+
+!numpy<=>python package
+
+>Similar Relation
+was conceived as
+comprises of
+coined as
+accepted as
+provided as
+is named as
+was designed as
+is as fast as
+is first implementation of
+released as
+runs of
+was released as
+commonly accepted as
+is conceived as
+operates as
+was organized as
+is abstracted as
+was developed as
+is organized as
+has as
+was originated as
+was applied as
+has evolved as
+system as
+runs as
+was used as
+was conducted as
+is explored as
+was held as
+called as
+is database of
+is as
+is accepted as
+is elaborated as
+was considered as
+is made of
+is freely available as
+is utilized as
+is cited as
+held as
+
+>Similar Keyword
+numpy
+pursuer
+hyperthermia
+moulin
+oligonucleotide
+triviality
+blowfish
+owl
+spite
+iris
+spine
+organizing
+crn
+approx
+conflation
+posynomial
+lifelog
+hurricanes
+datagram
+conductor
+homeland
+rsvp
+morphing
+stupidity
+concentrator
+digestion
+treemap
+restrict
+negatively associated
+maglev
+radiology
+folklore
+bloat
+pigments
+anonymous submission
+artillery
+not invented here
+dss
+dna
+vco
+
+
+!torch<=>python package
+
+>Similar Relation
+is first implementation of
+is made of
+is implementation of
+is made up of
+is multiscale implementation of
+finishes with
+is logic of
+is special type of
+host of
+is mechanism of
+is grounded on
+is conducted via
+is application of
+adoption of
+is contribution of
+is routed via
+is revision of
+implementation of
+is blend of
+relatively low adoption of
+misses via
+is made as
+is special kind of
+is adaptation of
+logic of
+is branch of
+is basis of
+is made via
+is primarily based on
+communication with
+grounded
+is realized via
+is grounded in
+is accomplished via
+is attempted via
+needs of
+comprises of
+is architecture of
+is via
+via
+
+>Similar Keyword
+torch
+technical communication
+ruleml
+robustification
+imperfect debugging
+gene promoter
+promotion
+large pedigree
+microrna sequencing
+assembly
+adhesion
+mature mirnas
+macromolecular assembly
+palm print
+blue light
+integrated processing
+querying
+work force
+applied anthropology
+open communication
+unsharp masking
+chromosome breakage
+and processing
+substitution
+collaborative engineering
+recent finding
+rigour
+certainty
+bottom up
+dependable computing
+hepatitis
+gene finding
+excitability
+photographic processing
+multivariate
+installation
+arabic
+key finding
+chirality
+chirality
+

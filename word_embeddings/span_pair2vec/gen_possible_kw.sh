@@ -1,0 +1,1 @@
+python embeddings/preprocess_kw.py data/vocab.txt data/keyword_f.txt data/keyword_p.txt

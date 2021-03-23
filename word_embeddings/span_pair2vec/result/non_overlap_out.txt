@@ -1,0 +1,1304 @@
+!binary search tree<=>data structure
+
+>Similar Relation
+is exactly equivalent to
+is restriction of
+is particular case of
+is instance of
+is thought as
+is converted to
+is analogous to
+is so similar to
+is form of
+is known as
+is well known as
+is new class of
+is example of
+ties
+is thought of
+is as expressive as
+is polynomially equivalent to
+is similar as
+is first converted to
+is
+is also known as
+is equivalent so
+is generated as
+is equivalent to
+is architecture of
+is axiomatization of
+thus serves as
+is denoted as
+is expectation of
+thus is
+is expressible as
+is expressive as
+is converted as
+is selected as
+prior is equivalent to
+is natural generalization of
+is degenerated to
+is as
+is called
+is conditional expectation of
+
+>Similar Keyword
+binary search tree
+search tree
+simple tree
+dynamic tree
+evolutionary tree
+binary tree
+clock tree
+complete binary tree
+tree searching
+dual tree
+radial tree
+computation tree
+hyperbolic tree
+hash tree
+recursive tree
+finite tree
+family tree
+junction tree
+large tree
+rational tree
+balanced tree
+binomial tree
+regular tree
+h tree
+threaded binary tree
+chemical tree
+multicast tree
+expression tree
+cover tree
+random binary tree
+extremal tree
+recursion tree
+fat tree
+pq tree
+random tree
+tree
+tree
+tree
+directed spanning tree
+finger search tree
+
+
+!linked list<=>data structure
+
+>Similar Relation
+starts by
+acts as
+puts
+spawns
+is meant as
+csit of
+system as
+piece of
+acts
+is implementing
+'s is
+of
+observations of
+is recommended as
+puts forth
+history of
+is selected as
+intensity of
+members of
+contributes as
+runs of
+line of
+intended as
+classical example of
+avoidance of
+time of
+is elaborated as
+compiles
+also acts as
+called as
+communication of
+starts from
+'s dilemma is
+will set
+rounds of
+norm of
+also initiates
+has as
+interests of
+will drive
+
+>Similar Keyword
+linked list
+unrolled linked list
+long list
+open list
+doubly linked list
+free list
+short list
+event list
+adjacency list
+list
+fault list
+document list
+display list
+mailing list
+revocation list
+client program
+shopping list
+dependable software
+preference list
+line list
+copycat
+check list
+ranking list
+artin group
+prologue
+operational program
+proprietary software
+ethnic group
+log file
+r software
+group
+sample group
+reading list
+c program
+transformation group
+complete chain
+program chair
+experimental group
+inverted list
+task list
+
+
+!hash table<=>data structure
+
+>Similar Relation
+is representative of
+is corollary of
+is third of
+denoted as
+is name of
+csit of
+specific type of
+is addition of
+is chain of
+is axiomatization of
+is span of
+is intersection of
+is proper superset of
+mixes in
+observations of
+lifetime of
+is discriminant of
+of type is
+of one is
+is conditional expectation of
+is selected as
+is natural variant of
+is abstraction of
+is typical of
+representative of
+is denoted as
+called as
+divergence of
+language of is
+histogram of
+piece of
+is dimension of
+subclasses of
+retrieval of
+contains of
+chain of
+type of
+progression of
+instance of
+is refinement of
+
+>Similar Keyword
+hash table
+table
+table
+distributed hash table
+interactive table
+single table
+pivot table
+state table
+large table
+transposition table
+routing table
+flow table
+rainbow table
+contingency table
+mathematical table
+table of contents
+branch table
+sierpinski triangle
+round table
+relational table
+symbol table
+multiprogramming system
+distribute hash table
+conditional probability table
+standard normal table
+data table
+topology table
+table of divisors
+page table
+autonomic nervous system
+page attribute table
+control table
+cluster system
+interrupt vector table
+signaling transduction
+casing string
+genetic code
+reentrancy
+parallel code
+common reference string
+
+
+!time complexity<=>search algorithm
+
+>Similar Relation
+resorting
+offset
+elapsed since
+accelerated
+renders
+supplied
+gradient
+imagining
+accelerating
+underpins
+corrected
+ascending
+however renders
+complexity
+forcing
+i.e. endowing
+delay
+requirement of
+boosting
+parametrizes
+complicate
+bound up
+bottleneck of
+leading
+scheduling
+motivates
+decreased
+reverses
+permeate
+stabilizes
+benefits
+speed
+contradicting
+exponent
+paid
+probability
+facilitated
+scaling energy down
+prevents
+prohibiting
+
+>Similar Keyword
+time complexity
+low time complexity
+exponential time complexity
+linear time complexity
+quadratic complexity
+intrinsic complexity
+high complexity
+high computational complexity
+linear complexity
+exact complexity
+topological complexity
+precise complexity
+bounded complexity
+exponential complexity
+message complexity
+structural complexity
+implicit computational complexity
+additional complexity
+query complexity
+asymptotic computational complexity
+circuit complexity
+computational complexity
+intermediate complexity
+low computational complexity
+complexity of constraint satisfaction
+spatial complexity
+communication complexity
+sample complexity
+deterministic complexity
+effective sample size
+algebraic complexity
+asymptotic complexity
+environmental complexity
+higher complexity
+amortized complexity
+parameterized complexity
+inherent complexity
+randomized complexity
+model complexity
+average time complexity
+
+
+!space complexity<=>search algorithm
+
+>Similar Relation
+complexity
+renders
+resorting
+however renders
+reverses
+gradient
+traveled
+motivates
+boosting
+accelerated
+underpins
+relaying
+bottleneck of
+appearing
+probability
+hampers
+scaling
+leading
+mandate
+is bottleneck of
+qualifies
+scaling energy down
+bound up
+recruiting
+requirement of
+delay
+also motivates
+elapsed since
+reduced
+reinterprets
+benefits
+forcing
+may mislead
+reduction
+receding
+mandates
+decreased
+stabilizes
+scheduling
+predicates
+
+>Similar Keyword
+space complexity
+parameterized complexity
+computational complexity
+low computational complexity
+structural complexity
+memory complexity
+computation complexity
+effective complexity
+linear complexity
+inherent complexity
+exponential complexity
+implicit computational complexity
+high computational complexity
+combinatorial complexity
+quadratic complexity
+additional complexity
+tape complexity
+intrinsic complexity
+runtime complexity
+parallel complexity
+polynomial complexity
+randomized complexity
+visual complexity
+complexity
+state complexity
+stochastic complexity
+precise complexity
+syntactic complexity
+bounded complexity
+deterministic complexity
+low complexity
+spatial complexity
+multiplicative complexity
+complexity of constraint satisfaction
+intermediate complexity
+algorithmic complexity
+lower complexity
+algebraic complexity
+grammatical complexity
+sample complexity
+
+
+!computational complexity<=>search algorithm
+
+>Similar Relation
+complexity
+gradient
+resorting
+accelerated
+renders
+boosting
+delay
+however renders
+requirement of
+qualifies
+bottleneck of
+imagining
+reverses
+traveled
+limitation of
+underpins
+forcing
+elapsed since
+stabilizes
+is bottleneck of
+relaying
+prohibiting
+bound up
+speed
+scaling
+decreased
+offset
+motivates
+reinterprets
+reduced
+similarities of
+benefits
+accelerating
+probability
+reduction
+supplied
+rethinking
+may mislead
+networking
+mandate
+
+>Similar Keyword
+computational complexity
+low computational complexity
+parameterized complexity
+high computational complexity
+complexity
+precise complexity
+effective complexity
+intrinsic complexity
+linear complexity
+structural complexity
+runtime complexity
+higher complexity
+space complexity
+randomized complexity
+parallel complexity
+inherent complexity
+additional complexity
+exponential complexity
+quadratic complexity
+high complexity
+implicit computational complexity
+algorithmic complexity
+low complexity
+polynomial complexity
+deterministic complexity
+bounded complexity
+state complexity
+data complexity
+time complexity
+cyclomatic complexity
+sample complexity
+computation complexity
+asymptotic computational complexity
+grammatical complexity
+exact complexity
+memory complexity
+combinatorial complexity
+lower complexity
+amortized complexity
+descriptive complexity
+
+
+!computer vision<=>deep learning
+
+>Similar Relation
+rethinking
+testbed
+has inspired
+relatively low adoption of
+reschedule
+led with
+have hindered
+made with
+has hindered
+is made with
+needs on
+pursued
+emerged with
+discourages
+needs with
+has spurred
+has realized
+is made on
+was highlighted by
+thanks
+was made with
+challenge
+highly relies on
+is made based on
+was made on
+is possible thanks to
+made to
+has modeled
+mainly relies on
+has emphasized
+began with
+is made through
+has progressed with
+exemplifies
+was made by
+text
+still relies on
+is made by
+detach
+is made of
+
+>Similar Keyword
+computer vision
+image processing and computer vision
+computer vision and image processing
+computational vision
+computer stereo vision
+vision processing
+computer vision and pattern recognition
+human vision
+general vision
+machine vision
+fourth generation
+first language acquisition
+human language processing
+automated generation
+early vision
+immune recognition
+image processing application
+natural language processing
+music and artificial intelligence
+computer generation
+global vision
+biological vision
+parallel generation
+wide area surveillance
+medical image processing
+pattern recognition application
+natural language processing application
+stereo vision
+intelligent text processing
+referring expression generation
+computer processing
+visual surveillance
+developmental cognitive neuroscience
+arabic natural language processing
+collaborative processing
+peripheral vision
+computer vision application
+redescription mining
+semiconductor device modeling
+third generation sequencing
+
+
+!natural language processing<=>deep learning
+
+>Similar Relation
+has hindered
+has benefited from
+is possible thanks to
+has shifted from
+has moved from
+has evolved from
+pursued
+has inspired
+needs on
+have hindered
+evolved into
+stemmed from
+highly relies on
+text
+mainly relies on
+techniques from
+can benefit from
+often relies on
+has traditionally relied on
+however can benefit from
+has frequently depended on
+currently relies on
+has received attention from
+imposes challenges on
+solely relies on
+is conducted via
+still relies on
+relies from
+have received interest following
+traditionally has relied on
+heavily relies on
+is made through
+is discussed based on
+rethinking
+is conducted through
+has evolved into
+usually relies on
+have evolved from
+may benefit from
+will benefit from
+
+>Similar Keyword
+natural language processing
+language processing
+statistical natural language processing
+human language processing
+arabic natural language processing
+medical image processing
+digital image processing
+intelligent text processing
+human sentence processing
+image processing
+computer vision and image processing
+word processing
+machine processing
+speech processing
+natural language generation
+antigen processing
+text processing
+natural language processing application
+image processing and computer vision
+automatic data processing
+cognitive processing
+natural language processing task
+language generation
+computer vision
+natural language summarization
+parallel image processing
+collaborative processing
+computer generation
+automatic processing
+computer vision and pattern recognition
+video processing
+document image processing
+document summarization
+computer processing
+vision processing
+event processing
+document processing
+multimedia processing
+microscope image processing
+language modeling
+
+
+!speech recognition<=>deep learning
+
+>Similar Relation
+has benefited from
+text
+is made through
+highly relies on
+benefited from
+still relies on
+heavily relies on
+mainly relies on
+has evolved from
+has frequently depended on
+grounded
+relies from
+is fundamental from
+critique
+leveraging from
+is made with
+duplicate
+is important from
+generally relies on
+can benefit from
+is made by
+often relies on
+is problem from
+usually relies on
+critically relies on
+solely relies on
+is made based on
+greatly benefit from
+is issue with
+leverages models from
+is made via
+relies upon
+currently relies on
+however can benefit from
+primarily relies on
+relies heavily on
+is made on
+is possible thanks to
+mostly relies on
+relies on
+
+>Similar Keyword
+speech recognition
+continuous speech recognition
+visual speech recognition
+automatic speech recognition
+structure recognition
+audio recognition
+face recognition
+object recognition
+surface recognition
+object class recognition
+music recognition
+robust face recognition
+human face recognition
+visual object recognition
+posture recognition
+person recognition
+invariant object recognition
+generic object recognition
+landmark recognition
+active object recognition
+movement recognition
+phoneme recognition
+human action recognition
+character recognition
+multispectral pattern recognition
+scene recognition
+statistical pattern recognition
+automatic face recognition
+automatic speaker recognition
+fast recognition
+molecular recognition
+robust object recognition
+dynamic recognition
+material recognition
+gene recognition
+color recognition
+iris recognition
+human activity recognition
+sketch recognition
+font recognition
+
+
+!support vector machine<=>machine learning
+
+>Similar Relation
+abandons
+is architecture of
+projected
+inspired
+recently inspired
+is currently used in
+is extensively used in
+currently used in
+backbone of
+will assist
+therefore is used in
+is used in
+is architecture for
+learning based
+is normally used in
+used in
+is inspired
+architecture for
+been used in
+learning model for
+commonly used in
+transform road infrastructure into
+is commonly used in
+be successfully used in
+is widely used in
+must complement
+evolved into
+is popular model of
+is key element of
+is promising alternative to
+has evolved into
+is further used in
+is also used in
+generalisation of
+deployed for
+based model for
+deployed to
+streamline
+is key ingredient of
+abandoning
+
+>Similar Keyword
+support vector machine
+structured support vector machine
+linear support vector machine
+fuzzy support vector machine
+vector machine
+multiclass support vector machine
+kernel machine
+support vector machine svm
+proximal support vector machine
+boltzmann machine
+inference machine
+injection molding machine
+multicore machine
+restricted boltzmann machine
+support vector regression machine
+core vector machine
+stack machine
+warren abstract machine
+batch machine
+squares support vector machine
+counter machine
+kernel extreme learning machine
+asynchronous sequential machine
+multi machine
+unrelated machine
+twin support vector machine
+helmholtz machine
+linear machine
+novel machine
+simd machine
+learning machine
+pointer machine
+supervised machine
+sequential machine
+logic learning machine
+simple machine
+memory machine
+hybrid machine
+single machine
+mealy machine
+
+
+!linear regression<=>machine learning
+
+>Similar Relation
+is popular model of
+is architecture of
+is common model for
+is model for
+is method of
+is useful model for
+is key ingredient of
+is important component of
+is new type of
+based model for
+is universality of
+is special type of
+is model of
+is technique of
+is formal model of
+is architecture for
+is ingredient of
+is probabilistic model of
+is language of
+is used technique for
+is commonly used in
+is fundamental component of
+is workhorse of
+is key element of
+is used here for
+is one of
+is new technique for
+is critical component of
+is component of
+is technique for
+is type of
+is widely used in
+is essential component of
+is instance of
+is used in
+is complement of
+is used method in
+is key component of
+is achievement of
+is important part of
+
+>Similar Keyword
+linear regression
+multiple linear regression
+general regression
+non linear regression
+simple linear regression
+bayesian linear regression
+random regression
+binomial regression
+tree regression
+multivariate linear regression
+spectral regression
+multiple regression
+sparse regression
+vector regression
+support vector regression
+kernel regression
+nonparametric regression
+local regression
+regression
+nonlinear regression
+robust regression
+semiparametric regression
+fuzzy linear regression
+quantile regression
+multivariable linear regression
+lasso regression
+sliced inverse regression
+polynomial regression
+stepwise regression
+fuzzy regression
+multivariate regression
+partial least square regression
+gaussian process regression
+maximum likelihood linear regression
+least squares regression
+penalized regression
+bayesian multivariate linear regression
+mixed regression
+kernel logistic regression
+squares regression
+
+
+!logistic regression<=>machine learning
+
+>Similar Relation
+is architecture of
+is architecture for
+is popular model of
+is method of
+is language of
+is achievement of
+is ingredient of
+is key ingredient of
+is candidate for
+is used technique for
+is technique of
+is special type of
+based model for
+is called for
+is new type of
+is alternative for
+is popular for
+is family of
+is application of
+is model for
+is universality of
+is model on
+is useful model for
+is model of
+is used here for
+is used method for
+is workhorse of
+is common model for
+is technique for
+is one of
+is type of
+is good candidate for
+is popular technique for
+is general method for
+is used on
+is simple extension of
+is interesting family of
+is widely used scalable solver for
+is structure of
+is family for
+
+>Similar Keyword
+logistic regression
+bayesian logistic regression
+multinomial logistic regression
+regression
+penalized logistic regression
+stepwise regression
+polynomial regression
+lasso regression
+kernel logistic regression
+kernel regression
+segmented regression
+svm regression
+robust regression
+local regression
+multiple regression
+mixed regression
+fuzzy regression
+general regression
+nonparametric regression
+multivariable linear regression
+statistical regression
+sliced inverse regression
+linear regression
+cox regression
+simple linear regression
+sparse regression
+spectral regression
+binomial regression
+isotonic regression
+tree regression
+symbolic regression
+interval regression
+vector regression
+ridge regression
+quantile regression
+squares regression
+random regression
+ordinal regression
+penalized regression
+non linear regression
+
+
+!k means<=>clustering algorithm
+
+>Similar Relation
+with algorithm is
+guided
+distributed
+gradient
+in algorithm is
+are cornerstone of
+derived by
+are backbone of
+closed
+variants of
+recognized by
+invoking
+optimized
+ties
+benchmark of
+based
+q
+hand
+transform based
+for algorithm is
+of method is
+gradient simultaneously
+constructed by
+cornerstone of
+of one is
+splits based
+of variant is
+designed by
+unrolling
+based on algorithm is
+algorithm by
+returned by
+of application is
+based on method is
+speckle
+with process is
+method of
+aided
+bound via
+of type is
+
+>Similar Keyword
+k means
+digital ink
+delayed reaction
+basic linear algebra subprograms
+fuzzy groups
+means
+proton nmr
+non orthogonal
+gap junctions
+chi researcher
+inner mitochondrial membrane
+branched covering
+microstructures
+toxic gas
+resonant inverter
+general k
+cdna arrays
+case base
+index i
+enzymatic reaction
+infra red
+permutation groups
+k nearest neighbors
+biomedical nmr
+keys
+number field sieve
+vortex shedding
+tower
+skid
+photodetectors
+mixture of experts
+large cardinal
+mixture of gaussians
+indefinite orthogonal group
+subroutines
+cliques
+multiplex pcr
+classical groups
+reaction
+polysemous word
+
+
+!k nearest neighbor<=>clustering algorithm
+
+>Similar Relation
+ties
+method as
+thought
+algorithm as
+with algorithm is
+search
+hand
+projected
+transform based
+is generalization of
+is architecture of
+splits based
+is class of
+recasts
+is axiomatization of
+is special class of
+recently been proposed as
+class
+based
+is natural generalization of
+noises
+gradient simultaneously
+is new class of
+is family
+alternating
+q
+was recently introduced as
+is special type of
+is like
+been proposed as
+deems
+learning based
+is expressive as
+class of are
+is as expressive as
+introduced as
+therefore is
+solvers
+thus is
+is converted as
+
+>Similar Keyword
+k nearest neighbor
+approximate nearest neighbor
+nearest neighbor
+k neighbor
+vertical projection
+nearest neighbor rule
+particle separators
+planar projection
+hermite spline
+weighted arithmetic mean
+cubic hermite spline
+common neighbor
+multi spectral
+multicast tree
+naive bayes nearest neighbor
+flat spline
+orthogonal projection
+arithmetic mean
+ternary search tree
+consensus tree
+random sample consensus
+spline
+linear projection
+polyharmonic spline
+graphical projection
+byzantine consensus
+drill pipe
+optimal binary search tree
+random projection
+box spline
+minimum spanning forest
+poisson regression
+walrasian auction
+evolutionary tree
+polar transform
+defragmentation
+search tree
+furthest neighbor
+preferential block voting
+hyperbolic tree
+
+
+!mean shift<=>clustering algorithm
+
+>Similar Relation
+gradient
+with algorithm is
+beamforming
+regularized
+hand
+rethinking
+coded
+splits based
+speckle
+gradient simultaneously
+backbone of
+relaying
+based
+transform based
+q
+detach
+metric
+compressed
+qualifies
+coined
+aided
+w.r.t.
+optimally dispatch
+wired
+guided
+stacked
+sensing
+inspired
+recently inspired
+coined as
+receding
+thought
+dispatch
+with problem is
+signed
+recruiting
+queueing
+
+deems
+violates
+
+>Similar Keyword
+eigendecomposition
+indefinite sum
+analog
+polyglot
+gridlock
+direct sum
+path dependent
+letter frequency
+social norm
+false sharing
+dispersion
+dispersion
+dispersion
+partial match
+doppler shift
+earth movers distance
+nitrogen oxide
+parameter dependent
+drag
+unit square
+false positive
+least square
+kloosterman sum
+span and div
+scale dependent
+legal norm
+significant bit
+monopoly
+dissimilarity
+division by zero
+visual hull
+effective mean
+golden ratio
+communication endpoint
+population risk
+reporting bias
+root locus
+paddle
+speed dating
+buffering
+
