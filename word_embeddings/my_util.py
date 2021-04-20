@@ -2,6 +2,9 @@ from typing import Iterable, List
 import numpy as np
 from heapq import nlargest
 from nltk import WordNetLemmatizer, pos_tag, word_tokenize
+import multiprocessing
+from threading import Thread
+from math import ceil
 
 wnl = WordNetLemmatizer()
 
@@ -32,3 +35,59 @@ def my_write(file_name:str, content:List[str]):
 
 def phrase_normalize(sent:str):
     return ' '.join([wnl.lemmatize(word, pos='n') if tag.startswith('NN') else word for word, tag in pos_tag(word_tokenize(sent)) if not tag.startswith('RB') and not tag.startswith('DT')])
+
+class MultiProcessing:
+    def __line_process_wrapper(self, temp_obj, input_list:list, output_list):
+        for line in input_list:
+            temp_obj.line_operation(line)
+        output_list.append(temp_obj)
+
+    def run(self, obj_generator, input_list:list, thread_num:int=1, post_operation=None):
+        if thread_num <= 0:
+            return
+        line_count = len(input_list)
+        print('Number of lines is %d' % (line_count))
+        unit_lines = ceil(line_count / thread_num)
+
+        manager = multiprocessing.Manager()
+        result = manager.list()
+        processing = []
+        for i in range(thread_num):
+            processing.append(multiprocessing.Process(target=self.__line_process_wrapper, args=(obj_generator(), input_list[unit_lines*i : unit_lines*(i+1)], result)))
+
+        for i in range(thread_num):
+            processing[i].start()
+
+        for i in range(thread_num):
+            processing[i].join()
+        if post_operation:
+            return post_operation(result)
+        else:
+            sub_result = ['\n'.join(sub) for sub in result]
+            return '\n'.join(sub_result)
+
+class MultiThreading:
+    def __line_process_wrapper(self, line_operation, input_list:list, output_list:list):
+        for line in input_list:
+            result = line_operation(line)
+            if result is not None:
+                output_list.append(result)
+
+    def run(self, line_operation, input_list:list, thread_num:int=1):
+        if thread_num <= 0:
+            return
+        line_count = len(input_list)
+        print('Number of lines is %d' % (line_count))
+        unit_lines = ceil(line_count / thread_num)
+
+        result = [[] for i in range(thread_num)]
+        threads = [Thread(target=self.__line_process_wrapper, args=(line_operation, input_list[unit_lines*i : unit_lines*(i+1)], result[i])) for i in range(thread_num)]
+
+        for i in range(thread_num):
+            threads[i].setDaemon(True)
+            threads[i].start()
+
+        for i in range(thread_num):
+            threads[i].join()
+        sub_result = ['\n'.join(sub) for sub in result]
+        return '\n'.join(sub_result)
