@@ -1,0 +1,2 @@
+python -m span_pair2vec.train --config config/span_pair2vec/pair2vec_train.json --save_path data/outputs/span_pair2vec/trained_model --gpu 1
+echo "Task is done." | mail -s "Task done" -A data/outputs/span_pair2vec/trained_model/stdout.log keruiz2@illinois.edu

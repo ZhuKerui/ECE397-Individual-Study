@@ -1,5 +1,0 @@
-data structure:binary search tree,linked list,hash table
-search algorithm:time complexity,space complexity,computational complexity
-deep learning:computer vision,natural language processing,speech recognition
-machine learning:support vector machine,linear regression,logistic regression
-clustering algorithm:k means,k nearest neighbor,mean shift

@@ -5,7 +5,7 @@ import spacy
 from collections import defaultdict, Counter
 import sys
 sys.path.append('..')
-from my_multithread import multithread_wrapper
+from my_multithread import MultiThreading
 from my_util import ugly_normalize, simple_normalize
 nlp = spacy.load('en_core_web_sm')
 
@@ -58,8 +58,8 @@ class Keyword_Base:
                                 # If the second word is not the last word in the phrase
                                 temp_dict = temp_dict[parent_node].copy()
                                 parent_node = sw
-                if cnt % 1000 == 0:
-                    print(cnt)
+                # if cnt % 1000 == 0:
+                #     print(cnt)
             print('Building word tree is accomplished with %d words added' % (cnt))
         with io.open(dump_file, 'w', encoding='utf-8') as output_file:
             json.dump(self.MyTree, output_file)
@@ -124,7 +124,8 @@ class Keyword_Base:
         return ''.join(sent_list)
 
     def process_sent(self, freq:int, input_file:str, output_file:str, thread_num:int=1):
-        multithread_wrapper(self.__process_sent, freq=freq, input_file=input_file, output_file=output_file, thread_num=thread_num)
+        multithreading = MultiThreading()
+        multithreading.run(self.__process_sent, input_file=input_file, output_file=output_file, thread_num=thread_num)
 
 
 class Vocab_Base:

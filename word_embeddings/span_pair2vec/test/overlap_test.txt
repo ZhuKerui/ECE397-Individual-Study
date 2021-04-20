@@ -1,5 +1,0 @@
-search algorithm:binary search algorithm,linear search algorithm,jump search algorithm
-algorithm complexity:time complexity,space complexity,computational complexity
-machine learning:machine translation,machine vision,machine intelligence
-python code:python library,python module,python package
-distance metric:cosine distance,euclidean distance,hamming distance

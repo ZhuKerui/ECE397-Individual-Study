@@ -1,0 +1,30 @@
+we have validated our analysis on several fundamental lock - free search data structures such as linked lists, hash tables, skip lists and binary trees.
+cuckoo hash tables, invertible bloom lookup tables, retrieval data structures and perfect hash functions.
+concurrent hash tables are one of the most important concurrent data structures with numerous applications.
+our starting point for better performing data structures is a fast and simple lock - free concurrent hash table based on linear probing that is limited to word - sized key - value types and does not support dynamic size adaptation.
+hash tables are one of the most fundamental data structures in computer science, in both theory and practice.
+we present a new data structure: double orthogonal list in hash table which is a high speed and high memory efficiency graph structure applicable to streaming graph.
+we present the berkeley container library, a set of generic, cross - platform, high - performance data structures for irregular applications, including queues, hash tables, bloom filters and more.
+by integrating an auxiliary data structure into lsh hash tables, we can efficiently estimate the computational cost of lsh - based search for a given query regardless of the data distribution.
+our approach contributes also to the study of learned data structures, a recent proposal to improve the time/space performance of fundamental data structures, e.g., b - trees, hash tables, bloom filters.
+with existing approaches, however, for each seed we keep a separate linear - size data structure, either a hash table or a spaced suffix array .
+such a data structure is called a naming function and has been implemented using a hash table that has a space - time tradeoff.
+the considered underlying data structures are hash tree, trie, and hash table trie.
+we focus on hash tables, the most commonly used internal data structure in main memory databases to perform join and aggregation operations.
+a standard design pattern found in many concurrent data structures, such as hash tables or ordered containers, is an alternation of parallelizable sections that incur no data conflicts and critical sections that must run sequentially and are protected with locks.
+the data structure has a wide area of applications including string matching problems while offering low overhead and efficient operations when embedded on top of a distributed hash table.
+hash tables are a ubiquitous class of dictionary data structures.
+finally, we describe a proof - of - concept implementation and experimental results, showing that our tool can verify commutativity of data structures such as a memory cell, counter, two - place set, array - based stack, queue, and a rudimentary hash table.
+iacono and patracsu established an update/query tradeoff curve for external hash tables: a hash table that performs insertions in o amortized ios requires omega expected ios for queries, where n is the number of items that can be stored in the data structure, b is the size of a memory transfer, m is the size of memory, and lambda is a tuning parameter.
+our technique is broadly applicable to a variety of data structures, including hash tables and binary search trees.
+this article presents the quotient hash table a new data structure for duplicate detection in unbounded streams.
+hash tables are one of the most fundamental data structures for effectively storing and accessing sparse data, with widespread usage in domains ranging from computer graphics to machine learning.
+this paper presents a new approach to speed up the generation and search processes using a combination of stack and hash table data structures.
+first, we describe classical data structures for the set membership and the predecessor search problems: perfect hash tables for set membership by fredman, koml 'di and a data structure by beame and fich for predecessor search.
+we focus on operations that require individual accesses to remote portions of a distributed data structure, e.g., accessing a hash table bucket or distributed queue, rather than global operations in which all processors collectively exchange information.
+a key innovation is the ability to maintain a small number of hash tables via preprocessing data structures and algorithms that sample from multiple buckets in each hash table.
+random hashing can provide guarantees regarding the performance of data structures such as hash tables, even in an adversarial setting.
+in this paper, we implement three variations of apriori algorithm using data structures hash tree, trie and hash table trie i.e.
+experiments are carried out on both real life and synthetic datasets which shows that hash table trie data structures performs far better than trie and hash tree in terms of execution time.
+the paradigm of many choices has influenced significantly the design of efficient data structures and, most notably, hash tables.
+in general, hash tables are a particularly challenging case for the flash drive because this data structure is inherently dependent upon the randomness of the hash function, as opposed to the spatial locality of the data.

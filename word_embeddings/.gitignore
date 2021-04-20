@@ -2,3 +2,7 @@ __pycache__
 .vscode
 data/
 runs/
+*.jar
+*.mco
+.stanfordnlp_resources/
+.washington_resource/

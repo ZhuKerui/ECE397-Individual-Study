@@ -1,0 +1,9 @@
+our approach contributes also to the study of learned data structures, a recent proposal to improve the time/space performance of fundamental data structures, e.g., b - trees, hash tables, bloom filters.
+previously, data structures such as string b - trees have implicitly supported weak prefix queries, but they all have query time that grows logarithmically with the size of the string collection.
+we consider the task of optimizing the b - tree data structure, used extensively in operating systems and databases, for sustainable usage on multi - level flash memory.
+we revisit self - adjusting external memory tree data structures, which combine the optimal worst - case i/o performances of b - trees, while adapting to the online distribution of queries.
+we prove lower bounds for the b - tree model, and introduce a b - tree model data structure, the belga b - tree, that executes any sequence of searches within a o factor of the best offline b - tree model algorithm, provided b= log^n.
+we design the first learned index that solves the dictionary problem with time and space complexity provably better than classic data structures for hierarchical memories, such as b - trees, and modern learned indexes.
+a classic versioned data structure in storage and computer science is the copy - on - write b - tree , it underlies many of today's file systems and databases, including wafl, zfs, btrfs and more.
+on a practical note, leapfrog triejoin can be implemented using conventional data structures such as b - trees, and extends naturally to exists_1 queries.
+the idea and techniques in the design and implementation of a bst and prefix tree is generic and thus can also be used for other types of trees such as b - tree, and other link - based data structures such as linked lists and graphs.

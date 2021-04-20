@@ -1,7 +1,0 @@
-ultra wide band:uwb
-support vector machine:svm
-artificial intelligence:ai
-depth first search:dfs
-internet protocol:ip
-k nearest neighbor:knn
-natural language processing:nlp

@@ -7,7 +7,7 @@ from collections import Counter
 import sys
 sys.path.append('..')
 
-from relation_similar.vdbscan import do_cluster
+from vdbscan import do_cluster
 from my_keywords import Keyword_Vocab
 from my_multithread import multithread_wrapper
 
