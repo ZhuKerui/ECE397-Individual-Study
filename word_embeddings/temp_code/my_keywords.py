@@ -5,8 +5,7 @@ import spacy
 from collections import defaultdict, Counter
 import sys
 sys.path.append('..')
-from my_multithread import MultiThreading
-from my_util import ugly_normalize, simple_normalize
+from tools.BasicUtils import MultiThreading, ugly_normalize
 nlp = spacy.load('en_core_web_sm')
 
 class Keyword_Base:

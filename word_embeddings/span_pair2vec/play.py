@@ -5,7 +5,7 @@ from span_pair2vec.matrix_data import create_vocab
 from sklearn.metrics.pairwise import cosine_similarity
 import sys
 sys.path.append('..')
-from my_util import ntopidx
+from tools.BasicUtils import ntopidx
 import numpy as np
 import pyhocon
 import torch

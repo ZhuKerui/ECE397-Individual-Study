@@ -1,12 +1,10 @@
 from typing import Iterable, List
 import numpy as np
 from heapq import nlargest
-from nltk import WordNetLemmatizer, pos_tag, word_tokenize
 import multiprocessing
 from threading import Thread
 from math import ceil
 
-wnl = WordNetLemmatizer()
 
 def ugly_normalize(vecs:np.ndarray):
     normalizers = np.sqrt((vecs * vecs).sum(axis=1))
@@ -23,18 +21,12 @@ def ntopidx(n, score:Iterable):
     s = nlargest(n, zip(np.arange(len(score)), score), key = lambda x: x[1])
     return [item[0] for item in s]
 
-def lemmatize_all(sentence:str):
-    return ' '.join((wnl.lemmatize(word, pos='n') if tag.startswith('NN') else word for word, tag in pos_tag(word_tokenize(sentence))))
-
 def my_read(file_name:str):
     return open(file_name, 'r').read().split('\n')
 
 def my_write(file_name:str, content:List[str]):
     with open(file_name, 'w') as f_out:
         f_out.write('\n'.join(content))
-
-def phrase_normalize(sent:str):
-    return ' '.join([wnl.lemmatize(word, pos='n') if tag.startswith('NN') else word for word, tag in pos_tag(word_tokenize(sent)) if not tag.startswith('RB') and not tag.startswith('DT')])
 
 class MultiProcessing:
     def __line_process_wrapper(self, temp_obj, input_list:list, output_list):

@@ -2,8 +2,8 @@
 import sys
 
 sys.path.append('..')
-from my_util import my_read, my_write, MultiProcessing
-from my_occurance import Occurance, occurance_dump, occurance_load, occurance_post_operation
+from tools.BasicUtils import MultiProcessing
+from tools.TextProcessing import Occurance, occurance_dump, occurance_post_operation
 
 # Generate occurance file
 p = MultiProcessing()

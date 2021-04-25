@@ -1,3 +1,4 @@
+# python sent_tokenize.py sent_file_in sent_file_out
 import sys
 from nltk import sent_tokenize
 

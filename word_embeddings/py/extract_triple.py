@@ -1,3 +1,4 @@
+# python extract_triple.py openie_result_file triple_file_out
 import sys
 
 triple = []
