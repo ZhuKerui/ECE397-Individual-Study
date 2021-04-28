@@ -109,21 +109,3 @@ def occurance_load(occur_file:str):
     with open(occur_file) as f_in:
         temp_dict = json.load(f_in)
         return {str(key):set(val) for key, val in temp_dict.items()}
-
-def mark_sent_in_html(sent:str, keywords:List[str]):
-    reformed_sent = sent_lemmatize(sent.replace('-', ' - '))
-    reformed_keywords = [k.replace('-', ' - ').split() for k in keywords]
-    for k in reformed_keywords:
-        begin_idx = 0
-        while reformed_sent[begin_idx:].count(k[0]) > 0:
-            begin_idx = reformed_sent.index(k[0], begin_idx)
-            is_good = True
-            for i in range(1, len(k)):
-                if begin_idx + i >= len(reformed_sent) or reformed_sent[begin_idx + i] != k[i]:
-                    is_good = False
-                    break
-            if is_good:
-                reformed_sent.insert(begin_idx, '<font style="color:red;">')
-                reformed_sent.insert(begin_idx+i+2, '</font>')
-            begin_idx += (i+3) if is_good else (i+1)
-    return ' '.join(reformed_sent)
