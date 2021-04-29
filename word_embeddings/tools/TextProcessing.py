@@ -58,7 +58,7 @@ def build_word_tree(input_txt:str, dump_file:str):
         json.dump(MyTree, output_file)
         
 def sent_lemmatize(sentence:str):
-    return [wnl.lemmatize(word, pos='n') if tag.startswith('NN') else word for word, tag in pos_tag(word_tokenize(sentence))]
+    return [str(wnl.lemmatize(word, pos='n') if tag.startswith('NN') else word) for word, tag in pos_tag(word_tokenize(sentence))]
 
 class Occurance:
     def __init__(self, wordtree_file:str, keyword_file:str):
