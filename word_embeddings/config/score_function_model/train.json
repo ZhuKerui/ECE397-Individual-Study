@@ -1,0 +1,6 @@
+{
+    "dropout": 0.5,
+    "normalize_args": true,
+    "d_args": 300,
+    "d_rels": 300
+}
