@@ -55,8 +55,10 @@ class MultiProcessing:
         if post_operation:
             return post_operation(result)
         else:
-            sub_result = ['\n'.join(sub) for sub in result]
-            return '\n'.join(sub_result)
+            ret = []
+            for sub in result:
+                ret += sub.line_record
+            return ret
 
 class MultiThreading:
     def __line_process_wrapper(self, line_operation, input_list:list, output_list:list):
