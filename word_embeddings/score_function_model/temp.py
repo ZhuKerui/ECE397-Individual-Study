@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 from typing import Tuple, List
 
-from torchtext.legacy import data
+from torchtext import data
 from torchtext.vocab import Vectors
 from torch.nn import init
 from tqdm import tqdm
@@ -25,7 +25,7 @@ class MyDataset(data.Dataset):
     def __init__(self, corpus_path:str, path_field:data.Field, entity_field:data.Field, test:bool=False, **kwargs):
         
         fields = [('id', None), ('path', path_field), ('subjs', entity_field), ('objs', entity_field)]
-        corpus_data = pd.read_csv(corpus_path, delimiter='\t')
+        corpus_data = pd.read_csv(corpus_path)
 
         if test:
             examples = [data.Example.fromlist([None, text, None, None], fields=fields) for text in tqdm(corpus_data['path'])]
@@ -48,49 +48,49 @@ train_iter, val_iter = data.BucketIterator.splits((train_data, valid_data), batc
 
 
 
-model_name = 'bert-base-uncased'
-raw_data = pd.read_csv('drive/MyDrive/Colab Notebooks/CS412/data/train.csv')
+# model_name = 'bert-base-uncased'
+# raw_data = pd.read_csv('drive/MyDrive/Colab Notebooks/CS412/data/train.csv')
 
-# Define classes
-class DataToDataset(Dataset):
-    def __init__(self, depPath:List[str], pair:List[Tuple[str, str]]):
-        self.depPath = depPath
-        self.pair = pair
+# # Define classes
+# class DataToDataset(Dataset):
+#     def __init__(self, depPath:List[str], pair:List[Tuple[str, str]]):
+#         self.depPath = depPath
+#         self.pair = pair
 
-    def __len__(self):
-        return len(self.labels)
+#     def __len__(self):
+#         return len(self.labels)
     
-    def __getitem__(self, index):
-        return self.depPath[index], self.pair[index]
+#     def __getitem__(self, index):
+#         return self.depPath[index], self.pair[index]
 
-class PairEncoder(Module):
-    def __init__(self, keyword_vocab:List[str], dropout:float=0.5, normalize_args:bool=False, d_args:int=300, d_rels:int=300):
-        super(PairEncoder, self).__init__()
-        self.dropout = Dropout(p=dropout)
-        self.nonlinearity  = ReLU()
-        self.normalize = normalize if normalize_args else (lambda x : x)
-        self.arg_emb = Embedding(len(keyword_vocab), d_args)
+# class PairEncoder(Module):
+#     def __init__(self, keyword_vocab:List[str], dropout:float=0.5, normalize_args:bool=False, d_args:int=300, d_rels:int=300):
+#         super(PairEncoder, self).__init__()
+#         self.dropout = Dropout(p=dropout)
+#         self.nonlinearity  = ReLU()
+#         self.normalize = normalize if normalize_args else (lambda x : x)
+#         self.arg_emb = Embedding(len(keyword_vocab), d_args)
         
-        self.pairEncoder = Sequential(
-            self.dropout, 
-            Linear(3 * d_args, d_args), 
-            self.nonlinearity, 
-            self.dropout, 
-            Linear(d_args, d_args), 
-            self.nonlinearity, 
-            self.dropout, 
-            Linear(d_args, d_args), 
-            self.nonlinearity, 
-            self.dropout, 
-            Linear(d_args, d_rels)
-        )
+#         self.pairEncoder = Sequential(
+#             self.dropout, 
+#             Linear(3 * d_args, d_args), 
+#             self.nonlinearity, 
+#             self.dropout, 
+#             Linear(d_args, d_args), 
+#             self.nonlinearity, 
+#             self.dropout, 
+#             Linear(d_args, d_args), 
+#             self.nonlinearity, 
+#             self.dropout, 
+#             Linear(d_args, d_rels)
+#         )
 
-    def forward(self, subjects:torch.Tensor, objects:torch.Tensor):
-        subjects = self.normalize(subjects)
-        objects = self.normalize(objects)
-        return self.pairEncoder(torch.cat([subjects, objects, subjects * objects], dim=-1))
+#     def forward(self, subjects:torch.Tensor, objects:torch.Tensor):
+#         subjects = self.normalize(subjects)
+#         objects = self.normalize(objects)
+#         return self.pairEncoder(torch.cat([subjects, objects, subjects * objects], dim=-1))
 
-class PathEncoder(Module):
-    def __init__(self, config):
-        super(PathEncoder, self).__init__()
+# class PathEncoder(Module):
+#     def __init__(self, config):
+#         super(PathEncoder, self).__init__()
 

@@ -13,7 +13,7 @@ def read_vocab_from_file(vocab_path, specials):
     print('Loaded vocab with {} tokens'.format(len(tokens)))
     return vocab
 
-def get_cooccurance(fname, vocab_file, outf):
+def get_cooccurrence(fname, vocab_file, outf):
     vocab = read_vocab_from_file(vocab_file, specials=['<unk>', '<pad>', '<X>', '<Y>'])
     counts = defaultdict(int)
     win = 5
@@ -35,6 +35,6 @@ def get_cooccurance(fname, vocab_file, outf):
 corpus_file = sys.argv[1]  # input corput
 pair_counts_file = sys.argv[2]  # output
 vocab_file = sys.argv[3] if len(sys.argv) > 3 else 'vocabulary/pair2vec_tokens.txt' # optional vocaulary file from the repo
-get_cooccurance(corpus_file, vocab_file, pair_counts_file)
-#get_cooccurance('/sdb/data/wikipedia-sentences/shuf_sentences.txt', '/sdb/data/wikipedia-sentences/triplet_contexts/vocab.txt',
+get_cooccurrence(corpus_file, vocab_file, pair_counts_file)
+#get_cooccurrence('/sdb/data/wikipedia-sentences/shuf_sentences.txt', '/sdb/data/wikipedia-sentences/triplet_contexts/vocab.txt',
 #        '/sdb/data/wikipedia-sentences/coor_counts.txt')

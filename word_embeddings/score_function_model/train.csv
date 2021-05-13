@@ -1,0 +1,51 @@
+,path,subj,obj
+0,i_pobj i_prep compound,porous_medium,multiscale
+1,i_compound prep pobj,multiscale,porous_medium
+2,amod,porous_medium,heterogeneous
+3,i_amod,heterogeneous,porous_medium
+4,i_appos i_pobj i_prep punct subtok,finite_volume,finite_element_method
+5,i_subtok i_punct prep pobj appos,finite_element_method,finite_volume
+6,i_pobj i_prep punct subtok,multiscale,finite_element_method
+7,i_subtok i_punct prep pobj,finite_element_method,multiscale
+8,compound,solver,algebraic_multigrid
+9,i_compound,algebraic_multigrid,solver
+10,i_pobj i_prep prep pobj,fracture,porous_medium
+11,i_pobj i_prep prep pobj,porous_medium,fracture
+12,prep pobj,flow,porous_medium
+13,i_pobj i_prep,porous_medium,flow
+14,i_amod i_pobj i_prep i_pobj i_prep i_pobj i_prep dobj appos,heterogeneous,multiscale_method
+15,i_appos i_dobj prep pobj prep pobj prep pobj amod,multiscale_method,heterogeneous
+16,i_amod,heterogeneous,porous_medium
+17,amod,porous_medium,heterogeneous
+18,compound,coarse_grid,multiscale
+19,i_compound,multiscale,coarse_grid
+20,appos,fracture,coarse_grid
+21,i_appos,coarse_grid,fracture
+22,compound,solver,algebraic_multigrid
+23,i_compound,algebraic_multigrid,solver
+24,i_amod compound,conservative,flux
+25,i_compound amod,flux,conservative
+26,i_nmod compound,mass,flux
+27,i_compound nmod,flux,mass
+28,i_nsubj i_conj oprd,infinite_word,lsp
+29,i_oprd conj nsubj,lsp,infinite_word
+30,i_conj,forgery,genuine_signature
+31,conj,genuine_signature,forgery
+32,i_pobj i_prep i_pobj pobj,signature,offline_signature_verification
+33,i_pobj pobj prep pobj,offline_signature_verification,signature
+34,i_pobj i_prep nummod,datasets,state_-_of_-_the_-_art
+35,i_nummod prep pobj,state_-_of_-_the_-_art,datasets
+36,dobj,counting,perfect_matchings
+37,i_dobj,perfect_matchings,counting
+38,i_pobj i_prep prep pobj,graph,hereditary_class
+39,i_pobj i_prep prep pobj,hereditary_class,graph
+40,i_pobj,scheduling,edf
+41,pobj,edf,scheduling
+42,i_pobj i_prep conj,jpeg,jpeg_2000
+43,i_conj prep pobj,jpeg_2000,jpeg
+44,i_advcl prep pobj compound,overloading,operator
+45,i_compound i_pobj i_prep advcl,operator,overloading
+46,i_dobj,language,object_-_oriented_programming
+47,dobj,object_-_oriented_programming,language
+48,i_pobj i_prep dobj,functional_language,type_checking
+49,i_dobj prep pobj,type_checking,functional_language

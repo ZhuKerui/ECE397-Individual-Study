@@ -3,9 +3,9 @@ import sys
 
 sys.path.append('..')
 from tools.BasicUtils import MultiProcessing
-from tools.TextProcessing import Occurance, occurance_dump, occurance_post_operation
+from tools.DocProcessing.Occurrence import Occurrence, occurrence_dump, occurrence_post_operation
 
-# Generate occurance file
+# Generate occurrence file
 p = MultiProcessing()
-occur_dict = p.run(lambda: Occurance(sys.argv[1], sys.argv[2]), open(sys.argv[3]).readlines(), 8, occurance_post_operation)
-occurance_dump(sys.argv[4], occur_dict)
+occur_dict = p.run(lambda: Occurrence(sys.argv[1], sys.argv[2]), open(sys.argv[3]).readlines(), 8, occurrence_post_operation)
+occurrence_dump(sys.argv[4], occur_dict)
