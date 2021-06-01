@@ -20,5 +20,4 @@ dg = Dataset_Generator(keyword_list, co_occur_list, pair_graph)
 for idx, line in enumerate(open(sys.argv[4]).readlines()):
     dg.line_operation(line)
 print('Use time %f seconds' % (time.time() - start_time))
-df = pd.DataFrame(dg.line_record, columns=['path', 'subj', 'obj'])
-df.to_csv(sys.argv[5])
+pd.DataFrame(dg.line_record, columns=['path', 'subj', 'obj']).to_csv(sys.argv[5])

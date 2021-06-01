@@ -1,9 +1,0 @@
-,path,subj,obj
-0,conj,polymorphism,typing
-1,i_conj,typing,polymorphism
-2,i_amod,incremental,type_checker
-3,amod,type_checker,incremental
-4,i_amod,incremental,type_checker
-5,amod,type_checker,incremental
-6,i_pobj i_prep,scientific_paper,publishing
-7,prep pobj,publishing,scientific_paper

@@ -78,8 +78,10 @@ def find_dependency_path_from_tree(doc, kw1:str, kw2:str):
         branch[i] = 1
         i = doc[i].head.i
     i = idx2
-    while branch[i] == 0:
+    while branch[i] != 1:
         branch[i] = 2
+        if i == doc[i].head.i:
+            return ''
         i = doc[i].head.i
     dep1 = []
     j = idx1
