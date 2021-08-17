@@ -1,0 +1,13 @@
+Starting server with command: java -Xmx8G -cp /home/keruiz2/.stanfordnlp_resources/stanford-corenlp-4.1.0/* edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 60000 -threads 5 -maxCharLength 100000 -quiet True -serverProperties corenlp_server-f0b38fe817964d6c.props -preload openie
+Traceback (most recent call last):
+  File "/scratch/similar_relation/project/word_embeddings/openie/stanford_test/stanford.py", line 13, in <module>
+    for triple in client.annotate(line):
+  File "/home/keruiz2/miniconda3/envs/FWD_pip/lib/python3.9/site-packages/openie/openie.py", line 54, in annotate
+    core_nlp_output = self.client.annotate(text=text, annotators=['openie'], output_format='json',
+  File "/home/keruiz2/miniconda3/envs/FWD_pip/lib/python3.9/site-packages/stanfordnlp/server/client.py", line 398, in annotate
+    r = self._request(text.encode('utf-8'), request_properties, **kwargs)
+  File "/home/keruiz2/miniconda3/envs/FWD_pip/lib/python3.9/site-packages/stanfordnlp/server/client.py", line 311, in _request
+    self.ensure_alive()
+  File "/home/keruiz2/miniconda3/envs/FWD_pip/lib/python3.9/site-packages/stanfordnlp/server/client.py", line 137, in ensure_alive
+    raise PermanentlyFailedException("Timed out waiting for service to come alive.")
+stanfordnlp.server.client.PermanentlyFailedException: Timed out waiting for service to come alive.

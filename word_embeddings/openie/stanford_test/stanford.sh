@@ -1,6 +1,6 @@
 # Setup parameters
-file_in=sub_sent0
-file_out=sub_sent0_out.txt
+file_in="$1"
+file_out="$2"
 cmd='python stanford.py ${file_in} ${file_out}'
 start_time=`date`
 :>t.log

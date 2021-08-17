@@ -1,0 +1,19 @@
+Loading parser models... 
+Initializing malt: -u file:/scratch/similar_relation/project/word_embeddings/openie/ollie_test/engmalt.linear-1.7.mco -m parse -cl off
+  Transition system    : Projective
+  Parser configuration : Stack
+  Feature model        : eng-liblinear.xml
+  Classifier           : liblinear
+  Data Format          : /engmalt.linear-1.7/conllx.xml
+1.94 s
+Loading ollie models... WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by scala.runtime.ScalaRunTime$ (file:/scratch/similar_relation/project/word_embeddings/openie/ollie_test/ollie-app-latest.jar) to method sun.net.www.protocol.jar.JarURLConnection$JarURLInputStream.close()
+WARNING: Please consider reporting this to the maintainers of scala.runtime.ScalaRunTime$
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+0.47 s
+Loading ollie confidence function... 0.05 s
+
+Running extractor on temp_temp_000...
+
+Completed in 2.47 s seconds
